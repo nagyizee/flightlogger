@@ -1,23 +1,18 @@
 ----------------------------------------------------
 components:
-
-    uc.:                        nfr52832
-    pressure/temperature:       mpl3115A2
-    accelero:                   MMA8452QR1           
-    ext.mem.                    S25FL064LABNFA040
+                                                                                         ron(noTVA)
+    uc.:                        nfr52832                QFN48   (6x6mm)     1.7 - 3.6V     23
+    pressure/temperature:       mpl3115A2               8pin    (3x5mm)     1.9 - 3.6V     21
+    accelero:                   MMA8452QR1              QFN16   (3x3mm)     1.9 - 3.6V     10 
+    ext.mem.                    S25FL064LABNFA040       USON8   (4x4mm)     2.7 - 3.6V     13
     
-                                                                                  WSON8   (5x6mm)
-                                S25FL064LABNFM040       1200pcs - 20.1  - 64Mb  - USON8   (4x4mm) 
-                                MT25QU128ABA1EW7-0SIT   3700pcs - 10ron - 128Mb - WDFN-8  (6x5mm)   -max 2V !!!
-                                S25FL064LABNFA040       473       13.5  - 64Mb  - USON8   (4x4mm)
-
                                 
 ----------------------------------------------------
 sampling:
 
     10Hz. (0.1sec / sample)
     
-    sample types:                                                  sampled at
+    sample element types:                                           sampled at
         - (A) altitude (0.05m)    16bit    range: 0 .. 3000.00        10Hz     - 0.05m resolution uint16
         - (T) temperature (0.5*C)  8bit    range: -40 .. 85           0.5Hz    - 0.5*C with 40*C offset uint8
         - (C) ctrl_sig. (1%)       8bit    range: -120 .. 120         4.5Hz    - 1% resolution with 120 offset uint8
@@ -42,20 +37,21 @@ data storage - page allocation:
         [pg.header][ds][ds][ds]....[crc16]
     
         [pg.header]:
-            - [00]        page written marker (if 0xff - page is free)
+            - [00]        page written marker (if 0xaa or 0xff - page is free)
               [sinf]      session info
               [ss][ss]    16bit sequence counter (32k pages - with 64k value we can detect the start/end of sequence
 
             session info:
                 1bit      1st. page recorded from power on
+                1bit      1st. page recorded for a new session
                 1bit      last page recorded before power off
-                3bits     number of recorded ds                
+                4bits     number of samples recored                
               
         [ds] x 8    31x8 bytes of payload     (8 seconds)
               
         [res][res]  reserved
 
-        [crc][crc]  16 bit page CRC
+        [crc][crc]  16 bit page CRC - over data range [0]..[253]
         
         
             
@@ -81,10 +77,15 @@ b4 .. bN  - data log area
 
 - memory array is deleted completely at 1st. start-up
 - memory is written 1 page at a time
-- if 4 pages till next undeleted block - delete it. (operation max. 600ms, page can hold 8 sec. recordings)
+- if 2 pages till next undeleted block - delete it. (operation max. 600ms, page can hold 8 sec. recordings)
+- deleting will be done after writing the current page.
 
-TODO: diag. if deletion is finished before power down.
-
+- when block is deleted, the first byte is written 0xaa. This marks that delete operation was successfull.
+- if after start-up the block is checked at the last 2 pages from prew. block - it will mark that the new block
+  can be used. Otherwise a new delete operation is triggered.
+  
+  
+  
 
 
 
