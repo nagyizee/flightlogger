@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <fileVersion>2</fileVersion>
+    <fileChecksum>622603082</fileChecksum>
+    <configuration>
+        <name>Debug</name>
+        <outputs>
+            <file>$PROJ_DIR$\..\Sources\HAL\Base\base.h</file>
+            <file>$PROJ_DIR$\..\Sources\System\Os\Os.h</file>
+            <file>$PROJ_DIR$\..\Sources\System\Os\Os_Rt.c</file>
+            <file>$PROJ_DIR$\..\Sources\Startup\startup_stm32f100xb.s</file>
+            <file>$PROJ_DIR$\..\Sources\System\Main\main.c</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\OsSys\HALOsSys.c</file>
+            <file>$TOOLKIT_DIR$\lib\rt7M_tl.a</file>
+            <file>$PROJ_DIR$\Debug\Obj\HALcore.o</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\Core\HALcore.c</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\OsSys\HALOsSys.h</file>
+            <file>$TOOLKIT_DIR$\lib\m7M_tl.a</file>
+            <file>$TOOLKIT_DIR$\lib\shb_l.a</file>
+            <file>$PROJ_DIR$\Debug\Obj\OsExperiments.pbd</file>
+            <file>$PROJ_DIR$\stm32f100xB.icf</file>
+            <file>$PROJ_DIR$\Debug\Obj\Os.pbi</file>
+            <file>$TOOLKIT_DIR$\CMSIS\Include\core_cm3.h</file>
+            <file>$TOOLKIT_DIR$\lib\dl7M_tln.a</file>
+            <file>$PROJ_DIR$\..\Sources\System\Os\Os_Internals.h</file>
+            <file>$PROJ_DIR$\..\Sources\System\Os\Os_Rt.h</file>
+            <file>$PROJ_DIR$\..\Sources\System\Os\Os.c</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\Core\HALcore.h</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\Base\system_stm32f1xx.h</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\Base\stm32f100xb.h</file>
+            <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
+            <file>$PROJ_DIR$\Debug\Obj\HALcore.pbi</file>
+            <file>$TOOLKIT_DIR$\CMSIS\Include\cmsis_compiler.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</file>
+            <file>$PROJ_DIR$\Debug\Obj\HALOsSys.o</file>
+            <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
+            <file>$PROJ_DIR$\Debug\Obj\HALOsSys.pbi</file>
+            <file>$PROJ_DIR$\Debug\Obj\Os.o</file>
+            <file>$PROJ_DIR$\Debug\Obj\Os_Rt.pbi</file>
+            <file>$PROJ_DIR$\Debug\Obj\startup_stm32f100xb.o</file>
+            <file>$PROJ_DIR$\Debug\Obj\main.o</file>
+            <file>$PROJ_DIR$\Debug\List\OsExperiments.map</file>
+            <file>$PROJ_DIR$\Debug\Obj\Os_Rt.o</file>
+            <file>$PROJ_DIR$\Debug\Exe\OsExperiments.out</file>
+            <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\cmsis_iar.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\iccarm_builtin.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\string.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\DLib_Product_string.h</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\OsSys\HALOsSysIrq.c</file>
+            <file>$PROJ_DIR$\Debug\Obj\HALOsSysIrq.pbi</file>
+            <file>$PROJ_DIR$\Debug\Obj\HALOsSysIrq.o</file>
+        </outputs>
+        <file>
+            <name>[ROOT_NODE]</name>
+            <outputs>
+                <tool>
+                    <name>ILINK</name>
+                    <file> 38 36</file>
+                </tool>
+            </outputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\System\Os\Os_Rt.c</name>
+            <outputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 33</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 37</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 39 0 28 40 18 30 1 17 26 29 20</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 1 18 0 40 39 30 28 26 29 17 20</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\Startup\startup_stm32f100xb.s</name>
+            <outputs>
+                <tool>
+                    <name>AARM</name>
+                    <file> 34</file>
+                </tool>
+            </outputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\System\Main\main.c</name>
+            <outputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 23</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 35</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 28 39 40 30 0 26 29 1</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 0 40 39 30 28 26 29 1</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\HAL\OsSys\HALOsSys.c</name>
+            <outputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 31</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 27</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 40 22 15 0 21 30 28 41 9 25 39 26 29 42</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 9 22 15 40 39 30 28 26 29 25 41 42 21 0</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\HAL\Core\HALcore.c</name>
+            <outputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 24</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 7</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 21 28 25 40 30 22 39 26 29 15 42 0 41</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 0 40 39 30 28 26 29 22 15 25 41 42 21</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\System\Os\Os.c</name>
+            <outputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 14</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 32</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 40 30 9 25 17 28 0 22 15 1 18 39 44 45 26 29 21 42 43 41</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 43 39 30 28 26 29 44 45 1 17 0 40 18 9 22 15 25 41 42 21</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\Debug\Exe\OsExperiments.out</name>
+            <outputs>
+                <tool>
+                    <name>ILINK</name>
+                    <file> 36</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>ILINK</name>
+                    <file> 13 7 27 48 35 32 37 34 11 6 10 16</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\HAL\OsSys\HALOsSysIrq.c</name>
+            <outputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 47</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 48</file>
+                </tool>
+            </outputs>
+        </file>
+    </configuration>
+    <configuration>
+        <name>Release</name>
+        <outputs />
+        <forcedrebuild>
+            <name>[MULTI_TOOL]</name>
+            <tool>ILINK</tool>
+        </forcedrebuild>
+    </configuration>
+</project>
