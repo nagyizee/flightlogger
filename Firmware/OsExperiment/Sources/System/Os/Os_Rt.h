@@ -18,8 +18,9 @@
 
 #define OS_TICKS_PER_US						(3)								/* timer granularity set to 3MHz  - NOTE: synchronize it with the OsSys prescaler */
 #define OS_TIME2TICK(timeUs)				(timeUs * OS_TICKS_PER_US)		/* convert time in us -> timer ticks */
+#define OS_TASK_TOTAL_CYCLE					(OS_TIME2TICK(5000))			/* cycle time to complete the task list */
 
-#define OSRT_TASK_LIST_LENGTH				(sizeof(OsRt_TaskList) / sizeof(tOsSchedulerElement))
+#define OSRT_TASK_LIST_LENGTH				(10)
 
 /*--------------------------------------------------
  * 		    		 Types

@@ -18,11 +18,23 @@
  * 		    		Defines
  *--------------------------------------------------*/
 
+#define OSSYS_TIMER_MAX_CYCLES				(0x10000)
+
+#define OSSYS_DBG_ENABLE					(1)
+
+#if OSSYS_DBG_ENABLE != 0
+	#define OSSYS_DBG_TOGGLE_ON				do { } while(0)
+	#define OSSYS_DBG_TOGGLE_OFF			do { } while(0)
+#else
+	#define OSSYS_DBG_TOGGLE_ON				do { } while(0)
+	#define OSSYS_DBG_TOGGLE_OFF			do { } while(0)
+#endif
+
+
 #define HALOsSys_DisableAllInterrupts()		do { __disable_irq(); } while(0)
 #define HALOsSys_EnableAllInterrupts()		do { __enable_irq(); } while(0)
 
 #define HALOsSys_GetCurrentCounter()		((uint32)TIM17->CNT)
-
 
 extern volatile uint32 gHALOsSys_CounterValue;
 extern volatile uint32 gHALOsSys_CounterNext;
