@@ -5,6 +5,13 @@
  *	is responsible for timed interrupt generation.
  *	This module is hard coupled with the Os module.
  *
+ *	Interfaces:
+ *		gHALOsSys_CounterValue [OsSys -> Os]: timer counter value when the scheduler interrupt was produced
+ *		gHALOsSys_CounterNext  [OsSys <- Os]: next scheduled wake-up set by the Os.
+ *		HALOsSys_GetCurrentCounter():		  gets the os timer counter value
+ *		HALOsSys_DisableAllInterrupts():	  disable the global interrupt handling
+ *		HALOsSys_EnableAllInterrupts():		  enable the global interrupt handling
+ *
  */
 
 /*--------------------------------------------------
@@ -21,15 +28,6 @@
 #define OSSYS_TIMER_MAX_CYCLES				(0x10000)
 
 #define OSSYS_DBG_ENABLE					(1)
-
-#if OSSYS_DBG_ENABLE != 0
-	#define OSSYS_DBG_TOGGLE_ON				do { } while(0)
-	#define OSSYS_DBG_TOGGLE_OFF			do { } while(0)
-#else
-	#define OSSYS_DBG_TOGGLE_ON				do { } while(0)
-	#define OSSYS_DBG_TOGGLE_OFF			do { } while(0)
-#endif
-
 
 #define HALOsSys_DisableAllInterrupts()		do { __disable_irq(); } while(0)
 #define HALOsSys_EnableAllInterrupts()		do { __enable_irq(); } while(0)

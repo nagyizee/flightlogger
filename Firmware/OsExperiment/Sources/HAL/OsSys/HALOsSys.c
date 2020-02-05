@@ -35,7 +35,7 @@ void HALOsSys_Init(void)
 	DBGMCU->CR = DBGMCU_CR_DBG_TIM17_STOP;
 
 	/* set up NVIC */
-	NVIC_SetPriority(TIM1_TRG_COM_TIM17_IRQn, 0);
+	NVIC_SetPriority(TIM1_TRG_COM_TIM17_IRQn, 1);
 	NVIC_EnableIRQ(TIM1_TRG_COM_TIM17_IRQn);
    
    HALOsSys_EnableAllInterrupts();

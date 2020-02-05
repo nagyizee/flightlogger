@@ -2370,6 +2370,33 @@
         </settings>
     </configuration>
     <group>
+        <name>AppGroup</name>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\ApplicationBgnd\AppExample\ExampleApp.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\ApplicationBgnd\AppExample\ExampleApp.h</name>
+        </file>
+    </group>
+    <group>
+        <name>AppRtGroup</name>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\ApplicationRT\ExampleRtApp\ExampleRtApp.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\ApplicationRT\ExampleRtApp\ExampleRtApp.h</name>
+        </file>
+    </group>
+    <group>
+        <name>Drivers</name>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\Drivers\Example\exampleDrv.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\Drivers\Example\exampleDrv.h</name>
+        </file>
+    </group>
+    <group>
         <name>HAL</name>
         <file>
             <name>$PROJ_DIR$\..\Sources\HAL\Base\base.h</name>
@@ -2388,6 +2415,12 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\Sources\HAL\OsSys\HALOsSysIrq.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\HAL\Port\HALport.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\HAL\Port\HALport.h</name>
         </file>
     </group>
     <group>

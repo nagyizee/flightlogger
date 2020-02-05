@@ -8,8 +8,11 @@
 #include "HALCore.h"
 /* System */
 /* Drivers */
+#include "exampleDrv.h"
 /* AppRT */
+#include "ExampleRtApp.h"
 /* AppBgnd */
+#include "ExampleApp.h"
 
 
 /* Task list definition */
@@ -46,6 +49,8 @@ tOsSchedulerElement gOsRt_BackgndTask =
 void OsRt_Init(void)
 {
 	HALCore_Init();
+	HALPort_Init();
+	ExampleDrv_Init();
 
 
 }
@@ -55,44 +60,37 @@ void OsRt_Init(void)
 /* definition of timed Tasks - they are run in the low priority interrupt context */
 static void RTTask_1ms(void)
 {
-	asm("nop");
+	ExampleRtApp_Main(0);
 }
 
 static void RTTask_5ms_1(void)
 {
-	asm("nop");
+	ExampleRtApp_Main(1);
 }
 
 static void RTTask_5ms_2(void)
 {
-	asm("nop");
+	ExampleRtApp_Main(2);
 }
 
 static void RTTask_5ms_3(void)
 {
-	asm("nop");
+	ExampleRtApp_Main(3);
 }
 
 static void RTTask_5ms_4(void)
 {
-	asm("nop");
+	ExampleRtApp_Main(4);
 }
 
 static void RTTask_5ms_5(void)
 {
-	asm("nop");
+	ExampleRtApp_Main(5);
 }
 
 /* definition of the constantly running background task - it is run in the application context */
 static void RTTask_BackGnd(void)
 {
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	asm("nop");
-	asm("nop");
+	ExampleApp_Main();
 }
 

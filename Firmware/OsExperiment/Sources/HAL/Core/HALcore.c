@@ -9,13 +9,13 @@ void HALCore_Init(void)
 
 	/* Init system clock with external oscillator */
 	/* start up external oscillator */
-	RCC->CR |= RCC_CR_HSEON_Msk;
-	while (RCC->CR & RCC_CR_HSERDY_Msk == 0);
+	RCC->CR |= RCC_CR_HSEON;
+	while (RCC->CR & RCC_CR_HSERDY == 0);
     /* set up PLL for 24MHz - same clock for AHB / APB1 / APB2 */
-	RCC->CFGR = RCC_CFGR_PLLMULL3 | RCC_CFGR_PLLSRC_Msk;
-	RCC->CR |= RCC_CR_PLLON_Msk;
-	while (RCC->CR & RCC_CR_PLLRDY_Msk == 0);
+	RCC->CFGR = RCC_CFGR_PLLMULL3 | RCC_CFGR_PLLSRC;
+	RCC->CR |= RCC_CR_PLLON;
+	while (RCC->CR & RCC_CR_PLLRDY == 0);
 	/* switch system clock source to PLL */
-	RCC->CFGR |= 0x01;
-	RCC->CR &= ~RCC_CR_HSION_Msk;
+	RCC->CFGR |= 0x02;
+	RCC->CR &= ~RCC_CR_HSION;
 }
