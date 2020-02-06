@@ -11,6 +11,7 @@
  *--------------------------------------------------*/
 
 #include "base.h"
+#include "Os.h"
 
 /*--------------------------------------------------
  * 		    		Defines
@@ -24,11 +25,16 @@
 
 typedef struct
 {
-	uint32 task_idx;
-	uint32 tstamp_current;
+	uint32 task_idx;						/* RT task index which is executed at the next interrupt */
+	uint32 tstamp_current;					/* Timestamp when the RT task index will be executed */
 
+} tOsRtInternalInstance;
 
-} tOsInternalInstance;
+typedef struct
+{
+	tOsBgndRunMode run_mode;				/* run mode for the background task */
+
+} tOsBgndInternalInstance;
 
 /*--------------------------------------------------
  *   		  	 	Functions

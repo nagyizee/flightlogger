@@ -6,6 +6,7 @@
 /* project specific includes */
 /* HAL */
 #include "HALCore.h"
+#include "HALport.h"
 /* System */
 /* Drivers */
 #include "exampleDrv.h"
@@ -23,7 +24,7 @@ static void RTTask_5ms_3(void);
 static void RTTask_5ms_4(void);
 static void RTTask_5ms_5(void);
 
-static void RTTask_BackGnd(void);
+static void RTTask_BackGnd(uint32 reason);
 
 tOsSchedulerElement gOsRt_TaskList[OSRT_TASK_LIST_LENGTH] =
 {
@@ -39,10 +40,7 @@ tOsSchedulerElement gOsRt_TaskList[OSRT_TASK_LIST_LENGTH] =
 	{&RTTask_5ms_5,	OS_TIME2TICK(4100)},
 };
 
-tOsSchedulerElement gOsRt_BackgndTask =
-{
-	&RTTask_BackGnd, 0
-};
+tOsTaskBgndItem gOsRt_BgndTask = &RTTask_BackGnd;
 
 
 /* definition of the startup code */
@@ -89,8 +87,8 @@ static void RTTask_5ms_5(void)
 }
 
 /* definition of the constantly running background task - it is run in the application context */
-static void RTTask_BackGnd(void)
+static void RTTask_BackGnd(uint32 reason)
 {
-	ExampleApp_Main();
+	ExampleApp_Main(reason);
 }
 

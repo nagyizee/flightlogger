@@ -32,6 +32,8 @@
 #define HALOsSys_DisableAllInterrupts()		do { __disable_irq(); } while(0)
 #define HALOsSys_EnableAllInterrupts()		do { __enable_irq(); } while(0)
 
+#define HALOsSys_Sleep()					do { asm("wfi"); } while (0)
+
 #define HALOsSys_GetCurrentCounter()		((uint32)TIM17->CNT)
 
 extern volatile uint32 gHALOsSys_CounterValue;

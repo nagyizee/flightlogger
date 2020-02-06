@@ -21,7 +21,7 @@
  *--------------------------------------------------*/
 
 /* Init the cpu core items (clocks and stuff) */
-void ExampleApp_Main(void);
+void ExampleApp_Main(uint32 reason);
 
 
 #endif

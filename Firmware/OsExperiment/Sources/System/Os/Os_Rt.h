@@ -27,6 +27,7 @@
  *--------------------------------------------------*/
 
 typedef void (*tOsTaskItem)(void);
+typedef void (*tOsTaskBgndItem)(uint32 reason);
 
 typedef struct
 {
@@ -34,8 +35,10 @@ typedef struct
 	uint32		timeStamp;
 } tOsSchedulerElement;
 
+/* RealTime task list */
 extern tOsSchedulerElement gOsRt_TaskList[];
-extern tOsSchedulerElement gOsRt_BackgndTask;
+/* Background task */
+extern tOsTaskBgndItem gOsRt_BgndTask;
 
 /*--------------------------------------------------
  *   		  	 	Functions
