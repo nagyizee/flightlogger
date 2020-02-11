@@ -18,9 +18,16 @@
 #define NULL    0
 #endif
 
+#define RES_OK		(0)
+color
+
+
 #ifndef ON_QT_PLATFORM
 
-    typedef uint8_t     uint8;
+    #define true    1
+    #define false   0
+
+	typedef uint8_t     uint8;
     typedef int8_t      int8;
     typedef uint16_t    uint16;
     typedef int16_t     int16;
@@ -30,25 +37,28 @@
     typedef int64_t     int64;
     typedef uint8_t     bool;
 
-    #define true    1
-    #define false   0
+    typedef	tResult		uint32;
+
+
 
 #else
 
- typedef unsigned char          uint8;
- typedef signed char            int8;
- typedef unsigned short         uint16;
- typedef short                  int16;
- typedef unsigned int           uint32;
- typedef int                    int32;
- typedef unsigned long long     uint64;
- typedef long long              int64;
+	#define true    1
+	#define false   0
+
+	typedef unsigned char          uint8;
+	typedef signed char            int8;
+	typedef unsigned short         uint16;
+	typedef short                  int16;
+	typedef unsigned int           uint32;
+	typedef int                    int32;
+	typedef unsigned long long     uint64;
+	typedef long long              int64;
 #ifndef __cplusplus
- typedef unsigned char          bool;
+	typedef unsigned char          bool;
 #endif
 
-#define true    1
-#define false   0
+    typedef	tResult		uint32;
 
 #endif
 

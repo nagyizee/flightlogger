@@ -46,8 +46,13 @@ void Os_Init(void);
 void Os_Run(void);
 
 /* Wake up the background task from a RT application module
+ * context must be between 1 .. 0x7FFFFFFF
  * Function to be used by Real Time tasks only */
 void Os_RtWakeUpBgndTask(uint32 context);
+
+/* get the current time in us
+* Function to be used by Real Time tasks only */
+tOsTimestamp Os_RtGetCurrentTime(void);
 
 /* Background application run mode selector
  * Function to be used by Background tasks only */

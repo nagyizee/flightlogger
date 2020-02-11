@@ -1,5 +1,6 @@
 #include "ExampleRtApp.h"
 #include "HALport.h"
+#include "Os.h"
 
 
 void ExampleRtApp_Main(uint32 taskIdx)
@@ -28,5 +29,15 @@ void ExampleRtApp_Main(uint32 taskIdx)
 	{
 		count--;
 	}
+
+	if (taskIdx == 2)
+	{
+		Os_RtWakeUpBgndTask(2);
+	}
+	else if (taskIdx == 4)
+	{
+		Os_RtWakeUpBgndTask(4);
+	}
+
 	PORT_PIN_RTAPP_OFF();
 }
