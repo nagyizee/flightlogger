@@ -18,8 +18,8 @@
  * 		    		Includes
  *--------------------------------------------------*/
 
-#include "stm32f100xb.h"
 #include "base.h"
+#include "nrf.h"
 
 /*--------------------------------------------------
  * 		    		Defines
@@ -34,7 +34,11 @@
 
 #define HALOsSys_Sleep()					do { asm("wfi"); } while (0)
 
-#define HALOsSys_GetCurrentCounter()		((uint32)TIM17->CNT)
+inline uint32 HALOsSys_GetCurrentCounter(void)
+{
+    NRF_TIMER0->TASKS_CAPTURE[1] = 1;
+    return NRF_TIMER0->CC[1];
+}
 
 extern volatile uint32 gHALOsSys_CounterValue;
 extern volatile uint32 gHALOsSys_CounterNext;

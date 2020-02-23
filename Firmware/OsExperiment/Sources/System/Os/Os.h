@@ -16,6 +16,11 @@
  * 		    		Defines
  *--------------------------------------------------*/
 
+#ifdef NRF52832_XXAA
+extern inline uint32 HALOsSys_GetCurrentCounter(void);
+#endif
+
+
 /* wake up reasons for the background task */
 #define 	OSBGND_WAKE_REASON_BULK		(0xF1000000)
 #define 	OSBGND_WAKE_REASON_RTPER	(0xF2000000)

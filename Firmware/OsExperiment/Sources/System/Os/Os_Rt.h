@@ -16,7 +16,7 @@
  * 		    		Defines
  *--------------------------------------------------*/
 
-#define OS_TICKS_PER_US						(3)								/* timer granularity set to 3MHz  - NOTE: synchronize it with the OsSys prescaler
+#define OS_TICKS_PER_US						(2)								/* timer granularity set to 2MHz  - NOTE: synchronize it with the OsSys prescaler
  	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	 	   - Os time_ctr maximum reach: 3 x 2^64 us = 1.75M years */
 
 #define OS_TIME2TICK(timeUs)				(timeUs * OS_TICKS_PER_US)		/* convert time in us -> timer ticks */
