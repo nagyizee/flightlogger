@@ -1,173 +1,92 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project>
     <fileVersion>2</fileVersion>
-    <fileChecksum>643561211</fileChecksum>
+    <fileChecksum>2323802528</fileChecksum>
     <configuration>
         <name>Debug</name>
         <outputs>
+            <file>$PROJ_DIR$\..\Sources\ApplicationBgnd\AppExample\ExampleApp.c</file>
+            <file>$PROJ_DIR$\..\Sources\ApplicationRT\ExampleRtApp\ExampleRtApp.h</file>
+            <file>$PROJ_DIR$\..\Sources\ApplicationBgnd\AppExample\ExampleApp.h</file>
+            <file>$PROJ_DIR$\..\Sources\ApplicationRT\ExampleRtApp\ExampleRtApp.c</file>
+            <file>$PROJ_DIR$\Debug\Obj\HALcore.o</file>
+            <file>$PROJ_DIR$\Debug\Obj\HALOsSysIrq.o</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\Core\HALcore.c</file>
+            <file>$PROJ_DIR$\Debug\Obj\HALport.o</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\OsSys\HALOsSys.c</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\Port\HALport.h</file>
             <file>$PROJ_DIR$\..\Sources\System\Os\Os.h</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\OsSys\HALOsSys.h</file>
+            <file>$PROJ_DIR$\Debug\Obj\HALOsSys.o</file>
+            <file>$PROJ_DIR$\Debug\Obj\ExampleRtApp.o</file>
+            <file>$PROJ_DIR$\..\Sources\System\Os\Os.c</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\OsSys\HALOsSysIrq.c</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\Core\HALcore.h</file>
+            <file>$PROJ_DIR$\..\Sources\Drivers\Example\exampleDrv.h</file>
             <file>$PROJ_DIR$\..\Sources\HAL\Port\HALport.c</file>
             <file>$PROJ_DIR$\..\Sources\System\Os\Os_Internals.h</file>
-            <file>$PROJ_DIR$\..\Sources\HAL\Core\HALcore.h</file>
-            <file>$PROJ_DIR$\..\Sources\HAL\OsSys\HALOsSys.h</file>
-            <file>$PROJ_DIR$\..\Sources\System\Main\main.c</file>
-            <file>$PROJ_DIR$\stm32f100xB.icf</file>
-            <file>$PROJ_DIR$\..\Sources\HAL\OsSys\HALOsSysIrq.c</file>
-            <file>$PROJ_DIR$\..\Sources\Startup\startup_stm32f100xb.s</file>
-            <file>$PROJ_DIR$\..\Sources\HAL\OsSys\HALOsSys.c</file>
-            <file>$PROJ_DIR$\..\Sources\System\Os\Os.c</file>
-            <file>$PROJ_DIR$\..\Sources\System\Os\Os_Rt.c</file>
-            <file>$PROJ_DIR$\..\Sources\System\Os\Os_Rt.h</file>
-            <file>$PROJ_DIR$\..\Sources\HAL\Port\HALport.h</file>
-            <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
-            <file>$PROJ_DIR$\..\Sources\Drivers\Example\exampleDrv.h</file>
-            <file>$PROJ_DIR$\..\Sources\HAL\Base\base.h</file>
-            <file>$PROJ_DIR$\..\Sources\HAL\Core\HALcore.c</file>
-            <file>$PROJ_DIR$\..\Sources\ApplicationBgnd\AppExample\ExampleApp.h</file>
-            <file>$PROJ_DIR$\..\Sources\ApplicationRT\ExampleRtApp\ExampleRtApp.h</file>
-            <file>$PROJ_DIR$\..\Sources\ApplicationBgnd\AppExample\ExampleApp.c</file>
-            <file>$PROJ_DIR$\..\Sources\ApplicationRT\ExampleRtApp\ExampleRtApp.c</file>
             <file>$PROJ_DIR$\..\Sources\Drivers\Example\exampleDrv.c</file>
-            <file>$PROJ_DIR$\Debug\Obj\Os_Rt.o</file>
-            <file>$PROJ_DIR$\Debug\Obj\HALOsSysIrq.pbi</file>
-            <file>$PROJ_DIR$\Debug\Obj\Os.o</file>
-            <file>$PROJ_DIR$\Debug\Obj\ExampleApp.pbi</file>
-            <file>$PROJ_DIR$\..\Sources\HAL\Base\system_stm32f1xx.h</file>
-            <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
-            <file>$PROJ_DIR$\Debug\Exe\OsExperiments.out</file>
-            <file>$TOOLKIT_DIR$\inc\c\DLib_Product_string.h</file>
-            <file>$PROJ_DIR$\..\Sources\HAL\Base\stm32f100xb.h</file>
-            <file>$PROJ_DIR$\Debug\Obj\HALport.o</file>
-            <file>$TOOLKIT_DIR$\lib\rt7M_tl.a</file>
-            <file>$PROJ_DIR$\Debug\Obj\startup_stm32f100xb.o</file>
-            <file>$PROJ_DIR$\Debug\Obj\ExampleRtApp.o</file>
-            <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
-            <file>$PROJ_DIR$\Debug\Obj\HALcore.o</file>
+            <file>$PROJ_DIR$\..\Sources\System\Os\Os_Rt.h</file>
+            <file>$PROJ_DIR$\..\Sources\System\Main\main.c</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\Base\base.h</file>
+            <file>$PROJ_DIR$\..\Sources\System\Os\Os_Rt.c</file>
             <file>$PROJ_DIR$\Debug\Obj\ExampleApp.o</file>
             <file>$PROJ_DIR$\Debug\Obj\exampleDrv.o</file>
-            <file>$PROJ_DIR$\Debug\Obj\main.o</file>
-            <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
-            <file>$PROJ_DIR$\Debug\Obj\OsExperiments.pbd</file>
-            <file>$TOOLKIT_DIR$\lib\dl7M_tln.a</file>
-            <file>$PROJ_DIR$\Debug\Obj\ExampleRtApp.pbi</file>
-            <file>$TOOLKIT_DIR$\CMSIS\Include\core_cm3.h</file>
-            <file>$TOOLKIT_DIR$\inc\c\string.h</file>
-            <file>$TOOLKIT_DIR$\inc\c\cmsis_iar.h</file>
-            <file>$TOOLKIT_DIR$\lib\m7M_tl.a</file>
-            <file>$PROJ_DIR$\Debug\Obj\HALOsSys.o</file>
-            <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
-            <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</file>
-            <file>$PROJ_DIR$\Debug\Obj\HALcore.pbi</file>
-            <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
-            <file>$TOOLKIT_DIR$\lib\shb_l.a</file>
-            <file>$PROJ_DIR$\Debug\List\OsExperiments.map</file>
             <file>$PROJ_DIR$\Debug\Obj\HALOsSys.pbi</file>
-            <file>$PROJ_DIR$\Debug\Obj\HALOsSysIrq.o</file>
-            <file>$PROJ_DIR$\Debug\Obj\HALport.pbi</file>
+            <file>$PROJ_DIR$\Debug\Obj\Os.o</file>
+            <file>$PROJ_DIR$\Debug\Obj\Os_Rt.o</file>
             <file>$PROJ_DIR$\Debug\Obj\exampleDrv.pbi</file>
-            <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
+            <file>$PROJ_DIR$\Debug\Obj\HALOsSysIrq.pbi</file>
             <file>$PROJ_DIR$\Debug\Obj\Os_Rt.pbi</file>
-            <file>$TOOLKIT_DIR$\CMSIS\Include\cmsis_compiler.h</file>
-            <file>$TOOLKIT_DIR$\inc\c\iccarm_builtin.h</file>
             <file>$PROJ_DIR$\Debug\Obj\Os.pbi</file>
+            <file>$PROJ_DIR$\Debug\Exe\OsExperiments.out</file>
+            <file>$PROJ_DIR$\Debug\Obj\OsExperiments.pbd</file>
+            <file>$PROJ_DIR$\Debug\Obj\main.pbi</file>
+            <file>$PROJ_DIR$\Debug\Obj\ExampleRtApp.pbi</file>
+            <file>$PROJ_DIR$\Debug\Obj\ExampleApp.pbi</file>
+            <file>$PROJ_DIR$\Debug\Obj\HALport.pbi</file>
+            <file>$PROJ_DIR$\Debug\Obj\HALcore.pbi</file>
+            <file>$PROJ_DIR$\Debug\Obj\main.o</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\Base\nrf.h</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\Base\system_nrf52.c</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\Base\nrf52_name_change.h</file>
+            <file>$TOOLKIT_DIR$\CMSIS\Include\cmsis_compiler.h</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\Base\nrf52.h</file>
+            <file>$TOOLKIT_DIR$\CMSIS\Include\core_cm4.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\cmsis_iar.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\string.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\iccarm_builtin.h</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\Base\system_nrf52.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\ysizet.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\DLib_Product_string.h</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\Base\system_nrf.h</file>
+            <file>$TOOLKIT_DIR$\lib\shb_l.a</file>
+            <file>$TOOLKIT_DIR$\lib\m7M_tls.a</file>
+            <file>$PROJ_DIR$\Debug\List\OsExperiments.map</file>
+            <file>$TOOLKIT_DIR$\lib\rt7M_tl.a</file>
+            <file>$TOOLKIT_DIR$\lib\dl7M_tln.a</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\Base\compiler_abstraction.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\stdint.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\DLib_Config_Normal.h</file>
+            <file>$PROJ_DIR$\..\Sources\Startup\startup_nrf52832.s</file>
+            <file>$PROJ_DIR$\Debug\Obj\startup_nrf52832.o</file>
+            <file>$TOOLKIT_DIR$\inc\c\DLib_Product.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\ycheck.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\DLib_Defaults.h</file>
+            <file>$TOOLKIT_DIR$\inc\c\yvals.h</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\Base\nrf51_to_nrf52.h</file>
+            <file>$PROJ_DIR$\..\Sources\HAL\Base\nrf52_bitfields.h</file>
+            <file>$PROJ_DIR$\..\..\..\..\..\..\Users\nagyizee\Google Drive\Projects\My_Projects\FlightLogger\Firmware\OsExperiment\Project\nrf52832_xxaa.icf</file>
+            <file>$PROJ_DIR$\Debug\Obj\system_nrf52.pbi</file>
+            <file>$TOOLKIT_DIR$\inc\c\stdbool.h</file>
+            <file>$PROJ_DIR$\Debug\Obj\system_nrf52.o</file>
         </outputs>
         <file>
-            <name>$PROJ_DIR$\..\Sources\HAL\Port\HALport.c</name>
+            <name>$PROJ_DIR$\..\Sources\ApplicationBgnd\AppExample\ExampleApp.c</name>
             <outputs>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 58</file>
-                </tool>
-                <tool>
-                    <name>ICCARM</name>
-                    <file> 32</file>
-                </tool>
-            </outputs>
-            <inputs>
-                <tool>
-                    <name>BICOMP</name>
-                    <file> 60 51 62 31 28 41 45 13 53 50 27 63 16 47</file>
-                </tool>
-                <tool>
-                    <name>ICCARM</name>
-                    <file> 16 60 28 53 50 51 41 13 31 45 62 47 63 27</file>
-                </tool>
-            </inputs>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Sources\System\Main\main.c</name>
-            <outputs>
-                <tool>
-                    <name>BICOMP</name>
-                    <file> 14</file>
-                </tool>
-                <tool>
-                    <name>ICCARM</name>
-                    <file> 40</file>
-                </tool>
-            </outputs>
-            <inputs>
-                <tool>
-                    <name>BICOMP</name>
-                    <file> 50 28 60 53 16 51 41 0</file>
-                </tool>
-                <tool>
-                    <name>ICCARM</name>
-                    <file> 16 60 28 53 50 51 41 0</file>
-                </tool>
-            </inputs>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Sources\HAL\OsSys\HALOsSysIrq.c</name>
-            <outputs>
-                <tool>
-                    <name>BICOMP</name>
-                    <file> 24</file>
-                </tool>
-                <tool>
-                    <name>ICCARM</name>
-                    <file> 57</file>
-                </tool>
-            </outputs>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Sources\Startup\startup_stm32f100xb.s</name>
-            <outputs>
-                <tool>
-                    <name>AARM</name>
-                    <file> 34</file>
-                </tool>
-            </outputs>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Sources\HAL\OsSys\HALOsSys.c</name>
-            <outputs>
-                <tool>
-                    <name>BICOMP</name>
-                    <file> 56</file>
-                </tool>
-                <tool>
-                    <name>ICCARM</name>
-                    <file> 49</file>
-                </tool>
-            </outputs>
-            <inputs>
-                <tool>
-                    <name>BICOMP</name>
-                    <file> 60 16 41 28 45 63 31 27 62 51 4 53 50 47</file>
-                </tool>
-                <tool>
-                    <name>ICCARM</name>
-                    <file> 4 31 45 60 28 53 50 51 41 62 47 63 27 16</file>
-                </tool>
-            </inputs>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Sources\System\Os\Os.c</name>
-            <outputs>
-                <tool>
-                    <name>BICOMP</name>
-                    <file> 64</file>
+                    <file> 38</file>
                 </tool>
                 <tool>
                     <name>ICCARM</name>
@@ -177,89 +96,11 @@
             <inputs>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 0 4 53 28 62 2 50 16 60 31 27 12 36 30 51 41 45 63 46 47</file>
+                    <file> 61 51 62 44 9 66 65 23 70 45 48 68 10 67 42 46 69 60 47 50 54</file>
                 </tool>
                 <tool>
                     <name>ICCARM</name>
-                    <file> 46 28 53 50 51 41 36 30 0 16 60 2 12 4 31 45 62 47 63 27</file>
-                </tool>
-            </inputs>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Sources\System\Os\Os_Rt.c</name>
-            <outputs>
-                <tool>
-                    <name>BICOMP</name>
-                    <file> 61</file>
-                </tool>
-                <tool>
-                    <name>ICCARM</name>
-                    <file> 23</file>
-                </tool>
-            </outputs>
-            <inputs>
-                <tool>
-                    <name>BICOMP</name>
-                    <file> 60 51 13 16 27 2 19 28 41 62 12 3 15 18 53 50 0 31 45 63 47</file>
-                </tool>
-                <tool>
-                    <name>ICCARM</name>
-                    <file> 0 16 60 28 53 50 51 41 12 2 3 13 31 45 62 47 63 27 15 19 18</file>
-                </tool>
-            </inputs>
-        </file>
-        <file>
-            <name>[ROOT_NODE]</name>
-            <outputs>
-                <tool>
-                    <name>ILINK</name>
-                    <file> 29 55</file>
-                </tool>
-            </outputs>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Sources\HAL\Core\HALcore.c</name>
-            <outputs>
-                <tool>
-                    <name>BICOMP</name>
-                    <file> 52</file>
-                </tool>
-                <tool>
-                    <name>ICCARM</name>
-                    <file> 37</file>
-                </tool>
-            </outputs>
-            <inputs>
-                <tool>
-                    <name>BICOMP</name>
-                    <file> 60 28 41 62 51 45 31 53 50 27 63 16 47</file>
-                </tool>
-                <tool>
-                    <name>ICCARM</name>
-                    <file> 16 60 28 53 50 51 41 31 45 62 47 63 27</file>
-                </tool>
-            </inputs>
-        </file>
-        <file>
-            <name>$PROJ_DIR$\..\Sources\ApplicationBgnd\AppExample\ExampleApp.c</name>
-            <outputs>
-                <tool>
-                    <name>BICOMP</name>
-                    <file> 26</file>
-                </tool>
-                <tool>
-                    <name>ICCARM</name>
-                    <file> 38</file>
-                </tool>
-            </outputs>
-            <inputs>
-                <tool>
-                    <name>BICOMP</name>
-                    <file> 60 51 62 13 28 41 16 31 45 0 53 50 27 63 47</file>
-                </tool>
-                <tool>
-                    <name>ICCARM</name>
-                    <file> 16 60 28 53 50 51 41 0 13 31 45 62 47 63 27</file>
+                    <file> 23 61 66 68 67 62 65 10 9 42 46 47 45 48 50 51 54 70 69 44 60</file>
                 </tool>
             </inputs>
         </file>
@@ -268,21 +109,135 @@
             <outputs>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 44</file>
+                    <file> 37</file>
                 </tool>
                 <tool>
                     <name>ICCARM</name>
-                    <file> 35</file>
+                    <file> 13</file>
                 </tool>
             </outputs>
             <inputs>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 16 53 27 0 50 60 13 28 51 41 31 45 47 19 62 63</file>
+                    <file> 48 23 68 70 45 10 67 44 51 61 9 66 62 65 42 46 69 60 47 50 54 1</file>
                 </tool>
                 <tool>
                     <name>ICCARM</name>
-                    <file> 19 16 60 28 53 50 51 41 13 31 45 62 47 63 27 0</file>
+                    <file> 1 23 61 66 68 67 62 65 9 42 46 47 45 48 50 51 54 70 69 44 60 10</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>[ROOT_NODE]</name>
+            <outputs>
+                <tool>
+                    <name>ILINK</name>
+                    <file> 34 57</file>
+                </tool>
+            </outputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\HAL\Core\HALcore.c</name>
+            <outputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 40</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 4</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 67 70 45 48 68 44 51 61 42 66 62 65 46 69 60 47 50 54 23</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 23 61 66 68 67 62 65 42 46 47 45 48 50 51 54 70 69 44 60</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\HAL\OsSys\HALOsSys.c</name>
+            <outputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 27</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 12</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 61 46 62 60 50 23 66 65 69 47 54 42 68 67 70 44 51 45 48 11</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 11 23 61 66 68 67 62 65 42 46 47 45 48 50 51 54 70 69 44 60</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\System\Os\Os.c</name>
+            <outputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 33</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 28</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 66 69 54 11 52 65 10 47 19 53 62 61 23 46 60 50 21 68 67 42 70 44 51 45 48 49</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 49 66 68 67 62 65 52 53 10 23 61 19 21 11 42 46 47 45 48 50 51 54 70 69 44 60</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\HAL\OsSys\HALOsSysIrq.c</name>
+            <outputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 31</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 5</file>
+                </tool>
+            </outputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\HAL\Port\HALport.c</name>
+            <outputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 39</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 7</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 67 51 61 44 68 70 45 48 9 66 62 65 42 46 69 60 47 50 54 23</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 23 61 66 68 67 62 65 9 42 46 47 45 48 50 51 54 70 69 44 60</file>
                 </tool>
             </inputs>
         </file>
@@ -291,21 +246,67 @@
             <outputs>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 59</file>
+                    <file> 30</file>
                 </tool>
                 <tool>
                     <name>ICCARM</name>
-                    <file> 39</file>
+                    <file> 26</file>
                 </tool>
             </outputs>
             <inputs>
                 <tool>
                     <name>BICOMP</name>
-                    <file> 50 60 27 63 13 53 31 28 51 41 45 62 16 47</file>
+                    <file> 61 50 62 69 9 66 65 47 54 42 46 60 68 67 51 45 48 70 44 23</file>
                 </tool>
                 <tool>
                     <name>ICCARM</name>
-                    <file> 16 60 28 53 50 51 41 31 45 62 47 63 27 13</file>
+                    <file> 23 61 66 68 67 62 65 46 47 45 48 50 51 54 9 42 70 69 44 60</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\System\Main\main.c</name>
+            <outputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 36</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 41</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 67 66 61 68 23 62 65 10</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 23 61 66 68 67 62 65 10</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\System\Os\Os_Rt.c</name>
+            <outputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 32</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 29</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 47 9 23 67 69 54 19 1 68 10 42 46 60 61 50 21 16 17 2 66 62 65 70 44 51 45 48</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 10 23 61 66 68 67 62 65 21 19 16 9 42 46 47 45 48 50 51 54 70 69 44 60 17 1 2</file>
                 </tool>
             </inputs>
         </file>
@@ -314,15 +315,47 @@
             <outputs>
                 <tool>
                     <name>ILINK</name>
-                    <file> 55</file>
+                    <file> 57</file>
                 </tool>
             </outputs>
             <inputs>
                 <tool>
                     <name>ILINK</name>
-                    <file> 6 38 39 35 37 49 57 32 40 25 23 34 54 33 48 43</file>
+                    <file> 71 25 26 13 4 12 5 7 41 28 29 64 74 55 58 56 59</file>
                 </tool>
             </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\HAL\Base\system_nrf52.c</name>
+            <outputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 72</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 74</file>
+                </tool>
+            </outputs>
+            <inputs>
+                <tool>
+                    <name>BICOMP</name>
+                    <file> 68 47 69 54 42 67 46 60 61 50 73 51 66 62 65 70 44 45 48</file>
+                </tool>
+                <tool>
+                    <name>ICCARM</name>
+                    <file> 61 66 68 67 62 65 73 42 46 47 45 48 50 51 54 70 69 44 60</file>
+                </tool>
+            </inputs>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\Startup\startup_nrf52832.s</name>
+            <outputs>
+                <tool>
+                    <name>AARM</name>
+                    <file> 64</file>
+                </tool>
+            </outputs>
         </file>
     </configuration>
     <configuration>

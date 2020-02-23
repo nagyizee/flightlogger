@@ -78,7 +78,7 @@
                 </option>
                 <option>
                     <name>OGChipSelectEditMenu</name>
-                    <state>STM32F100RB	ST STM32F100RB</state>
+                    <state>nRF52832_xxAA	NordicSemi nRF52832_xxAA</state>
                 </option>
                 <option>
                     <name>GenLowLevelInterface</name>
@@ -117,7 +117,7 @@
                 <option>
                     <name>GBECoreSlave</name>
                     <version>26</version>
-                    <state>38</state>
+                    <state>39</state>
                 </option>
                 <option>
                     <name>OGUseCmsis</name>
@@ -134,21 +134,21 @@
                 <option>
                     <name>CoreVariant</name>
                     <version>26</version>
-                    <state>38</state>
+                    <state>39</state>
                 </option>
                 <option>
                     <name>GFPUDeviceSlave</name>
-                    <state>STM32F100RB	ST STM32F100RB</state>
+                    <state>nRF52832_xxAA	NordicSemi nRF52832_xxAA</state>
                 </option>
                 <option>
                     <name>FPU2</name>
                     <version>0</version>
-                    <state>0</state>
+                    <state>4</state>
                 </option>
                 <option>
                     <name>NrRegs</name>
                     <version>0</version>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
                 <option>
                     <name>NEON</name>
@@ -157,7 +157,7 @@
                 <option>
                     <name>GFPUCoreSlave2</name>
                     <version>26</version>
-                    <state>38</state>
+                    <state>39</state>
                 </option>
                 <option>
                     <name>OGCMSISPackSelectDevice</name>
@@ -198,7 +198,7 @@
                 </option>
                 <option>
                     <name>DSPExtension</name>
-                    <state>0</state>
+                    <state>1</state>
                 </option>
             </data>
         </settings>
@@ -215,7 +215,7 @@
                 </option>
                 <option>
                     <name>CCDefines</name>
-                    <state></state>
+                    <state>NRF52832_XXAA</state>
                 </option>
                 <option>
                     <name>CCPreprocFile</name>
@@ -762,7 +762,7 @@
                 </option>
                 <option>
                     <name>IlinkIcfFile</name>
-                    <state>C:\Users\nagyizee\Google Drive\Projects\My_Projects\FlightLogger\Firmware\OsExperiment\Project\stm32f100xB.icf</state>
+                    <state>C:\Users\nagyizee\Google Drive\Projects\My_Projects\FlightLogger\Firmware\OsExperiment\Project\nrf52832_xxaa.icf</state>
                 </option>
                 <option>
                     <name>IlinkIcfFileSlave</name>
@@ -2089,11 +2089,14 @@
         <file>
             <name>$PROJ_DIR$\..\Sources\HAL\Port\HALport.h</name>
         </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\HAL\Base\system_nrf52.c</name>
+        </file>
     </group>
     <group>
         <name>Startup</name>
         <file>
-            <name>$PROJ_DIR$\..\Sources\Startup\startup_stm32f100xb.s</name>
+            <name>$PROJ_DIR$\..\Sources\Startup\startup_nrf52832.s</name>
         </file>
     </group>
     <group>
