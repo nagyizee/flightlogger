@@ -1,0 +1,11 @@
+#include "base.h"
+#include "HALport.h"
+
+void HALPort_Init(void)
+{
+    /* set up pin configuration */
+//    NRF_P0->PIN_CNF[2]  = GPIO_PIN_CNF_DIR_Output | GPIO_PIN_CNF_INPUT_Msk | (GPIO_PIN_CNF_DRIVE_H0H1 << GPIO_PIN_CNF_DRIVE_Pos);
+//    NRF_P0->PIN_CNF[3]  = GPIO_PIN_CNF_DIR_Output | GPIO_PIN_CNF_INPUT_Msk | (GPIO_PIN_CNF_DRIVE_H0H1 << GPIO_PIN_CNF_DRIVE_Pos);
+//    NRF_P0->PIN_CNF[5]  = GPIO_PIN_CNF_DIR_Output | GPIO_PIN_CNF_INPUT_Msk | (GPIO_PIN_CNF_DRIVE_H0H1 << GPIO_PIN_CNF_DRIVE_Pos);
+//    NRF_P0->PIN_CNF[18] = GPIO_PIN_CNF_DIR_Output | GPIO_PIN_CNF_INPUT_Msk | (GPIO_PIN_CNF_DRIVE_H0H1 << GPIO_PIN_CNF_DRIVE_Pos);
+}

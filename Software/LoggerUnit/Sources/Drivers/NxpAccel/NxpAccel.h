@@ -1,0 +1,1 @@
+/* NXP MMA8452 3x axis accelerometer driver */

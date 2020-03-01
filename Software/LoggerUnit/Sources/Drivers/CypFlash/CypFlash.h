@@ -1,0 +1,1 @@
+/* Cypress S25FL064 External flash driver - using standard SPI interface */
