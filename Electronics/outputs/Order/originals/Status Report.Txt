@@ -1,0 +1,21 @@
+Output: Gerber Files
+Type  : Gerber
+From  : Variant [[No Variations]] of Project [FlightLogger.PrjPcb]
+   Generated File[FlightLogger.GTL]
+   Generated File[FlightLogger.GBL]
+   Generated File[FlightLogger.GTP]
+   Generated File[FlightLogger.GTS]
+   Generated File[FlightLogger.GBS]
+   Generated File[FlightLogger.GBP]
+   Generated File[FlightLogger.GM2]
+   Generated File[FlightLogger.GM3]
+   Generated File[FlightLogger.GM4]
+   Generated File[FlightLogger.RUL]
+   Generated File[FlightLogger.EXTREP]
+   Generated File[FlightLogger.REP]
+
+
+Files Generated   : 12
+Documents Printed : 0
+
+Finished Output Generation At 18:41:15 On 2020-01-24

@@ -1,0 +1,8 @@
+DRC Rules Export File for PCB: C:\Users\nagyizee\Google Drive\Projects\My_Projects\FlightLogger\Electronics\design\FlightLogger.PcbDoc
+RuleKind=Clearance|RuleName=Clearance_pour|Scope=Board|Minimum=11.81
+RuleKind=Clearance|RuleName=Clearance|Scope=Board|Minimum=5.00
+RuleKind=Width|RuleName=Width|Scope=Board|Minimum=5.00
+RuleKind=SolderMaskExpansion|RuleName=SolderMaskExpansion|Scope=Board|Minimum=0.39
+RuleKind=ShortCircuit|RuleName=ShortCircuit|Scope=Board|Allowed=0
+RuleKind=MinimumAnnularRing|RuleName=MinimumAnnularRing|Scope=Board|Minimum=3.54
+RuleKind=SolderMaskExpansion|RuleName=SolderMaskExpansion_vias|Scope=Board|Minimum=-23.62

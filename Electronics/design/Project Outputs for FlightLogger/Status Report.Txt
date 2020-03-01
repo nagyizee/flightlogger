@@ -1,0 +1,12 @@
+Output: NC Drill Files
+Type  : NC Drill
+From  : Project [FlightLogger.PrjPcb]
+   Generated File[FlightLogger.TXT]
+   Generated File[FlightLogger.LDP]
+   Generated File[FlightLogger.DRR]
+
+
+Files Generated   : 3
+Documents Printed : 0
+
+Finished Output Generation At 18:48:26 On 2020-01-24
