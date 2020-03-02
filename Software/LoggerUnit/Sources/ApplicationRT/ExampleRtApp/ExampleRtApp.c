@@ -9,10 +9,10 @@ void ExampleRtApp_Main(uint32 taskIdx)
 
 	for (count = 0; count < taskIdx; count++)
 	{
-		PORT_PIN_RTAPP_ON();
+		PORT_PIN_LED_ON_ON();
 		asm("nop");
 		asm("nop");
-		PORT_PIN_RTAPP_OFF();
+		PORT_PIN_LED_ON_OFF();
 	}
 
 	if (taskIdx)
@@ -24,7 +24,7 @@ void ExampleRtApp_Main(uint32 taskIdx)
 		count = 50;
 	}
 
-	PORT_PIN_RTAPP_ON();
+	PORT_PIN_LED_ON_ON();
 	while (count)
 	{
 		count--;
@@ -39,5 +39,5 @@ void ExampleRtApp_Main(uint32 taskIdx)
 		Os_RtWakeUpBgndTask(4);
 	}
 
-	PORT_PIN_RTAPP_OFF();
+	PORT_PIN_LED_ON_OFF();
 }
