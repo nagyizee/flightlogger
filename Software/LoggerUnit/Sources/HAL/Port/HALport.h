@@ -17,10 +17,10 @@
  *--------------------------------------------------*/
 
 /* define GPIO pins used in the project */
-#define		PIN_TESTPAD_0		(0)         /* gen.out */
-#define 	PIN_TESTPAD_1		(1)         /* gen.out */
-#define 	PIN_I2C_SCK  	    (2)         /* i2c */
-#define 	PIN_I2C_SD	    	(3)         /* i2c */
+#define	    PIN_TESTPAD_0       (0)         /* gen.out */
+#define     PIN_TESTPAD_1       (1)         /* gen.out */
+#define     PIN_I2C_SCK         (2)         /* i2c */
+#define     PIN_I2C_SD	    	(3)         /* i2c */
 #define     PIN_ANA_PWRSRC      (4)         /* analog.in */
 #define     PIN_ANA_EXT         (5)         /* analog.in */
 #define     PIN_PPM_IN          (6)         /* tim.capt.in */
@@ -58,26 +58,26 @@
 #define     GPIO_PRESS_INT       NRF_P0
 
 /* Generic Output pin operations */
-#define 	PORT_PIN_TESTPAD_0_ON()		    do { GPIO_PIN_TESTPAD_0->OUTSET  = (1U << PIN_TESTPAD_0); } while(0)
-#define 	PORT_PIN_TESTPAD_0_OFF()		do { GPIO_PIN_TESTPAD_0->OUTCLR  = (1U << PIN_TESTPAD_0); } while(0)
+#define     PORT_PIN_TESTPAD_0_ON()         do { GPIO_TESTPAD_0->OUTSET  = (1U << PIN_TESTPAD_0); } while(0)
+#define     PORT_PIN_TESTPAD_0_OFF()        do { GPIO_TESTPAD_0->OUTCLR  = (1U << PIN_TESTPAD_0); } while(0)
 
-#define     PORT_PIN_TESTPAD_1_ON()         do { GPIO_PIN_TESTPAD_1->OUTSET  = (1U << PIN_TESTPAD_1); } while(0)
-#define     PORT_PIN_TESTPAD_1_OFF()        do { GPIO_PIN_TESTPAD_1->OUTCLR  = (1U << PIN_TESTPAD_1); } while(0)
+#define     PORT_PIN_TESTPAD_1_ON()         do { GPIO_TESTPAD_1->OUTSET  = (1U << PIN_TESTPAD_1); } while(0)
+#define     PORT_PIN_TESTPAD_1_OFF()        do { GPIO_TESTPAD_1->OUTCLR  = (1U << PIN_TESTPAD_1); } while(0)
 
-#define     PORT_PIN_IF_CTRL_ON()           do { GPIO_PIN_IF_CTRL->OUTSET  = (1U << PIN_IF_CTRL); } while(0)
-#define     PORT_PIN_IF_CTRL_OFF()          do { GPIO_PIN_IF_CTRL->OUTCLR  = (1U << PIN_IF_CTRL); } while(0)
+#define     PORT_PIN_IF_CTRL_ON()           do { GPIO_IF_CTRL->OUTSET  = (1U << PIN_IF_CTRL); } while(0)
+#define     PORT_PIN_IF_CTRL_OFF()          do { GPIO_IF_CTRL->OUTCLR  = (1U << PIN_IF_CTRL); } while(0)
 
 #define     PORT_PIN_LED_ON_ON()            do { GPIO_LED_ON->OUTSET  = (1U << PIN_LED_ON); } while(0)
 #define     PORT_PIN_LED_ON_OFF()           do { GPIO_LED_ON->OUTCLR  = (1U << PIN_LED_ON); } while(0)
 
-#define     PORT_PIN_LED_BLE_ON()           do { GPIO_PIN_LED_BLE->OUTSET  = (1U << PIN_LED_BLE); } while(0)
-#define     PORT_PIN_LED_BLE_OFF()          do { GPIO_PIN_LED_BLE->OUTCLR  = (1U << PIN_LED_BLE); } while(0)
+#define     PORT_PIN_LED_BLE_ON()           do { GPIO_LED_BLE->OUTSET  = (1U << PIN_LED_BLE); } while(0)
+#define     PORT_PIN_LED_BLE_OFF()          do { GPIO_LED_BLE->OUTCLR  = (1U << PIN_LED_BLE); } while(0)
 
-#define     PORT_PIN_FLS_RESET_ON()         do { GPIO_PIN_FLS_RESET->OUTSET  = (1U << PIN_FLS_RESET); } while(0)
-#define     PORT_PIN_FLS_RESET_OFF()        do { GPIO_PIN_FLS_RESET->OUTCLR  = (1U << PIN_FLS_RESET); } while(0)
+#define     PORT_PIN_FLS_RESET_ON()         do { GPIO_FLS_RESET->OUTSET  = (1U << PIN_FLS_RESET); } while(0)
+#define     PORT_PIN_FLS_RESET_OFF()        do { GPIO_FLS_RESET->OUTCLR  = (1U << PIN_FLS_RESET); } while(0)
 
-#define     PORT_PIN_FLS_CS_ON()            do { GPIO_PIN_FLS_CS->OUTSET  = (1U << PIN_FLS_CS); } while(0)
-#define     PORT_PIN_FLS_CS_OFF()           do { GPIO_PIN_FLS_CS->OUTCLR  = (1U << PIN_FLS_CS); } while(0)
+#define     PORT_PIN_FLS_CS_ON()            do { GPIO_FLS_CS->OUTSET  = (1U << PIN_FLS_CS); } while(0)
+#define     PORT_PIN_FLS_CS_OFF()           do { GPIO_FLS_CS->OUTCLR  = (1U << PIN_FLS_CS); } while(0)
 
 /* Generic Input pin operations */
 
