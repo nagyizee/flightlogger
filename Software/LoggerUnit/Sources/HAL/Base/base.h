@@ -18,7 +18,10 @@
 #define NULL    0
 #endif
 
-#define RES_OK		(0)
+#define RES_OK		    (0)
+#define RES_BUSY        (1)
+#define RES_INVALID     (2)
+#define RES_ERROR       (3)
 
 #ifndef ON_QT_PLATFORM
 
@@ -35,6 +38,7 @@ typedef uint64_t uint64;
 typedef int64_t int64;
 typedef uint8_t bool;
 
+/*returned error code: see RES_XXX defines above */
 typedef uint32 tResult;
 
 #else
