@@ -344,8 +344,10 @@
                     <state>$PROJ_DIR$\..\Sources\HAL\Core\</state>
                     <state>$PROJ_DIR$\..\Sources\HAL\OsSys\</state>
                     <state>$PROJ_DIR$\..\Sources\HAL\Port\</state>
+                    <state>$PROJ_DIR$\..\Sources\HAL\I2c\</state>
+                    <state>$PROJ_DIR$\..\Sources\HAL\Spi\</state>
                     <state>$PROJ_DIR$\..\Sources\System\Os\</state>
-                    <state>$PROJ_DIR$\..\Sources\Drivers\Example\</state>
+                    <state>$PROJ_DIR$\..\Sources\Drivers\NxpBaro\</state>
                     <state>$PROJ_DIR$\..\Sources\ApplicationBgnd\AppExample\</state>
                     <state>$PROJ_DIR$\..\Sources\ApplicationRT\ExampleRtApp\</state>
                 </option>
@@ -2094,6 +2096,9 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\Sources\HAL\I2c\HALI2c.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\HAL\I2c\HALI2c_Cfg.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\Sources\HAL\OsSys\HALOsSys.c</name>
