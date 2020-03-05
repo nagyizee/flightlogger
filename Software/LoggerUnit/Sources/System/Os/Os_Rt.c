@@ -8,8 +8,10 @@
 #include "HALCore.h"
 #include "HALport.h"
 #include "HALSpi.h"
+#include "HALI2c.h"
 /* System */
 /* Drivers */
+#include "NxpBaro.h"
 /* AppRT */
 #include "ExampleRtApp.h"
 /* AppBgnd */
