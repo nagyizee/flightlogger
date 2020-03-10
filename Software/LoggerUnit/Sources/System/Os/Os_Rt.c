@@ -50,6 +50,7 @@ void OsRt_Init(void)
 {
   HALCore_Init();
   HALPort_Init();
+  HALI2C_Init();
 }
 
 /* definition of timed Tasks - they are run in the low priority interrupt context */

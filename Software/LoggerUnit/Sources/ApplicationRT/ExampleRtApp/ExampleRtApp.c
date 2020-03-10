@@ -2,6 +2,11 @@
 #include "HALport.h"
 #include "Os.h"
 
+//TODO: remove this
+#include "HALI2c.h"
+
+
+uint8 buff[16];
 
 void ExampleRtApp_Main(uint32 taskIdx)
 {
@@ -40,4 +45,25 @@ void ExampleRtApp_Main(uint32 taskIdx)
 	}
 
 	PORT_PIN_LED_ON_OFF();
+
+static bool i2ctest = false;
+if (i2ctest)
+{
+    volatile uint32 ctr = 0;
+    buff[0] = 0x26;
+    buff[1] = 0xB8;
+    buff[2] = 0xFF;
+
+    HALI2C_Write(HALI2C_CHANNEL_BAROMETER, buff, 3);
+
+    while (HALI2C_GetStatus(HALI2C_CHANNEL_BAROMETER) == I2C_BUSY)
+    {
+        ctr++;
+    }
+
+    i2ctest = 0;
+}
+
+
+
 }

@@ -1,33 +1,50 @@
-#ifndef _HALI2C_CFG_H
-#define _HALI2C_CFG_H
+/*
+ * HALI2c_Internals.h
+ *
+ */
+
+#ifndef HAL_I2C_HALI2C_INTERNALS_H_
+#define HAL_I2C_HALI2C_INTERNALS_H_
 
 /*--------------------------------------------------
  *                              Includes
  *--------------------------------------------------*/
 
+#include "HALI2c.h"
 
 /*--------------------------------------------------
                                 Type definitions
  *--------------------------------------------------*/
+
+#define I2C_BAUDRATE_100        (0x01980000u)
+#define I2C_BAUDRATE_250        (0x04000000u)
+#define I2C_BAUDRATE_400        (0x06400000u)
+
+typedef struct
+{
+    tI2CStatus  ch_status;
+
+
+} tI2cInternals;
+
+
+typedef struct
+{
+    uint8  dev_addr;        /* slave device address */
+
+
+} tI2cChannelConfig;
 
 
 /*--------------------------------------------------
                                 Defines
  *--------------------------------------------------*/
 
-#define HALI2C_CHANNEL_BAROMETER       (0u)
-#define HALI2C_CHANNEL_ACCELERO        (1u)
-
-#define HALI2C_CHADDR_BAROMETER        (0x60)
-#define HALI2C_CHADDR_ACCELERO         (0x1C)
 
 /*--------------------------------------------------
  *                              Exported interfaces
  *--------------------------------------------------*/
 
-#endif
 
 
-
-
-
+#endif /* HAL_I2C_HALI2C_INTERNALS_H_ */

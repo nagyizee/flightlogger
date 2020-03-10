@@ -19,7 +19,7 @@ typedef struct
 static const tNrfPortCfg    lPinConfig[] = {
     {PIN_TESTPAD_0,   ((GPIO_PIN_CNF_DIR_Output << 0) | (GPIO_PIN_CNF_INPUT_Disconnect << 1) | (GPIO_PIN_CNF_PULL_Disabled << 2) | (GPIO_PIN_CNF_DRIVE_S0S1 << 8) | (GPIO_PIN_CNF_SENSE_Disabled << 16))},
     {PIN_TESTPAD_1,   ((GPIO_PIN_CNF_DIR_Output << 0) | (GPIO_PIN_CNF_INPUT_Disconnect << 1) | (GPIO_PIN_CNF_PULL_Disabled << 2) | (GPIO_PIN_CNF_DRIVE_S0S1 << 8) | (GPIO_PIN_CNF_SENSE_Disabled << 16))},
-    {PIN_I2C_SCK,     ((GPIO_PIN_CNF_DIR_Output << 0) | (GPIO_PIN_CNF_INPUT_Disconnect << 1) | (GPIO_PIN_CNF_PULL_Disabled << 2) | (GPIO_PIN_CNF_DRIVE_S0D1 << 8) | (GPIO_PIN_CNF_SENSE_Disabled << 16))},
+    {PIN_I2C_SCK,     ((GPIO_PIN_CNF_DIR_Input << 0)  | (GPIO_PIN_CNF_INPUT_Connect << 1)    | (GPIO_PIN_CNF_PULL_Disabled << 2) | (GPIO_PIN_CNF_DRIVE_S0D1 << 8) | (GPIO_PIN_CNF_SENSE_Disabled << 16))},
     {PIN_I2C_SD,      ((GPIO_PIN_CNF_DIR_Input << 0)  | (GPIO_PIN_CNF_INPUT_Connect << 1)    | (GPIO_PIN_CNF_PULL_Disabled << 2) | (GPIO_PIN_CNF_DRIVE_S0D1 << 8) | (GPIO_PIN_CNF_SENSE_High << 16))},
     {PIN_ANA_PWRSRC,  ((GPIO_PIN_CNF_DIR_Input << 0)  | (GPIO_PIN_CNF_INPUT_Disconnect << 1) | (GPIO_PIN_CNF_PULL_Disabled << 2) | (GPIO_PIN_CNF_DRIVE_S0S1 << 8) | (GPIO_PIN_CNF_SENSE_Disabled << 16))},
     {PIN_ANA_EXT,     ((GPIO_PIN_CNF_DIR_Input << 0)  | (GPIO_PIN_CNF_INPUT_Disconnect << 1) | (GPIO_PIN_CNF_PULL_Disabled << 2) | (GPIO_PIN_CNF_DRIVE_S0S1 << 8) | (GPIO_PIN_CNF_SENSE_Disabled << 16))},
