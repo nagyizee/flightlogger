@@ -12,6 +12,7 @@
 /* System */
 /* Drivers */
 #include "NxpBaro.h"
+#include "CypFlash.h"
 /* AppRT */
 #include "ExampleRtApp.h"
 /* AppBgnd */

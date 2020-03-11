@@ -348,6 +348,7 @@
                     <state>$PROJ_DIR$\..\Sources\HAL\Spi\</state>
                     <state>$PROJ_DIR$\..\Sources\System\Os\</state>
                     <state>$PROJ_DIR$\..\Sources\Drivers\NxpBaro\</state>
+                    <state>$PROJ_DIR$\..\Sources\Drivers\CypFlash\</state>
                     <state>$PROJ_DIR$\..\Sources\ApplicationBgnd\AppExample\</state>
                     <state>$PROJ_DIR$\..\Sources\ApplicationRT\ExampleRtApp\</state>
                 </option>
