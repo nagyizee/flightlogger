@@ -8,6 +8,12 @@
 
 uint8 buff[16];
 
+static uint32 i2ctest = 0;
+static tI2CChannelType ch = HALI2C_CHANNEL_BAROMETER;
+static uint32 tx_size = 1;
+static uint32 rx_size = 1;
+static uint8 reg;
+
 void ExampleRtApp_Main(uint32 taskIdx)
 {
 	volatile uint32 count;
@@ -46,15 +52,22 @@ void ExampleRtApp_Main(uint32 taskIdx)
 
 	PORT_PIN_LED_ON_OFF();
 
-static bool i2ctest = false;
 if (i2ctest)
 {
     volatile uint32 ctr = 0;
-    buff[0] = 0x26;
-    buff[1] = 0xB8;
-    buff[2] = 0xFF;
 
-    HALI2C_Write(HALI2C_CHANNEL_BAROMETER, buff, 3);
+    if (i2ctest == 1)
+    {
+        HALI2C_Write(ch, buff, tx_size);
+    }
+    else if (i2ctest == 2)
+    {
+        HALI2C_Read(ch, buff, rx_size);
+    }
+    else
+    {
+        HALI2C_ReadRegister(ch, reg, buff, rx_size);
+    }
 
     while (HALI2C_GetStatus(HALI2C_CHANNEL_BAROMETER) == I2C_BUSY)
     {

@@ -22,17 +22,15 @@
 
 typedef struct
 {
-    tI2CStatus  ch_status;
-
-
+    bool            busy;                     /* i2c peripheral is busy */
+    tI2CChannelType op_ch;                    /* channel in operation */
+    tI2CStatus      ch_status[HALI2C_CH_NR];  /* memorize individual statuses for each channel to hold error state even after op. successfully the other channels */
 } tI2cInternals;
 
 
 typedef struct
 {
     uint8  dev_addr;        /* slave device address */
-
-
 } tI2cChannelConfig;
 
 
