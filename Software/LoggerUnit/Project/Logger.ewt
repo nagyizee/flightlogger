@@ -2432,6 +2432,9 @@
             <name>$PROJ_DIR$\..\Sources\HAL\I2c\HALI2c_Cfg.h</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\Sources\HAL\I2c\HALI2c_Internals.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Sources\HAL\OsSys\HALOsSys.c</name>
         </file>
         <file>
