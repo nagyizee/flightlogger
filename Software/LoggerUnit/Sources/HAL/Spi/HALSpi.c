@@ -27,16 +27,16 @@ uint8 HALSPI_DummyDataBuffer[HALSPI_MAXBUFFERSIZE];
 
 /* Device handling functions */
 
-void HALSPI_Initialization(void)
+void HALSPI_Init(void)
 {
 };
 
 TSpiStatus HALSPI_Status(TSpiChannelType ch)
 {
-  return SPI_READY;
+  return SPI_UNINITIALIZED;
 };
 
-TSpiStatus HALSPI_StartTransfer(TSpiChannelType ch, uint16 cnt)
+TSpiStatus HALSPI_StartTransfer(TSpiChannelType ch)
 {
   return SPI_READY;
 };

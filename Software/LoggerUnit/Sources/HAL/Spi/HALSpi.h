@@ -22,9 +22,12 @@
 typedef uint32 TSpiChannelType;
 
 typedef enum 
-{ SPI_BUSY  = 0u,
-  SPI_READY = 1u,  
+{ 
+  SPI_UNINITIALIZED = 0u,
+  SPI_BUSY,
+  SPI_READY,
 } TSpiStatus;
+
 /*--------------------------------------------------
                                 Defines
  *--------------------------------------------------*/
@@ -37,9 +40,9 @@ typedef enum
 
 /* Device handling functions */
 
-void HALSPI_Initialization(void);
+void HALSPI_Init(void);
 TSpiStatus HALSPI_Status(TSpiChannelType ch);
-TSpiStatus HALSPI_StartTransfer(TSpiChannelType ch, uint16 cnt);
+TSpiStatus HALSPI_StartTransfer(TSpiChannelType ch);
 
 /* Chip select handling functions */
 
