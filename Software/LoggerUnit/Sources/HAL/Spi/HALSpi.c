@@ -33,46 +33,46 @@ void HALSPI_Init(void)
 
 TSpiStatus HALSPI_Status(TSpiChannelType ch)
 {
-  return SPI_UNINITIALIZED;
+    return SPI_UNINITIALIZED;
 };
 
 TSpiStatus HALSPI_StartTransfer(TSpiChannelType ch)
 {
-  return SPI_READY;
+    return SPI_READY;
 };
 
 /* Chip select handling functions */
 
 TSpiStatus HALSPI_SetCS(TSpiChannelType ch)
 {
-  /* Dummy LED toggling */
-  PORT_PIN_LED_BLE_ON();
-  return SPI_READY;
+    /* Dummy LED toggling */
+    PORT_PIN_LED_BLE_ON();
+    return SPI_READY;
 };
 
 void HALSPI_ReleaseCS(TSpiChannelType ch)
 {
-  /* Dummy LED toggling */
-  PORT_PIN_LED_BLE_OFF();
+    /* Dummy LED toggling */
+    PORT_PIN_LED_BLE_OFF();
 };
 
 /* Data handling functions */
 
 void HALSPI_TxData(TSpiChannelType ch, uint16 cnt , uint8 *buf)
 { 
-  uint16 i;
-  
-  /* Save dummy data */
-  for(i=0; i<cnt; i++) HALSPI_DummyDataBuffer[i] = buf[i];
+    uint16 i;
+    
+    /* Save dummy data */
+    for(i=0; i<cnt; i++) HALSPI_DummyDataBuffer[i] = buf[i];
 
 };
 
 void HALSPI_RxData(TSpiChannelType ch, uint16 cnt , uint8 *buf)
 {
-  uint16 i;
-  
-  /* Send back dummy data */
-  for(i=0; i<cnt; i++) buf[i] = HALSPI_DummyDataBuffer[i];
+    uint16 i;
+    
+    /* Send back dummy data */
+    for(i=0; i<cnt; i++) buf[i] = HALSPI_DummyDataBuffer[i];
 };
 
 /*--------------------------------------------------

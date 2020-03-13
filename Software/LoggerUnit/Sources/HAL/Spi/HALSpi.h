@@ -23,9 +23,9 @@ typedef uint32 TSpiChannelType;
 
 typedef enum 
 { 
-  SPI_UNINITIALIZED = 0u,
-  SPI_BUSY,
-  SPI_READY,
+    SPI_UNINITIALIZED = 0u,
+    SPI_BUSY,
+    SPI_READY,
 } TSpiStatus;
 
 /*--------------------------------------------------
