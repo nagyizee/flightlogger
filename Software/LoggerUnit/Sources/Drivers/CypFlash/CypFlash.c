@@ -85,28 +85,38 @@ void CypFlash_EraseAll(void)
 }
 
 /*  Data handling functions */
-tCypFlashStatus CypFlash_Read(void)
+tCypFlashStatus CypFlash_Read(uint32 address, uint16 count, uint8* buffer)
 {
+    PORT_PIN_LED_ON_OFF();
+    PORT_PIN_LED_BLE_OFF();
     return lCypFlash.CypFlash_Status;
 }
 
-tCypFlashStatus CypFlash_Write(void)
+tCypFlashStatus CypFlash_Write(uint32 address, uint16 count, uint8* buffer)
 {
+    PORT_PIN_LED_ON_ON();
+    PORT_PIN_LED_BLE_OFF();
     return lCypFlash.CypFlash_Status;
 }
 
-tCypFlashStatus CypFlash_WritePage(void)
+tCypFlashStatus CypFlash_WritePage(uint32 address, uint8* buffer)
 {
+    PORT_PIN_LED_ON_ON();
+    PORT_PIN_LED_BLE_ON();
     return lCypFlash.CypFlash_Status;
 }
 
-tCypFlashStatus CypFlash_EraseSector(void) /* 4K sector */
+tCypFlashStatus CypFlash_EraseSector(uint32 address) /* 4K sector */
 {
+    PORT_PIN_LED_ON_OFF();
+    PORT_PIN_LED_BLE_ON();
     return lCypFlash.CypFlash_Status;
 }
 
-tCypFlashStatus CypFlash_EraseBlock(void) /* 32K block */
+tCypFlashStatus CypFlash_EraseBlock(uint32 address) /* 32K block */
 {
+    PORT_PIN_LED_ON_OFF();
+    PORT_PIN_LED_BLE_ON();
     return lCypFlash.CypFlash_Status;
 }
 

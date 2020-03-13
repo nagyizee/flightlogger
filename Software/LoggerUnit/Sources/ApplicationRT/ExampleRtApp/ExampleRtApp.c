@@ -19,8 +19,12 @@ static uint8 reg;
 uint8 buff[16];
 
 static uint32 spitest = 0;
-static uint32 cypflashtest = 0;
 
+
+static uint32 cypflashtest = 0; 
+/* Possible values: 0 - inactive, 1 - read, 2 - write, 3 - page write, 4 - erase sector, 5 - erase block */
+uint8 flash_buff[256];
+static uint32 baseaddress = 0;
 
 void ExampleRtApp_Main(uint32 taskIdx)
 {
@@ -102,9 +106,43 @@ void ExampleRtApp_Main(uint32 taskIdx)
 
     if (cypflashtest)
     {
-        static TSpiStatus ls_Spi_Status;
+        static tCypFlashStatus ls_CypFlash_Status;
+        static uint16 i;
         
-        ls_Spi_Status = HALSPI_SetCS(0);
+        switch(cypflashtest)
+        {
+        case 1: /* Read */
+            {
+                ls_CypFlash_Status = CypFlash_Read(baseaddress, 256, &flash_buff[0]);
+                break;
+            }
+        case 2: /* write  */
+            {
+                for (i=0; i<64; i++) flash_buff[i] = i;
+                ls_CypFlash_Status = CypFlash_Write(baseaddress, 64, &flash_buff[0]);
+                break;
+            }
+        case 3: /* page write */
+            {
+                for (i=0; i<256; i++) flash_buff[i] = 0x55;
+                ls_CypFlash_Status = CypFlash_WritePage(baseaddress, &flash_buff[0]);
+                break;
+            }
+        case 4: /* erase sector */
+            {
+                ls_CypFlash_Status = CypFlash_EraseSector(baseaddress);
+                break;
+            }
+        case 5: /* erase block */
+            {
+                ls_CypFlash_Status = CypFlash_EraseBlock(baseaddress);
+                break;
+            }
+        default: 
+            break;
+        }
+        cypflashtest=0;
+      
     }
 
 }
