@@ -131,8 +131,6 @@ tSpiStatus HALSPI_Status(tSpiChannelType ch)
 
 tResult HALSPI_StartTransfer(tSpiChannelType ch)
 {
-    uint16 cnt;
-
     if (ch != lSpi.op_ch)
     {
         return RES_INVALID;                 /* current channel is not chipselected */
@@ -311,7 +309,7 @@ static void local_SpiSetupRx(void)
     if (lSpi.ch[ch].rx_size)
     {
         /* note: safe to call - can be called from application if IRQs are inactive */
-        local_ISR_SpiSetupRx(&lSpi.ch[ch]);
+        local_ISRSpiSetupRx(&lSpi.ch[ch]);
     }
     else
     {
@@ -324,13 +322,13 @@ static void local_ISRSpiSetupTx(tSpiChannelParams *pChparam)
 {
     uint16 cnt;
 
-    cnt = lSpi.ch[ch].tx_remaining;
+    cnt = pChparam->tx_remaining;
     if (cnt > DATA_CHUNK_SIZE)
     {
         cnt = DATA_CHUNK_SIZE;
     }
 
-    DEV_SPI->TXD.PTR = (uint32)&lSpi.ch[ch].tx_buff[0];
+    DEV_SPI->TXD.PTR = (uint32)&pChparam->tx_buff[0];
     DEV_SPI->TXD.MAXCNT = (uint8)cnt;
     pChparam->tx_remaining -= cnt;
     pChparam->tx_buff += cnt;
