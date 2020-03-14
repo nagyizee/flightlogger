@@ -31,9 +31,9 @@ static const tNrfPortCfg    lPinConfig[] = {
     {PIN_LED_ON,      ((GPIO_PIN_CNF_DIR_Output << 0) | (GPIO_PIN_CNF_INPUT_Disconnect << 1) | (GPIO_PIN_CNF_PULL_Disabled << 2) | (GPIO_PIN_CNF_DRIVE_S0S1 << 8) | (GPIO_PIN_CNF_SENSE_Disabled << 16))},
     {PIN_LED_BLE,     ((GPIO_PIN_CNF_DIR_Output << 0) | (GPIO_PIN_CNF_INPUT_Disconnect << 1) | (GPIO_PIN_CNF_PULL_Disabled << 2) | (GPIO_PIN_CNF_DRIVE_S0S1 << 8) | (GPIO_PIN_CNF_SENSE_Disabled << 16))},
     {PIN_FLS_RESET,   ((GPIO_PIN_CNF_DIR_Output << 0) | (GPIO_PIN_CNF_INPUT_Disconnect << 1) | (GPIO_PIN_CNF_PULL_Disabled << 2) | (GPIO_PIN_CNF_DRIVE_S0S1 << 8) | (GPIO_PIN_CNF_SENSE_Disabled << 16))},
-    {PIN_FLS_CLK,     ((GPIO_PIN_CNF_DIR_Output << 0) | (GPIO_PIN_CNF_INPUT_Disconnect << 1) | (GPIO_PIN_CNF_PULL_Disabled << 2) | (GPIO_PIN_CNF_DRIVE_H0H1 << 8) | (GPIO_PIN_CNF_SENSE_Disabled << 16))},
-    {PIN_FLS_SI,      ((GPIO_PIN_CNF_DIR_Input << 0)  | (GPIO_PIN_CNF_INPUT_Connect << 1)    | (GPIO_PIN_CNF_PULL_Disabled << 2) | (GPIO_PIN_CNF_DRIVE_S0S1 << 8) | (GPIO_PIN_CNF_SENSE_High << 16))},
-    {PIN_FLS_SO,      ((GPIO_PIN_CNF_DIR_Output << 0) | (GPIO_PIN_CNF_INPUT_Disconnect << 1) | (GPIO_PIN_CNF_PULL_Disabled << 2) | (GPIO_PIN_CNF_DRIVE_H0H1 << 8) | (GPIO_PIN_CNF_SENSE_Disabled << 16))},
+    {PIN_FLS_CLK,     ((GPIO_PIN_CNF_DIR_Output << 0) | (GPIO_PIN_CNF_INPUT_Connect << 1)    | (GPIO_PIN_CNF_PULL_Disabled << 2) | (GPIO_PIN_CNF_DRIVE_H0H1 << 8) | (GPIO_PIN_CNF_SENSE_Disabled << 16))},
+    {PIN_FLS_SI,      ((GPIO_PIN_CNF_DIR_Output << 0) | (GPIO_PIN_CNF_INPUT_Disconnect << 1) | (GPIO_PIN_CNF_PULL_Disabled << 2) | (GPIO_PIN_CNF_DRIVE_H0H1 << 8) | (GPIO_PIN_CNF_SENSE_Disabled << 16))},
+    {PIN_FLS_SO,      ((GPIO_PIN_CNF_DIR_Input << 0)  | (GPIO_PIN_CNF_INPUT_Connect << 1)    | (GPIO_PIN_CNF_PULL_Disabled << 2) | (GPIO_PIN_CNF_DRIVE_S0S1 << 8) | (GPIO_PIN_CNF_SENSE_High << 16))},
     {PIN_FLS_CS,      ((GPIO_PIN_CNF_DIR_Output << 0) | (GPIO_PIN_CNF_INPUT_Disconnect << 1) | (GPIO_PIN_CNF_PULL_Disabled << 2) | (GPIO_PIN_CNF_DRIVE_S0S1 << 8) | (GPIO_PIN_CNF_SENSE_Disabled << 16))},
     {PIN_PRESS_INT,   ((GPIO_PIN_CNF_DIR_Input << 0)  | (GPIO_PIN_CNF_INPUT_Connect << 1)    | (GPIO_PIN_CNF_PULL_Pulldown << 2) | (GPIO_PIN_CNF_DRIVE_S0S1 << 8) | (GPIO_PIN_CNF_SENSE_High << 16))}
 };

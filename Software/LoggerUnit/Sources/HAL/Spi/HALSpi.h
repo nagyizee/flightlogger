@@ -19,7 +19,7 @@
                                 Type definitions
  *--------------------------------------------------*/
 
-typedef uint32 TSpiChannelType;
+typedef uint32 tSpiChannelType;
 
 typedef enum 
 { 
@@ -27,12 +27,10 @@ typedef enum
     SPI_BUSY,
     SPI_READY,
 } TSpiStatus;
-
 /*--------------------------------------------------
                                 Defines
  *--------------------------------------------------*/
 
-#define HALSPI_MAXBUFFERSIZE  260u  /* FLS write/read cmd + 3 byte address + 256 data bytes */
 
 /*--------------------------------------------------
  *                              Exported interfaces
@@ -41,18 +39,18 @@ typedef enum
 /* Device handling functions */
 
 void HALSPI_Init(void);
-TSpiStatus HALSPI_Status(TSpiChannelType ch);
-TSpiStatus HALSPI_StartTransfer(TSpiChannelType ch);
+tSpiStatus HALSPI_Status(tSpiChannelType ch);
+tSpiStatus HALSPI_StartTransfer(tSpiChannelType ch);
 
 /* Chip select handling functions */
 
-TSpiStatus HALSPI_SetCS(TSpiChannelType ch);
-void HALSPI_ReleaseCS(TSpiChannelType ch);
+tSpiStatus HALSPI_SetCS(tSpiChannelType ch);
+void HALSPI_ReleaseCS(tSpiChannelType ch);
 
 /* Data handling functions */
 
-void HALSPI_TxData(TSpiChannelType ch, uint16 cnt , uint8 *buf);
-void HALSPI_RxData(TSpiChannelType ch, uint16 cnt , uint8 *buf);
+void HALSPI_TxData(tSpiChannelType ch, uint16 cnt , uint8 *buf);
+void HALSPI_RxData(tSpiChannelType ch, uint16 cnt , uint8 *buf);
 
 #endif
 
