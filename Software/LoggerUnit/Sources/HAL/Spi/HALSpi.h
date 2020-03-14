@@ -13,20 +13,21 @@
  *--------------------------------------------------*/
 
 #include "base.h"
-#include "HALport.h"
+#include "HALSpi_Cfg.h"
 
 /*--------------------------------------------------
                                 Type definitions
  *--------------------------------------------------*/
 
-typedef uint32 tSpiChannelType;
+typedef uint8 tSpiChannelType;
 
 typedef enum 
 { 
-    SPI_UNINITIALIZED = 0u,
-    SPI_BUSY,
-    SPI_READY,
-} TSpiStatus;
+    SPI_UNINITIALIZED = 0u,         /* peripheral is shut down or in low power */
+    SPI_IDLE,                       /* peripheral is in idle state, no chipselect */
+    SPI_READY,                      /* chipselect was issued for the current channel, but no operation on it. The rest of channels will report SPI_BUSY */
+    SPI_BUSY                        /* channel is transmitting/receiving, or an other channel is selected and/or operational. */
+} tSpiStatus;
 /*--------------------------------------------------
                                 Defines
  *--------------------------------------------------*/
@@ -40,17 +41,27 @@ typedef enum
 
 void HALSPI_Init(void);
 tSpiStatus HALSPI_Status(tSpiChannelType ch);
-tSpiStatus HALSPI_StartTransfer(tSpiChannelType ch);
+tResult HALSPI_StartTransfer(tSpiChannelType ch);
 
 /* Chip select handling functions */
 
-tSpiStatus HALSPI_SetCS(tSpiChannelType ch);
+/* Select an SPI device by it's channel.
+ * The routine allocates operations for this channel - any operation
+ * on other channels will result in invalid or busy result.
+ */
+tResult HALSPI_SetCS(tSpiChannelType ch);
+/* Deselect an SPI device.
+ * It will release the channel operations also.
+ * - If called ch is busy, then it will stop the operation on that channel (tx/rx is stopped, buffers remain incompletely filled)
+ * - If called on a non-chipselected channel then it does nothing
+ */
 void HALSPI_ReleaseCS(tSpiChannelType ch);
 
-/* Data handling functions */
-
-void HALSPI_TxData(tSpiChannelType ch, uint16 cnt , uint8 *buf);
-void HALSPI_RxData(tSpiChannelType ch, uint16 cnt , uint8 *buf);
+/* Data handling functions.
+ * - These functions can be called on any channel, only the current channel must not be in BUSY state.
+ * - By setting cnt to 0 or buf to NULL, the operation will be canceled for a following StartTransfer */
+tResult HALSPI_TxData(tSpiChannelType ch, uint16 cnt , uint8 *buf);
+tResult HALSPI_RxData(tSpiChannelType ch, uint16 cnt , uint8 *buf);
 
 #endif
 

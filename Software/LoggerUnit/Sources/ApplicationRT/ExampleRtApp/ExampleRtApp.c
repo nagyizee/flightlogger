@@ -94,7 +94,7 @@ void ExampleRtApp_Main(uint32 taskIdx)
 
     if (spitest)
     {
-        static TSpiStatus ls_Spi_Status;
+        static tSpiStatus ls_Spi_Status;
         
         ls_Spi_Status = HALSPI_SetCS(0);
         asm("nop");
