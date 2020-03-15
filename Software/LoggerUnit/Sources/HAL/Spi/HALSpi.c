@@ -48,6 +48,7 @@ static void local_SpiSetupRx(void);
 void ISRHandler_Spi(void)
 {
     uint32 ch;
+    uint32 need_start = 0;
     /* note: lSpi.op_ch and lSpi.ch[ch] can not be changed by application till spi is busy */
     ch = lSpi.op_ch;
     if (DEV_SPI->EVENTS_ENDRX)
@@ -56,6 +57,7 @@ void ISRHandler_Spi(void)
         if (lSpi.ch[ch].rx_remaining)
         {
             local_ISRSpiSetupRx(&lSpi.ch[ch]);
+            need_start = 1;
         }
         else
         {
@@ -72,6 +74,7 @@ void ISRHandler_Spi(void)
         if (lSpi.ch[ch].tx_remaining)
         {
             local_ISRSpiSetupTx(&lSpi.ch[ch]);
+            need_start = 1;
         }
         else
         {
@@ -88,7 +91,7 @@ void ISRHandler_Spi(void)
         /* note: it is set by application only if spi is not in busy - can be cleaned by ISR only, application will only read it */
         lSpi.busy = false;
     }
-    else
+    else if (need_start)
     {
         /* we still have stuff to transmit */
         DEV_SPI->TASKS_START = 1;
