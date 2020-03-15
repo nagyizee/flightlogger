@@ -40,6 +40,7 @@ static uint32 baseaddress = 0;
 
 static void local_i2c_test(void);
 static void local_spi_test(void);
+static void local_cypflashtest(void);
 static void local_fillbuffer(uint8 *buffer);
 
 void ExampleRtApp_Main(uint32 taskIdx)
@@ -85,48 +86,7 @@ void ExampleRtApp_Main(uint32 taskIdx)
 
     local_i2c_test();
     local_spi_test();
-
-    if (cypflashtest)
-    {
-        static tCypFlashStatus ls_CypFlash_Status;
-        static uint16 i;
-        
-        switch(cypflashtest)
-        {
-        case 1: /* Read */
-            {
-                ls_CypFlash_Status = CypFlash_Read(baseaddress, 256, &flash_buff[0]);
-                break;
-            }
-        case 2: /* write  */
-            {
-                for (i=0; i<64; i++) flash_buff[i] = i;
-                ls_CypFlash_Status = CypFlash_Write(baseaddress, 64, &flash_buff[0]);
-                break;
-            }
-        case 3: /* page write */
-            {
-                for (i=0; i<256; i++) flash_buff[i] = 0x55;
-                ls_CypFlash_Status = CypFlash_WritePage(baseaddress, &flash_buff[0]);
-                break;
-            }
-        case 4: /* erase sector */
-            {
-                ls_CypFlash_Status = CypFlash_EraseSector(baseaddress);
-                break;
-            }
-        case 5: /* erase block */
-            {
-                ls_CypFlash_Status = CypFlash_EraseBlock(baseaddress);
-                break;
-            }
-        default: 
-            break;
-        }
-        cypflashtest=0;
-      
-    }
-
+    local_cypflashtest();
 }
 
 
@@ -267,4 +227,48 @@ static void local_fillbuffer(uint8 *buffer)
     }
 
 
+}
+
+static void local_cypflashtest(void)
+{
+    if (cypflashtest)
+    {
+        static tCypFlashStatus ls_CypFlash_Status;
+        static uint16 i;
+        
+        switch(cypflashtest)
+        {
+        case 1: /* Read */
+            {
+                ls_CypFlash_Status = CypFlash_Read(baseaddress, 256, &flash_buff[0]);
+                break;
+            }
+        case 2: /* write  */
+            {
+                for (i=0; i<64; i++) flash_buff[i] = i;
+                ls_CypFlash_Status = CypFlash_Write(baseaddress, 64, &flash_buff[0]);
+                break;
+            }
+        case 3: /* page write */
+            {
+                for (i=0; i<256; i++) flash_buff[i] = 0x55;
+                ls_CypFlash_Status = CypFlash_WritePage(baseaddress, &flash_buff[0]);
+                break;
+            }
+        case 4: /* erase sector */
+            {
+                ls_CypFlash_Status = CypFlash_EraseSector(baseaddress);
+                break;
+            }
+        case 5: /* erase block */
+            {
+                ls_CypFlash_Status = CypFlash_EraseBlock(baseaddress);
+                break;
+            }
+        default: 
+            break;
+        }
+        cypflashtest=0;
+      
+    }
 }
