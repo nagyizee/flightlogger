@@ -12,6 +12,9 @@
 
 #define LONGBUFF_SIZE       (4096)
 
+#define FLS_UNRESET()       do {PORT_PIN_FLS_RESET_ON();} while(0)     /* Signal 1 on RESET unresets the flash chip */
+#define FLS_RESET()         do {PORT_PIN_FLS_RESET_OFF();} while(0)    /* Signal 0 on RESET resets the flash chip */
+
 static uint32 tasktimingtest = 0;
 
 static uint32 i2ctest = 0;
@@ -206,7 +209,32 @@ static void local_spi_test(void)
             HALSPI_RxData(0, spitest_rx_size, buff_2);
             HALSPI_StartTransfer(0);
             break;
-
+        case 10:
+            /* ext.flash comm. test - read ID: - one shot */
+            FLS_UNRESET();
+            buff_1[0] = 0x9F;
+            HALSPI_TxData(0, 1, buff_1);
+            HALSPI_RxData(0, 4, buff_2);
+            HALSPI_SetCS(0);
+            HALSPI_StartTransfer(0);
+            while (HALSPI_GetStatus(0) == SPI_BUSY) {}
+            HALSPI_ReleaseCS(0);
+            /* buff_2 should be: xx 01 60 17 */
+            break;
+        case 11:
+            /* ext.flash comm. test - read ID: - 2 separated commands */
+            FLS_UNRESET();
+            buff_1[0] = 0x9F;
+            HALSPI_TxData(0, 1, buff_1);
+            HALSPI_SetCS(0);
+            HALSPI_StartTransfer(0);
+            while (HALSPI_GetStatus(0) == SPI_BUSY) {}      /* wait for sending command */
+            HALSPI_RxData(0, 3, buff_2);
+            HALSPI_StartTransfer(0);
+            while (HALSPI_GetStatus(0) == SPI_BUSY) {}      /* wait for receiving data */
+            HALSPI_ReleaseCS(0);
+            /* buff_2 should be: 01 60 17 */
+            break;
     }
 
     while (HALSPI_GetStatus(0) == SPI_BUSY)
@@ -214,6 +242,7 @@ static void local_spi_test(void)
         ctr++;
     }
 
+    spitest = 0;
 }
 
 static void local_fillbuffer(uint8 *buffer)
