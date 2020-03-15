@@ -38,7 +38,14 @@ static const tNrfPortCfg    lPinConfig[] = {
     {PIN_PRESS_INT,   ((GPIO_PIN_CNF_DIR_Input << 0)  | (GPIO_PIN_CNF_INPUT_Connect << 1)    | (GPIO_PIN_CNF_PULL_Pulldown << 2) | (GPIO_PIN_CNF_DRIVE_S0S1 << 8) | (GPIO_PIN_CNF_SENSE_High << 16))}
 };
 
-//static const uint32 lPinOutDef = ((0 << PIN_TESTPAD_0)|(0 << PIN_TESTPAD_1)|(1 << PIN_IF_TX_OUT)|(0, PIN_IF_CTRL)|(0, PIN_LED_ON)|(0, PIN_LED_BLE)|(0, PIN_FLS_RESET)|(1, PIN_FLS_CS));
+static const uint32 lPinOutDef = ((0 << PIN_TESTPAD_0)| \
+                                  (0 << PIN_TESTPAD_1)| \
+                                  (1 << PIN_IF_TX_OUT)| \
+                                  (0 << PIN_IF_CTRL)  | \
+                                  (0 << PIN_LED_ON)   | \
+                                  (0 << PIN_LED_BLE)  | \
+                                  (0 << PIN_FLS_RESET)| \
+                                  (1 << PIN_FLS_CS));
 
 /*--------------------------------------------------
  *             Interface Functions
@@ -48,7 +55,7 @@ void HALPort_Init(void)
 {
     int i;
     /* set up pin output default values */
-    NRF_P0->OUT = 0x00U;
+    NRF_P0->OUT = lPinOutDef;
 
     /* set up pin configuration */
     for (i = 0; i < (sizeof(lPinConfig) / sizeof(tNrfPortCfg)); i++)

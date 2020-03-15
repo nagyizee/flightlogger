@@ -61,6 +61,9 @@ void ISRHandler_Spi(void)
         {
             /* no reception buffer to set up - deactivate IRQ source for it */
             DEV_SPI->INTENCLR = SPIM_INTENSET_ENDRX_Msk;
+            DEV_SPI->RXD.MAXCNT = 0;
+            /* note: rx/tx size can not be changed from application till Spi is busy, and Application isn't monitoring it either */
+            lSpi.ch[ch].rx_size = 0;
         }
     }
     if (DEV_SPI->EVENTS_ENDTX)
@@ -74,6 +77,9 @@ void ISRHandler_Spi(void)
         {
             /* no reception buffer to set up - deactivate IRQ source for it */
             DEV_SPI->INTENCLR = SPIM_INTENSET_ENDTX_Msk;
+            DEV_SPI->TXD.MAXCNT = 0;
+            /* note: rx/tx size can not be changed from application till Spi is busy, and Application isn't monitoring it either */
+            lSpi.ch[ch].tx_size = 0;
         }
     }
 
@@ -81,6 +87,11 @@ void ISRHandler_Spi(void)
     {
         /* note: it is set by application only if spi is not in busy - can be cleaned by ISR only, application will only read it */
         lSpi.busy = false;
+    }
+    else
+    {
+        /* we still have stuff to transmit */
+        DEV_SPI->TASKS_START = 1;
     }
 }
 
@@ -106,7 +117,7 @@ void HALSPI_Init(void)
     DEV_SPI->ORC = 0x00;        /* use 0x00 as padding for TX */
 
     /* set up interrupt handling for the SPI */
-    NVIC_SetPriority(IRQ_SPI, 1);
+    NVIC_SetPriority(IRQ_SPI, 0);
     NVIC_EnableIRQ(IRQ_SPI);
 
     /* initialize local variables */
@@ -114,7 +125,7 @@ void HALSPI_Init(void)
     lSpi.op_ch = SPI_CHANNEL_FREE;
 }
 
-tSpiStatus HALSPI_Status(tSpiChannelType ch)
+tSpiStatus HALSPI_GetStatus(tSpiChannelType ch)
 {
     if ((lSpi.busy) ||                                                  /* busy state if peripheral is communicating */
         ((lSpi.op_ch != SPI_CHANNEL_FREE) && (lSpi.op_ch != ch)))       /* OR not the current channel is chipselected */
@@ -160,16 +171,6 @@ tResult HALSPI_StartTransfer(tSpiChannelType ch)
     /* start the transfer */
     DEV_SPI->EVENTS_STARTED = 0;
     DEV_SPI->TASKS_START = 1;
-    if (lSpi.ch[ch].tx_remaining || lSpi.ch[ch].rx_remaining)
-    {
-        while (DEV_SPI->EVENTS_STARTED == 0)
-        {
-        }
-        /* set up the next chunks in the double buffered registers */
-        /* note: no mutex is needed - IRQ is not active yet */
-        local_SpiSetupTx();
-        local_SpiSetupRx();
-    }
     /* activate interrupt sources */
     if (lSpi.ch[ch].rx_size)
     {
@@ -191,11 +192,11 @@ tResult HALSPI_SetCS(tSpiChannelType ch)
     {
         if ((ch != lSpi.op_ch) || (lSpi.busy))
         {
-            return RES_BUSY;      /* already in chip select */
+            return RES_BUSY;   /* other channel is using the chip select */
         }
         else
         {
-            return RES_OK;    /* other channel is using the chip select */
+            return RES_OK;     /* already in chip select */
         }
     }
     GPIO_FLS_CS->OUTCLR  = (1U << lSpiConfig[ch].cs_pin);

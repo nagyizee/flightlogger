@@ -9,22 +9,35 @@
 #include "CypFlash.h"
 
 /* Test control and data variables */
+
+#define LONGBUFF_SIZE       (4096)
+
 static uint32 tasktimingtest = 0;
 
 static uint32 i2ctest = 0;
-static tI2CChannelType ch = HALI2C_CHANNEL_BAROMETER;
-static uint32 tx_size = 1;
-static uint32 rx_size = 1;
-static uint8 reg;
-uint8 buff[16];
+static tI2CChannelType i2ctest_ch = HALI2C_CHANNEL_BAROMETER;
+static uint32 i2ctest_tx_size = 1;
+static uint32 i2ctest_rx_size = 1;
+static uint8 i2ctest_reg;
 
 static uint32 spitest = 0;
+static uint32 spitest_filltype = 1;
+static uint16 spitest_tx_size = 40;
+static uint16 spitest_rx_size = 1;
+static uint8  spitest_padding = 0x01;
+
+uint8 buff_1[LONGBUFF_SIZE];
+uint8 buff_2[LONGBUFF_SIZE];
 
 
 static uint32 cypflashtest = 0; 
 /* Possible values: 0 - inactive, 1 - read, 2 - write, 3 - page write, 4 - erase sector, 5 - erase block */
 uint8 flash_buff[256];
 static uint32 baseaddress = 0;
+
+static void local_i2c_test(void);
+static void local_spi_test(void);
+static void local_fillbuffer(uint8 *buffer);
 
 void ExampleRtApp_Main(uint32 taskIdx)
 {
@@ -67,42 +80,8 @@ void ExampleRtApp_Main(uint32 taskIdx)
         PORT_PIN_LED_ON_OFF();
     }
 
-    if (i2ctest)
-    {
-        volatile uint32 ctr = 0;
-
-        if (i2ctest == 1)
-        {
-            HALI2C_Write(ch, buff, tx_size);
-        }
-        else if (i2ctest == 2)
-        {
-            HALI2C_Read(ch, buff, rx_size);
-        }
-        else
-        {
-            HALI2C_ReadRegister(ch, reg, buff, rx_size);
-        }
-
-        while (HALI2C_GetStatus(HALI2C_CHANNEL_BAROMETER) == I2C_BUSY)
-        {
-            ctr++;
-        }
-
-        i2ctest = 0;
-      }
-
-    if (spitest)
-    {
-        static tSpiStatus ls_Spi_Status;
-        
-        ls_Spi_Status = HALSPI_SetCS(0);
-        asm("nop");
-        asm("nop");
-        asm("nop");
-        asm("nop");
-        HALSPI_ReleaseCS(0);
-    }
+    local_i2c_test();
+    local_spi_test();
 
     if (cypflashtest)
     {
@@ -144,5 +123,119 @@ void ExampleRtApp_Main(uint32 taskIdx)
         cypflashtest=0;
       
     }
+
+}
+
+
+
+static void local_i2c_test(void)
+{
+    volatile uint32 ctr = 0;
+
+    if (i2ctest == 0)
+    {
+        return;
+    }
+
+    switch (i2ctest)
+    {
+        case 1:
+            HALI2C_Write(i2ctest_ch, buff_1, i2ctest_tx_size);
+            break;
+        case 2:
+            HALI2C_Read(i2ctest_ch, buff_1, i2ctest_rx_size);
+            break;
+        case 3:
+            HALI2C_ReadRegister(i2ctest_ch, i2ctest_reg, buff_1, i2ctest_rx_size);
+            break;
+      }
+
+    while (HALI2C_GetStatus(HALI2C_CHANNEL_BAROMETER) == I2C_BUSY)
+    {
+        ctr++;
+    }
+
+    i2ctest = 0;
+}
+
+
+static void local_spi_test(void)
+{
+    volatile uint32 ctr = 0;
+    volatile tResult res;
+
+    if (spitest == 0)
+    {
+        return;
+    }
+
+    switch (spitest)
+    {
+        case 1:
+            res = HALSPI_SetCS(0);
+            break;
+        case 2:
+            HALSPI_ReleaseCS(0);
+            break;
+        case 3:
+            res = HALSPI_TxData(0, spitest_tx_size, buff_1);
+            break;
+        case 4:
+            res = HALSPI_RxData(0, spitest_rx_size, buff_2);
+            break;
+        case 5:
+            res = HALSPI_StartTransfer(0);
+            break;
+        case 6:
+            local_fillbuffer(buff_1);
+            break;
+        case 7:
+            local_fillbuffer(buff_2);
+            break;
+        case 8:
+            local_fillbuffer(buff_1);
+            HALSPI_SetCS(0);
+            HALSPI_TxData(0, spitest_tx_size, buff_1);
+            HALSPI_StartTransfer(0);
+            break;
+        case 9:
+            local_fillbuffer(buff_1);
+            local_fillbuffer(buff_2);
+            HALSPI_SetCS(0);
+            HALSPI_TxData(0, spitest_tx_size, buff_1);
+            HALSPI_RxData(0, spitest_rx_size, buff_2);
+            HALSPI_StartTransfer(0);
+            break;
+
+    }
+
+    while (HALSPI_GetStatus(0) == SPI_BUSY)
+    {
+        ctr++;
+    }
+
+}
+
+static void local_fillbuffer(uint8 *buffer)
+{
+    uint32 i;
+
+    switch (spitest_filltype)
+    {
+        case 0: /* fill with padding byte */
+            for (i = 0; i < LONGBUFF_SIZE; i++)
+            {
+                buffer[i] = spitest_padding;
+            }
+            break;
+        case 1: /* fill with increments */
+            for (i = 0; i < LONGBUFF_SIZE; i++)
+            {
+                buffer[i] = spitest_padding;
+                spitest_padding++;
+            }
+            break;
+    }
+
 
 }

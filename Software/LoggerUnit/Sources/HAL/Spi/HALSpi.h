@@ -40,7 +40,7 @@ typedef enum
 /* Device handling functions */
 
 void HALSPI_Init(void);
-tSpiStatus HALSPI_Status(tSpiChannelType ch);
+tSpiStatus HALSPI_GetStatus(tSpiChannelType ch);
 tResult HALSPI_StartTransfer(tSpiChannelType ch);
 
 /* Chip select handling functions */
