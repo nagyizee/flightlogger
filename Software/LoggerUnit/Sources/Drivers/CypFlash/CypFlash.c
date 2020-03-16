@@ -27,6 +27,7 @@
 #define FLS_CMD_WRITE_ENABLE    0x06
 #define FLS_CMD_ERASESECTOR     0x20
 #define FLS_CMD_ERASEBLOCK      0xD8
+#define FLS_CMD_ERASECHIP       0x60
 #define FLS_CMD_READSTATUS1     0x05     
 
 typedef struct
@@ -34,8 +35,8 @@ typedef struct
     uint8*                  ActualBuffer;
     uint16                  ActualCount;
     tCypFlashStatus         Status;
-    uint8                   Tx_Buffer[260];
-    uint8                   Rx_Buffer[260];
+    uint8                   Tx_Buffer[CYPFLASH_WRITE_BUFSIZE+4];
+    uint8                   Rx_Buffer[CYPFLASH_READ_BUFSIZE+4];
     uint8                   RecoverCounter;
     uint8                   RecoverIteration;
     uint8                   ActualCommand;
@@ -186,6 +187,7 @@ void CypFlash_MainFunction(void)
                         }
                         break;
                     }
+                case FLS_CMD_ERASECHIP:
                 case FLS_CMD_ERASEBLOCK:
                 case FLS_CMD_ERASESECTOR:
                     {
@@ -194,7 +196,7 @@ void CypFlash_MainFunction(void)
                         case FLS_CMD_WRITE_ENABLE:
                             {
                                 lCypFlash.Tx_Buffer[0] = lCypFlash.ActualCommand;
-                                HALSPI_TxData(FLASH_SPI_ID, 4, lCypFlash.Tx_Buffer);
+                                HALSPI_TxData(FLASH_SPI_ID, lCypFlash.ActualCount, lCypFlash.Tx_Buffer);
             
                                 lres = HALSPI_SetCS(FLASH_SPI_ID);
                                 if (lres == RES_OK)
@@ -208,6 +210,7 @@ void CypFlash_MainFunction(void)
                                 }
                                 break;
                             }
+                        case FLS_CMD_ERASECHIP:
                         case FLS_CMD_ERASEBLOCK:
                         case FLS_CMD_ERASESECTOR:
                             {
@@ -298,15 +301,11 @@ void CypFlash_Wake(void)
 {
 }
 
-void CypFlash_EraseAll(void)
-{
-}
-
 /*  Data handling functions */
 tCypFlashStatus CypFlash_Read(uint32 address, uint16 count, uint8* buffer)
 {
     tResult lres;
-    static tCypFlashStatus l_return_status;
+    tCypFlashStatus l_return_status;
     l_return_status = lCypFlash.Status;
     
     if (l_return_status == CYPFLASH_ST_READY)
@@ -314,6 +313,7 @@ tCypFlashStatus CypFlash_Read(uint32 address, uint16 count, uint8* buffer)
         /* Check input parameters - read 0 bytes not allowed, useless */
         if (((address&0x00FFFFFF)+count < FLASH_MAX_ADDRESS)
             &&(count>0)
+            &&(count<=CYPFLASH_READ_BUFSIZE)
             &&(buffer!=NULL))
         {
             PORT_PIN_LED_BLE_ON();
@@ -355,7 +355,7 @@ tCypFlashStatus CypFlash_Read(uint32 address, uint16 count, uint8* buffer)
 tCypFlashStatus CypFlash_Write(uint32 address, uint16 count, uint8* buffer)
 {
     tResult lres;
-    static tCypFlashStatus l_return_status;
+    tCypFlashStatus l_return_status;
     l_return_status = lCypFlash.Status;
     
     if (l_return_status == CYPFLASH_ST_READY)
@@ -363,6 +363,7 @@ tCypFlashStatus CypFlash_Write(uint32 address, uint16 count, uint8* buffer)
         /* Check input parameters */
         if (((address&0x00FFFFFF)+count < FLASH_MAX_ADDRESS)
             &&(count>0)
+            &&(count<=CYPFLASH_WRITE_BUFSIZE)
             &&(buffer!=NULL))
         {
             PORT_PIN_LED_ON_ON();
@@ -404,7 +405,7 @@ tCypFlashStatus CypFlash_Write(uint32 address, uint16 count, uint8* buffer)
 
 tCypFlashStatus CypFlash_WritePage(uint32 address, uint8* buffer)
 {
-    static tCypFlashStatus l_return_status;
+    tCypFlashStatus l_return_status;
     l_return_status = lCypFlash.Status;
     
     if (l_return_status == CYPFLASH_ST_READY)
@@ -423,7 +424,7 @@ tCypFlashStatus CypFlash_WritePage(uint32 address, uint8* buffer)
 
 tCypFlashStatus CypFlash_EraseSector(uint32 address) /* 4K sector */
 {
-    static tCypFlashStatus l_return_status;
+    tCypFlashStatus l_return_status;
     l_return_status = lCypFlash.Status;
     
     if (l_return_status == CYPFLASH_ST_READY)
@@ -431,10 +432,8 @@ tCypFlashStatus CypFlash_EraseSector(uint32 address) /* 4K sector */
         /* Check input parameters */
         if (address==(address&0x00FFF000)) /* Check address alignment to sector start*/
         {
-            PORT_PIN_LED_ON_ON();
-            PORT_PIN_LED_BLE_ON();
-            
             lCypFlash.ActualCommand = FLS_CMD_ERASESECTOR;
+            lCypFlash.ActualCount = 4;
             
             l_return_status = local_CypFlash_StartErase(address);
         }
@@ -446,20 +445,18 @@ tCypFlashStatus CypFlash_EraseSector(uint32 address) /* 4K sector */
     return l_return_status;
 }
 
-tCypFlashStatus CypFlash_EraseBlock(uint32 address) /* 32K block */
+tCypFlashStatus CypFlash_EraseBlock(uint32 address) /* 64K block */
 {
-    static tCypFlashStatus l_return_status;
+    tCypFlashStatus l_return_status;
     l_return_status = lCypFlash.Status;
     
     if (l_return_status == CYPFLASH_ST_READY)
     {
         /* Check input parameters */
-        if (address==(address&0x00FF8000)) /* Check address alignment to sector start*/
+        if (address==(address&0x00FF0000)) /* Check address alignment to sector start*/
         {
-            PORT_PIN_LED_ON_ON();
-            PORT_PIN_LED_BLE_ON();
-            
             lCypFlash.ActualCommand = FLS_CMD_ERASEBLOCK;
+            lCypFlash.ActualCount = 4;
             
             l_return_status = local_CypFlash_StartErase(address);
         }
@@ -467,6 +464,21 @@ tCypFlashStatus CypFlash_EraseBlock(uint32 address) /* 32K block */
         {
             l_return_status = CYPFLASH_ST_PARAM_ERROR;
         }
+    }
+    return l_return_status;
+}
+
+tCypFlashStatus CypFlash_EraseAll(void)
+{
+    tCypFlashStatus l_return_status;
+    l_return_status = lCypFlash.Status;
+    
+    if (l_return_status == CYPFLASH_ST_READY)
+    {
+        lCypFlash.ActualCommand = FLS_CMD_ERASECHIP;
+        lCypFlash.ActualCount = 1;
+        
+        l_return_status = local_CypFlash_StartErase(0);
     }
     return l_return_status;
 }
@@ -479,6 +491,9 @@ static tCypFlashStatus local_CypFlash_StartErase(uint32 address)
 {
     tResult lres;
     tCypFlashStatus l_return_status = CYPFLASH_ST_READY;
+    
+    PORT_PIN_LED_ON_ON();
+    PORT_PIN_LED_BLE_ON();
     
     lCypFlash.Tx_Buffer[0] = FLS_CMD_WRITE_ENABLE;
     lCypFlash.Tx_Buffer[1] = (uint8)(address>>16);

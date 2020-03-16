@@ -35,7 +35,7 @@ uint8 buff_2[LONGBUFF_SIZE];
 
 static uint32 cypflashtest = 0; 
 /* Possible values: 0 - inactive, 1 - read, 2 - write, 3 - page write, 4 - erase sector, 5 - erase block */
-uint8 flash_buff[256];
+uint8 flash_buff[CYPFLASH_READ_BUFSIZE];
 uint32 baseaddress = 0;
 
 static void local_i2c_test(void);
@@ -238,7 +238,7 @@ static void local_cypflashtest(void)
         {
         case 1: /* Read */
             {
-                ls_CypFlash_Status = CypFlash_Read(baseaddress, 256, &flash_buff[0]);
+                ls_CypFlash_Status = CypFlash_Read(baseaddress, CYPFLASH_READ_BUFSIZE, &flash_buff[0]);
                 if (ls_CypFlash_Status == CYPFLASH_ST_READY)
                 {
                     cypflashtest = 0;
@@ -258,7 +258,7 @@ static void local_cypflashtest(void)
             }
         case 3: /* Page write */
             {
-                for (i=0; i<256; i++) flash_buff[i] = 0x55;
+                for (i=0; i<CYPFLASH_WRITE_BUFSIZE; i++) flash_buff[i] = 0x55;
                 ls_CypFlash_Status = CypFlash_WritePage(baseaddress, &flash_buff[0]);
                 cypflashtest=0;
                 break;
@@ -272,6 +272,12 @@ static void local_cypflashtest(void)
         case 5: /* Erase block */
             {
                 ls_CypFlash_Status = CypFlash_EraseBlock(baseaddress);
+                cypflashtest=0;
+                break;
+            }
+        case 6: /* Erase entire chip */
+            {
+                ls_CypFlash_Status = CypFlash_EraseAll();
                 cypflashtest=0;
                 break;
             }
