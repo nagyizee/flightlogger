@@ -18,6 +18,8 @@
 
 #define FLASH_MAX_ADDRESS   16*1024*1024 /* 16 MB flash size */
 #define FLASH_SPI_ID        0
+#define RECOVER_RETRY_COUNT 5
+#define RECOVER_WAIT_CYCLES 200 /* 1 second based on 5ms task cycle time */
 
 typedef struct
 { /* Status Register 1 Volatile */
@@ -40,10 +42,13 @@ typedef struct
 
 typedef struct
 {
-    tCypFlashDeviceStatus DeviceStatus;
-    tCypFlashStatus       Status;
-    uint8                 Tx_Buffer[260];
-    uint8                 Rx_Buffer[260];
+    tCypFlashDeviceStatus   DeviceStatus;
+    tCypFlashStatus         Status;
+    uint8                   Tx_Buffer[260];
+    uint8                   Rx_Buffer[260];
+    uint8                   RecoverCounter;
+    uint8                   RecoverIteration;
+    
 } tCypFlashStruct;
 
 /*--------------------------------------------------
@@ -64,12 +69,19 @@ void CypFlash_Init(void)
 {
     /* initialize local variables */
     memset(&lCypFlash, 0, sizeof(tCypFlashStruct));
+    /* Force device initialisation phase */
+    while(lCypFlash.Status<=CYPFLASH_ST_INITIALIZING) CypFlash_MainFunction();
 }
 
 void CypFlash_MainFunction(void)
 {
     switch (lCypFlash.Status)
     {
+    case CYPFLASH_ST_READY:
+        {
+            /* Nothing to do, quickly exit cyclic function */
+            break;
+        }
     case CYPFLASH_ST_UNINITIALIZED:
         {
             tResult lres;
@@ -82,17 +94,8 @@ void CypFlash_MainFunction(void)
             if (lres == RES_OK)
             {
                 HALSPI_StartTransfer(FLASH_SPI_ID);   
-                while (HALSPI_GetStatus(FLASH_SPI_ID) == SPI_BUSY) {}
-                HALSPI_ReleaseCS(FLASH_SPI_ID);
-                /* result should be: xx 01 60 17 */
-                if ((lCypFlash.Rx_Buffer[1]==0x01)&&(lCypFlash.Rx_Buffer[2]==0x60)&&(lCypFlash.Rx_Buffer[3]==0x17))
-                {
-                    lCypFlash.Status = CYPFLASH_ST_READY;
-                }
-                else
-                {
-                    lCypFlash.Status = CYPFLASH_ST_COMM_ERROR;
-                }
+                lCypFlash.Status = CYPFLASH_ST_INITIALIZING;
+                lCypFlash.RecoverCounter = 0;
             }
             else
             {
@@ -101,9 +104,38 @@ void CypFlash_MainFunction(void)
             }
             break;
         }
-    case CYPFLASH_ST_READY:
+    case CYPFLASH_ST_INITIALIZING:
         {
-            break;
+            if (HALSPI_GetStatus(FLASH_SPI_ID) == SPI_READY)
+            {
+                HALSPI_ReleaseCS(FLASH_SPI_ID);
+                /* result should be: xx 01 60 17 */
+                if ((lCypFlash.Rx_Buffer[1]==0x01)&&
+                    (lCypFlash.Rx_Buffer[2]==0x60)&&
+                    (lCypFlash.Rx_Buffer[3]==0x17))
+                {
+                    lCypFlash.Status = CYPFLASH_ST_READY;
+                }
+                else
+                {
+                    lCypFlash.Status = CYPFLASH_ST_COMM_ERROR;
+                }
+            }
+            else /* SPI still busy */
+            {
+                /* SPI deadlock timeout handling */
+                if (lCypFlash.RecoverCounter >= RECOVER_WAIT_CYCLES)
+                {
+                    HALSPI_ReleaseCS(FLASH_SPI_ID);
+                    lCypFlash.Status = CYPFLASH_ST_COMM_ERROR;
+/* !! Don't reset lCypFlash.RecoverCounter only in this case to avoid extra wait time */
+                }
+                else
+                {
+                    lCypFlash.RecoverCounter++;
+                }
+            }
+        break;
         }
     case CYPFLASH_ST_BUSY:
         {
@@ -115,13 +147,33 @@ void CypFlash_MainFunction(void)
         }
     case CYPFLASH_ST_COMM_ERROR:
         {
+            if (lCypFlash.RecoverIteration<RECOVER_RETRY_COUNT)
+            {
+                if (lCypFlash.RecoverCounter>=RECOVER_WAIT_CYCLES)
+                {
+                    FLS_RESET();
+                    lCypFlash.RecoverIteration++;
+                    lCypFlash.Status = CYPFLASH_ST_UNINITIALIZED;
+                    lCypFlash.RecoverCounter=0;
+                }
+                else
+                {
+                    lCypFlash.RecoverCounter++;
+                }
+            }
+            else
+            {
+                /* Device blocked */
+                lCypFlash.Status = CYPFLASH_ST_DEVICE_ERROR;
+            }
             break;
         }
     case CYPFLASH_ST_DEVICE_ERROR:
         {
+            /* Fatal error concerning the memory device */
             break;
         }
-    default: while(1); //Force WDT reset
+    default: while(1); // Assert memory overwrite fatal error
     }
 }
 
