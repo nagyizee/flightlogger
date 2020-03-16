@@ -225,8 +225,6 @@ static void local_fillbuffer(uint8 *buffer)
             }
             break;
     }
-
-
 }
 
 static void local_cypflashtest(void)
@@ -238,37 +236,50 @@ static void local_cypflashtest(void)
         
         switch(cypflashtest)
         {
-        case 1: /* Read */
+        case 1: /* Read start */
             {
                 ls_CypFlash_Status = CypFlash_Read(baseaddress, 256, &flash_buff[0]);
+                if (ls_CypFlash_Status == CYPFLASH_ST_READY)
+                {
+                    cypflashtest = 0;
+                }
+                else
+                {
+                    /* Flash busy already, wrong sequence */
+                }
                 break;
             }
         case 2: /* write  */
             {
                 for (i=0; i<64; i++) flash_buff[i] = i;
                 ls_CypFlash_Status = CypFlash_Write(baseaddress, 64, &flash_buff[0]);
+                cypflashtest=0;
                 break;
             }
         case 3: /* page write */
             {
                 for (i=0; i<256; i++) flash_buff[i] = 0x55;
                 ls_CypFlash_Status = CypFlash_WritePage(baseaddress, &flash_buff[0]);
+                cypflashtest=0;
                 break;
             }
         case 4: /* erase sector */
             {
                 ls_CypFlash_Status = CypFlash_EraseSector(baseaddress);
+                cypflashtest=0;
                 break;
             }
         case 5: /* erase block */
             {
                 ls_CypFlash_Status = CypFlash_EraseBlock(baseaddress);
+                cypflashtest=0;
                 break;
             }
-        default: 
-            break;
+        default: /* Wrong test code */
+            {
+                cypflashtest=0;
+                break;
+            }
         }
-        cypflashtest=0;
-      
     }
 }
