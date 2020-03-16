@@ -25,31 +25,14 @@
 #define FLS_CMD_READ            0x03
 #define FLS_CMD_WRITE           0x02
 #define FLS_CMD_WRITE_ENABLE    0x06
-
-typedef struct
-{ /* Status Register 1 Volatile */
-    uint8 WIP:1;
-    uint8 WEL:1;
-    uint8 BP0:1;
-    uint8 BP1:1;
-    uint8 BP2:1;
-    uint8 TBPROT:1;
-    uint8 SEC:1;
-    uint8 SRP0:1;
-    /* Status Register 2 Volatile */
-    uint8 PS:1;
-    uint8 ES:1;
-    uint8 RFU_1:3; /* reserved for future use bits */
-    uint8 P_ERR:1;
-    uint8 E_ERR:1;
-    uint8 RFU_2:1; /* reserved for future use bits */
-} tCypFlashDeviceStatus;
+#define FLS_CMD_ERASESECTOR     0x20
+#define FLS_CMD_ERASEBLOCK      0xD8
+#define FLS_CMD_READSTATUS1     0x05     
 
 typedef struct
 {
     uint8*                  ActualBuffer;
     uint16                  ActualCount;
-    tCypFlashDeviceStatus   DeviceStatus;
     tCypFlashStatus         Status;
     uint8                   Tx_Buffer[260];
     uint8                   Rx_Buffer[260];
@@ -65,7 +48,9 @@ typedef struct
 static tCypFlashStruct  lCypFlash;
 
 /* Device handling functions */
+static tCypFlashStatus local_CypFlash_StartErase(uint32 address);
 static void local_CypFlash_GetDeviceStatus(void);
+static void local_CypFlash_CheckDeviceStatus(volatile uint8 status);
 
 /*--------------------------------------------------
  *             Interface Functions
@@ -185,9 +170,53 @@ void CypFlash_MainFunction(void)
                             }
                         case FLS_CMD_WRITE:
                             {
-                                lCypFlash.Status = CYPFLASH_ST_READY;
-                                PORT_PIN_LED_ON_OFF();
-                                /* No return data in the write process */
+                                local_CypFlash_GetDeviceStatus();
+                                break;
+                            }
+                        case FLS_CMD_READSTATUS1: /* 10ms cycle time */
+                            {
+                                local_CypFlash_CheckDeviceStatus(lCypFlash.Rx_Buffer[1]);
+                                break;
+                            }
+
+                        default:
+                            {
+                                while(1); /* Wrong memory contents for actual command, assert */
+                            }
+                        }
+                        break;
+                    }
+                case FLS_CMD_ERASEBLOCK:
+                case FLS_CMD_ERASESECTOR:
+                    {
+                        switch(lCypFlash.Tx_Buffer[0]) /* Just executed command */
+                        {
+                        case FLS_CMD_WRITE_ENABLE:
+                            {
+                                lCypFlash.Tx_Buffer[0] = lCypFlash.ActualCommand;
+                                HALSPI_TxData(FLASH_SPI_ID, 4, lCypFlash.Tx_Buffer);
+            
+                                lres = HALSPI_SetCS(FLASH_SPI_ID);
+                                if (lres == RES_OK)
+                                {
+                                    HALSPI_StartTransfer(FLASH_SPI_ID); 
+                                    lCypFlash.RecoverCounter = RECOVER_WAIT_CYCLES - 1; /* 5ms timeout */
+                                }
+                                else
+                                {
+                                    lCypFlash.Status = CYPFLASH_ST_COMM_ERROR;
+                                }
+                                break;
+                            }
+                        case FLS_CMD_ERASEBLOCK:
+                        case FLS_CMD_ERASESECTOR:
+                            {
+                                local_CypFlash_GetDeviceStatus();
+                                break;
+                            }
+                        case FLS_CMD_READSTATUS1: /* 5ms cycle time */
+                            {
+                                local_CypFlash_CheckDeviceStatus(lCypFlash.Rx_Buffer[1]);
                                 break;
                             }
                         default:
@@ -380,7 +409,7 @@ tCypFlashStatus CypFlash_WritePage(uint32 address, uint8* buffer)
     
     if (l_return_status == CYPFLASH_ST_READY)
     {
-        if (address==(address&0x00FFFF00)) /* Check address alignment to page */
+        if (address==(address&0x00FFFF00)) /* Check address alignment to page start*/
         {
             l_return_status = CypFlash_Write(address, 256, buffer);
         }
@@ -394,26 +423,118 @@ tCypFlashStatus CypFlash_WritePage(uint32 address, uint8* buffer)
 
 tCypFlashStatus CypFlash_EraseSector(uint32 address) /* 4K sector */
 {
-    PORT_PIN_LED_ON_OFF();
-    PORT_PIN_LED_BLE_ON();
-    return lCypFlash.Status;
+    static tCypFlashStatus l_return_status;
+    l_return_status = lCypFlash.Status;
+    
+    if (l_return_status == CYPFLASH_ST_READY)
+    {
+        /* Check input parameters */
+        if (address==(address&0x00FFF000)) /* Check address alignment to sector start*/
+        {
+            PORT_PIN_LED_ON_ON();
+            PORT_PIN_LED_BLE_ON();
+            
+            lCypFlash.ActualCommand = FLS_CMD_ERASESECTOR;
+            
+            l_return_status = local_CypFlash_StartErase(address);
+        }
+        else
+        {
+            l_return_status = CYPFLASH_ST_PARAM_ERROR;
+        }
+    }
+    return l_return_status;
 }
 
 tCypFlashStatus CypFlash_EraseBlock(uint32 address) /* 32K block */
 {
-    PORT_PIN_LED_ON_OFF();
-    PORT_PIN_LED_BLE_ON();
-    return lCypFlash.Status;
+    static tCypFlashStatus l_return_status;
+    l_return_status = lCypFlash.Status;
+    
+    if (l_return_status == CYPFLASH_ST_READY)
+    {
+        /* Check input parameters */
+        if (address==(address&0x00FF8000)) /* Check address alignment to sector start*/
+        {
+            PORT_PIN_LED_ON_ON();
+            PORT_PIN_LED_BLE_ON();
+            
+            lCypFlash.ActualCommand = FLS_CMD_ERASEBLOCK;
+            
+            l_return_status = local_CypFlash_StartErase(address);
+        }
+        else
+        {
+            l_return_status = CYPFLASH_ST_PARAM_ERROR;
+        }
+    }
+    return l_return_status;
 }
 
 /*--------------------------------------------------
  *             Local functions
  *--------------------------------------------------*/
 
-
+static tCypFlashStatus local_CypFlash_StartErase(uint32 address)
+{
+    tResult lres;
+    tCypFlashStatus l_return_status = CYPFLASH_ST_READY;
+    
+    lCypFlash.Tx_Buffer[0] = FLS_CMD_WRITE_ENABLE;
+    lCypFlash.Tx_Buffer[1] = (uint8)(address>>16);
+    lCypFlash.Tx_Buffer[2] = (uint8)(address>>8);
+    lCypFlash.Tx_Buffer[3] = (uint8)(address);
+    
+    HALSPI_TxData(FLASH_SPI_ID, 1, lCypFlash.Tx_Buffer);
+    
+    lres = HALSPI_SetCS(FLASH_SPI_ID);
+    if (lres == RES_OK)
+    {
+        HALSPI_StartTransfer(FLASH_SPI_ID); 
+        lCypFlash.RecoverCounter = RECOVER_WAIT_CYCLES - 1; /* 5ms timeout */
+        lCypFlash.Status = CYPFLASH_ST_BUSY;
+        /* Return the previous READY state as everything going OK */
+    }
+    else
+    {
+        lCypFlash.Status = CYPFLASH_ST_COMM_ERROR;
+        l_return_status = CYPFLASH_ST_COMM_ERROR;
+    }
+    return l_return_status;
+}
 
 static void local_CypFlash_GetDeviceStatus(void)
 {
-    /* Get the HW status register from the device */
-  
+    tResult lres;
+
+    lCypFlash.Tx_Buffer[0] = FLS_CMD_READSTATUS1;
+    HALSPI_TxData(FLASH_SPI_ID, 1, lCypFlash.Tx_Buffer);
+    HALSPI_RxData(FLASH_SPI_ID, 2, lCypFlash.Rx_Buffer);
+    
+    lres = HALSPI_SetCS(FLASH_SPI_ID);
+    if (lres == RES_OK)
+    {
+        HALSPI_StartTransfer(FLASH_SPI_ID); 
+        lCypFlash.RecoverCounter = 0; /* 1s timeout */
+    }
+    else
+    {
+        lCypFlash.Status = CYPFLASH_ST_COMM_ERROR;
+    }
+}
+
+static void local_CypFlash_CheckDeviceStatus(volatile uint8 status)
+{
+    uint8 masked_status = status & 0x01;
+    
+    if (masked_status == 0) /* Device ready ? */
+    {
+        lCypFlash.Status = CYPFLASH_ST_READY;
+        PORT_PIN_LED_ON_OFF();
+        PORT_PIN_LED_BLE_OFF();
+    }
+    else
+    {
+        local_CypFlash_GetDeviceStatus();
+    }
 }
