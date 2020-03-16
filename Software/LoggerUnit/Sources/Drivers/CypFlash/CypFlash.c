@@ -16,10 +16,15 @@
 #define FLS_UNRESET()       do {PORT_PIN_FLS_RESET_ON();} while(0)     /* Signal 1 on RESET unresets the flash chip */
 #define FLS_RESET()         do {PORT_PIN_FLS_RESET_OFF();} while(0)    /* Signal 0 on RESET resets the flash chip */
 
-#define FLASH_MAX_ADDRESS   16*1024*1024 /* 16 MB flash size */
+#define FLASH_MAX_ADDRESS   16*1024*1024+1 /* 16 MB flash size */
 #define FLASH_SPI_ID        0
 #define RECOVER_RETRY_COUNT 5
 #define RECOVER_WAIT_CYCLES 200 /* 1 second based on 5ms task cycle time */
+
+#define FLS_CMD_GET_ID          0x9F
+#define FLS_CMD_READ            0x03
+#define FLS_CMD_WRITE           0x02
+#define FLS_CMD_WRITE_ENABLE    0x06
 
 typedef struct
 { /* Status Register 1 Volatile */
@@ -51,7 +56,6 @@ typedef struct
     uint8                   RecoverCounter;
     uint8                   RecoverIteration;
     uint8                   ActualCommand;
-    
 } tCypFlashStruct;
 
 /*--------------------------------------------------
@@ -91,7 +95,7 @@ void CypFlash_MainFunction(void)
             FLS_UNRESET();
             PORT_PIN_LED_BLE_ON();
             /* Get and check device ID to verify proper communication */
-            lCypFlash.Tx_Buffer[0] = 0x9F;
+            lCypFlash.Tx_Buffer[0] = FLS_CMD_GET_ID;
             HALSPI_TxData(FLASH_SPI_ID, 1, lCypFlash.Tx_Buffer);
             HALSPI_RxData(FLASH_SPI_ID, 4, lCypFlash.Rx_Buffer);
             lres = HALSPI_SetCS(FLASH_SPI_ID);
@@ -144,16 +148,53 @@ void CypFlash_MainFunction(void)
         }
     case CYPFLASH_ST_BUSY:
         {
+            tResult lres;
+            
             if (HALSPI_GetStatus(FLASH_SPI_ID) == SPI_READY)
             {
                 HALSPI_ReleaseCS(FLASH_SPI_ID);
                 switch(lCypFlash.ActualCommand)
                 {
-                case 0x03: /* Read */
+                case FLS_CMD_READ:
                     {
                         lCypFlash.Status = CYPFLASH_ST_READY;
                         PORT_PIN_LED_BLE_OFF();
                         memcpy(lCypFlash.ActualBuffer, &lCypFlash.Rx_Buffer[4], lCypFlash.ActualCount);
+                        break;
+                    }
+                case FLS_CMD_WRITE:
+                    {
+                        switch(lCypFlash.Tx_Buffer[0]) /* Just executed command */
+                        {
+                        case FLS_CMD_WRITE_ENABLE:
+                            {
+                                lCypFlash.Tx_Buffer[0] = FLS_CMD_WRITE;
+                                HALSPI_TxData(FLASH_SPI_ID, lCypFlash.ActualCount+4, lCypFlash.Tx_Buffer);
+            
+                                lres = HALSPI_SetCS(FLASH_SPI_ID);
+                                if (lres == RES_OK)
+                                {
+                                    HALSPI_StartTransfer(FLASH_SPI_ID); 
+                                    lCypFlash.RecoverCounter = RECOVER_WAIT_CYCLES - 1; /* 5ms timeout */
+                                }
+                                else
+                                {
+                                    lCypFlash.Status = CYPFLASH_ST_COMM_ERROR;
+                                }
+                                break;
+                            }
+                        case FLS_CMD_WRITE:
+                            {
+                                lCypFlash.Status = CYPFLASH_ST_READY;
+                                PORT_PIN_LED_ON_OFF();
+                                /* No return data in the write process */
+                                break;
+                            }
+                        default:
+                            {
+                                while(1); /* Wrong memory contents for actual command, assert */
+                            }
+                        }
                         break;
                     }
                 default:
@@ -242,10 +283,12 @@ tCypFlashStatus CypFlash_Read(uint32 address, uint16 count, uint8* buffer)
     if (l_return_status == CYPFLASH_ST_READY)
     {
         /* Check input parameters - read 0 bytes not allowed, useless */
-        if (((address&0x00FFFFFF)+count < FLASH_MAX_ADDRESS)&&(count>0)&&(buffer!=NULL))
+        if (((address&0x00FFFFFF)+count < FLASH_MAX_ADDRESS)
+            &&(count>0)
+            &&(buffer!=NULL))
         {
             PORT_PIN_LED_BLE_ON();
-            lCypFlash.ActualCommand = 0x03;
+            lCypFlash.ActualCommand = FLS_CMD_READ;
             lCypFlash.ActualCount = count;
             lCypFlash.ActualBuffer = buffer;
             
@@ -282,16 +325,71 @@ tCypFlashStatus CypFlash_Read(uint32 address, uint16 count, uint8* buffer)
 
 tCypFlashStatus CypFlash_Write(uint32 address, uint16 count, uint8* buffer)
 {
-    PORT_PIN_LED_ON_ON();
-    PORT_PIN_LED_BLE_OFF();
-    return lCypFlash.Status;
+    tResult lres;
+    static tCypFlashStatus l_return_status;
+    l_return_status = lCypFlash.Status;
+    
+    if (l_return_status == CYPFLASH_ST_READY)
+    {
+        /* Check input parameters */
+        if (((address&0x00FFFFFF)+count < FLASH_MAX_ADDRESS)
+            &&(count>0)
+            &&(buffer!=NULL))
+        {
+            PORT_PIN_LED_ON_ON();
+            
+            lCypFlash.ActualCommand = FLS_CMD_WRITE;
+            lCypFlash.ActualCount = count;
+            lCypFlash.ActualBuffer = buffer;
+            
+            lCypFlash.Tx_Buffer[0] = FLS_CMD_WRITE_ENABLE;
+            lCypFlash.Tx_Buffer[1] = (uint8)(address>>16);
+            lCypFlash.Tx_Buffer[2] = (uint8)(address>>8);
+            lCypFlash.Tx_Buffer[3] = (uint8)(address);
+            /* Use double buffering for increased security */
+            memcpy(&lCypFlash.Tx_Buffer[4], buffer, count);
+            
+            HALSPI_TxData(FLASH_SPI_ID, 1, lCypFlash.Tx_Buffer);
+            
+            lres = HALSPI_SetCS(FLASH_SPI_ID);
+            if (lres == RES_OK)
+            {
+                HALSPI_StartTransfer(FLASH_SPI_ID); 
+                lCypFlash.RecoverCounter = RECOVER_WAIT_CYCLES - 1; /* 5ms timeout */
+                lCypFlash.Status = CYPFLASH_ST_BUSY;
+                /* Return the previous READY state as everything going OK */
+            }
+            else
+            {
+                lCypFlash.Status = CYPFLASH_ST_COMM_ERROR;
+                l_return_status = CYPFLASH_ST_COMM_ERROR;
+            }
+        }
+        else
+        {
+            l_return_status = CYPFLASH_ST_PARAM_ERROR;
+        }
+    }
+    return l_return_status;
 }
 
 tCypFlashStatus CypFlash_WritePage(uint32 address, uint8* buffer)
 {
-    PORT_PIN_LED_ON_ON();
-    PORT_PIN_LED_BLE_ON();
-    return lCypFlash.Status;
+    static tCypFlashStatus l_return_status;
+    l_return_status = lCypFlash.Status;
+    
+    if (l_return_status == CYPFLASH_ST_READY)
+    {
+        if (address==(address&0x00FFFF00)) /* Check address alignment to page */
+        {
+            l_return_status = CypFlash_Write(address, 256, buffer);
+        }
+        else
+        {
+            l_return_status = CYPFLASH_ST_PARAM_ERROR;
+        }
+    }
+    return l_return_status;
 }
 
 tCypFlashStatus CypFlash_EraseSector(uint32 address) /* 4K sector */
