@@ -19,13 +19,13 @@
 /* driver states */
 typedef enum
 {
-  CYPFLASH_ST_UNINITIALIZED  = 0u, /* driver and device not initialized yet */
-  CYPFLASH_ST_INITIALIZING,        /* driver and device under initialization phase (from uninit or from low power) */
-  CYPFLASH_ST_READY,               /* device is in ready state - all status and data from memory updated in driver */
-  CYPFLASH_ST_BUSY,                /* device is busy with SPI communication or other command */
-  CYPFLASH_ST_PARAM_ERROR,         /* function parameter error */
-  CYPFLASH_ST_COMM_ERROR,          /* can not communicate with the device, retry */
-  CYPFLASH_ST_DEVICE_ERROR         /* device fatal error - driver blocked */
+    CYPFLASH_ST_UNINITIALIZED  = 0u, /* driver and device not initialized yet */
+    CYPFLASH_ST_INITIALIZING,        /* driver and device under initialization phase (from uninit or from low power) */
+    CYPFLASH_ST_READY,               /* device is in ready state - all status and data from memory updated in driver */
+    CYPFLASH_ST_BUSY,                /* device is busy with SPI communication or other command */
+    CYPFLASH_ST_PARAM_ERROR,         /* function parameter error */
+    CYPFLASH_ST_COMM_ERROR,          /* can not communicate with the device, retry */
+    CYPFLASH_ST_DEVICE_ERROR         /* device fatal error - driver blocked */
 } tCypFlashStatus;
 
 /*--------------------------------------------------

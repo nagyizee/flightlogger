@@ -55,7 +55,10 @@ void OsRt_Init(void)
     HALPort_Init();
     HALI2C_Init();
     HALSPI_Init();
+    
     CypFlash_Init();
+    
+    RtAppData_Init();
 }
 
 /* definition of timed Tasks - they are run in the low priority interrupt context */

@@ -2150,6 +2150,12 @@
             <name>$PROJ_DIR$\..\Sources\HAL\Spi\HALSpi.h</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\Sources\HAL\Spi\HALSpi_Cfg.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\HAL\Spi\HALSpi_Internals.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Sources\HAL\Uart\HALUart.c</name>
         </file>
         <file>
