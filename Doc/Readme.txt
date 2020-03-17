@@ -45,11 +45,12 @@ data storage - page allocation:
                 1bit      1st. page recorded from power on
                 1bit      1st. page recorded for a new session
                 1bit      last page recorded before power off
-                4bits     number of samples recored                
+                4bits     number of samples recorded                
               
         [ds] x 8    31x8 bytes of payload     (8 seconds)
               
-        [res][res]  reserved
+        [rtc][rtc]  RTC Time info of first sample in dataset, RTC sync in RtAppComm Activation/ free running SW RTC calc in the OS during power cycle / reset to 0/0/0 after power up, 
+			start to be validated in the same power cycle with the flight
 
         [crc][crc]  16 bit page CRC - over data range [0]..[253]
         
