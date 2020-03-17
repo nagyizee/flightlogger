@@ -37,7 +37,7 @@ data storage - page allocation:
         [pg.header][ds][ds][ds]....[crc16]
     
         [pg.header]:
-            - [00]        page written marker (if 0xaa or 0xff - page is free)
+            - [00]        page written marker (if 0xaa or 0xff - page is free) - suggestion: only 0xFF free, 0xAA written, 0x00 invalidated
               [sinf]      session info
               [ss][ss]    16bit sequence counter (32k pages - with 64k value we can detect the start/end of sequence
 
@@ -51,6 +51,7 @@ data storage - page allocation:
               
         [rtc][rtc]  RTC Time info of first sample in dataset, RTC sync in RtAppComm Activation/ free running SW RTC calc in the OS during power cycle / reset to 0/0/0 after power up, 
 			start to be validated in the same power cycle with the flight
+		    RTC Date and RtAppComm Activation Time stored in NVM
 
         [crc][crc]  16 bit page CRC - over data range [0]..[253]
         
