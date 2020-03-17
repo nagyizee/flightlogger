@@ -16,6 +16,9 @@
 /* AppRT */
 #include "RtAppExample.h"
 #include "RtAppData.h"
+#include "RtAppPack.h"
+#include "RtAppComm.h"
+#include "RtAppSensor.h"
 /* AppBgnd */
 
 
@@ -68,7 +71,7 @@ static void RTTask_5ms_1(void)
 #ifdef RTAPPEXAMPLEACTIVE
     RtAppExample_Main(1);
 #endif
-    //RtAppSensor_MainFunction();
+    RtAppSensor_Main();
 }
 
 static void RTTask_5ms_2(void)
@@ -76,7 +79,7 @@ static void RTTask_5ms_2(void)
 #ifdef RTAPPEXAMPLEACTIVE
     RtAppExample_Main(2);
 #endif
-    //RtAppComm_MainFunction();
+    RtAppComm_Main();
 }
 
 static void RTTask_5ms_3(void)
@@ -84,7 +87,7 @@ static void RTTask_5ms_3(void)
 #ifdef RTAPPEXAMPLEACTIVE
     RtAppExample_Main(3);
 #endif
-    //RtAppPack_MainFunction();
+    RtAppPack_Main();
 }
 
 static void RTTask_5ms_4(void)

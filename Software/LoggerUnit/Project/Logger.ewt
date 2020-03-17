@@ -2372,6 +2372,12 @@
     <group>
         <name>AppRtGroup</name>
         <file>
+            <name>$PROJ_DIR$\..\Sources\ApplicationRT\RtAppComm.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\ApplicationRT\RtAppComm.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Sources\ApplicationRT\RtAppData.c</name>
         </file>
         <file>
@@ -2382,6 +2388,18 @@
         </file>
         <file>
             <name>$PROJ_DIR$\..\Sources\ApplicationRT\RtAppExample.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\ApplicationRT\RtAppPack.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\ApplicationRT\RtAppPack.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\ApplicationRT\RtAppSensor.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\ApplicationRT\RtAppSensor.h</name>
         </file>
     </group>
     <group>
