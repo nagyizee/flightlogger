@@ -37,6 +37,9 @@ static uint32 cypflashtest = 0;
 static tCypFlashStatus cypflashcallstatus;
 static uint8 flash_buff[CYPFLASH_READ_BUFSIZE];
 static uint32 baseaddress = 0;
+static uint8 writecount = 64;
+static uint8 writedata = 0x55;
+
 
 static void local_tasktiming_test(uint32 taskIdx);
 static void local_i2c_test(void);
@@ -243,13 +246,13 @@ static void local_cypflashtest(void)
             }
         case 2: /* Write 64 bytes from address */
             {
-                for (i=0; i<64; i++) flash_buff[i] = i;
-                cypflashcallstatus = CypFlash_Write(baseaddress, 64, &flash_buff[0]);
+                for (i=0; i<writecount; i++) flash_buff[i] = writedata;
+                cypflashcallstatus = CypFlash_Write(baseaddress, writecount, &flash_buff[0]);
                 break;
             }
         case 3: /* Page write with 0x55 */
             {
-                for (i=0; i<CYPFLASH_WRITE_BUFSIZE; i++) flash_buff[i] = 0x55;
+                for (i=0; i<CYPFLASH_WRITE_BUFSIZE; i++) flash_buff[i] = writedata;
                 cypflashcallstatus = CypFlash_WritePage(baseaddress, &flash_buff[0]);
                 break;
             }
