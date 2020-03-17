@@ -49,6 +49,7 @@ typedef struct
 static tCypFlashStruct  lCypFlash;
 
 /* Device handling functions */
+static void local_CypFlash_SetTxData(uint8 command, uint32 address, uint16 count);
 static tCypFlashStatus local_CypFlash_StartErase(uint32 address);
 static void local_CypFlash_GetDeviceStatus(void);
 static void local_CypFlash_CheckDeviceStatus(volatile uint8 status);
@@ -321,13 +322,8 @@ tCypFlashStatus CypFlash_Read(uint32 address, uint16 count, uint8* buffer)
             lCypFlash.ActualCount = count;
             lCypFlash.ActualBuffer = buffer;
             
-            lCypFlash.Tx_Buffer[0] = lCypFlash.ActualCommand;
-            lCypFlash.Tx_Buffer[1] = (uint8)(address>>16);
-            lCypFlash.Tx_Buffer[2] = (uint8)(address>>8);
-            lCypFlash.Tx_Buffer[3] = (uint8)(address);
+            local_CypFlash_SetTxData(lCypFlash.ActualCommand, address, 4);
             
-            /* Use double buffering for increased security */
-            HALSPI_TxData(FLASH_SPI_ID, 4, lCypFlash.Tx_Buffer);
             HALSPI_RxData(FLASH_SPI_ID, count+4, lCypFlash.Rx_Buffer);
             
             lres = HALSPI_SetCS(FLASH_SPI_ID);
@@ -372,14 +368,9 @@ tCypFlashStatus CypFlash_Write(uint32 address, uint16 count, uint8* buffer)
             lCypFlash.ActualCount = count;
             lCypFlash.ActualBuffer = buffer;
             
-            lCypFlash.Tx_Buffer[0] = FLS_CMD_WRITE_ENABLE;
-            lCypFlash.Tx_Buffer[1] = (uint8)(address>>16);
-            lCypFlash.Tx_Buffer[2] = (uint8)(address>>8);
-            lCypFlash.Tx_Buffer[3] = (uint8)(address);
-            /* Use double buffering for increased security */
+            /* Copy data to local buffer */
             memcpy(&lCypFlash.Tx_Buffer[4], buffer, count);
-            
-            HALSPI_TxData(FLASH_SPI_ID, 1, lCypFlash.Tx_Buffer);
+            local_CypFlash_SetTxData(FLS_CMD_WRITE_ENABLE, address,1);
             
             lres = HALSPI_SetCS(FLASH_SPI_ID);
             if (lres == RES_OK)
@@ -486,6 +477,15 @@ tCypFlashStatus CypFlash_EraseAll(void)
 /*--------------------------------------------------
  *             Local functions
  *--------------------------------------------------*/
+static void local_CypFlash_SetTxData(uint8 command, uint32 address, uint16 count)
+{
+    lCypFlash.Tx_Buffer[0] = command;
+    lCypFlash.Tx_Buffer[1] = (uint8)(address>>16);
+    lCypFlash.Tx_Buffer[2] = (uint8)(address>>8);
+    lCypFlash.Tx_Buffer[3] = (uint8)(address);
+    
+    HALSPI_TxData(FLASH_SPI_ID, count, lCypFlash.Tx_Buffer);
+}
 
 static tCypFlashStatus local_CypFlash_StartErase(uint32 address)
 {
@@ -495,12 +495,7 @@ static tCypFlashStatus local_CypFlash_StartErase(uint32 address)
     PORT_PIN_LED_ON_ON();
     PORT_PIN_LED_BLE_ON();
     
-    lCypFlash.Tx_Buffer[0] = FLS_CMD_WRITE_ENABLE;
-    lCypFlash.Tx_Buffer[1] = (uint8)(address>>16);
-    lCypFlash.Tx_Buffer[2] = (uint8)(address>>8);
-    lCypFlash.Tx_Buffer[3] = (uint8)(address);
-    
-    HALSPI_TxData(FLASH_SPI_ID, 1, lCypFlash.Tx_Buffer);
+    local_CypFlash_SetTxData(FLS_CMD_WRITE_ENABLE, address,1);
     
     lres = HALSPI_SetCS(FLASH_SPI_ID);
     if (lres == RES_OK)

@@ -34,8 +34,9 @@ uint8 buff_1[LONGBUFF_SIZE];
 uint8 buff_2[LONGBUFF_SIZE];
 
 static uint32 cypflashtest = 0; 
-uint8 flash_buff[CYPFLASH_READ_BUFSIZE];
-uint32 baseaddress = 0;
+static tCypFlashStatus cypflashcallstatus;
+static uint8 flash_buff[CYPFLASH_READ_BUFSIZE];
+static uint32 baseaddress = 0;
 
 static void local_tasktiming_test(uint32 taskIdx);
 static void local_i2c_test(void);
@@ -121,7 +122,6 @@ static void local_i2c_test(void)
 
     i2ctest = 0;
 }
-
 
 static void local_spi_test(void)
 {
@@ -232,61 +232,52 @@ static void local_cypflashtest(void)
 {
     if (cypflashtest)
     {
-        static tCypFlashStatus ls_CypFlash_Status;
-        static uint16 i;
+        uint16 i;
         
         switch(cypflashtest)
         {
         case 1: /* Read */
             {
-                ls_CypFlash_Status = CypFlash_Read(baseaddress, CYPFLASH_READ_BUFSIZE, &flash_buff[0]);
-                if (ls_CypFlash_Status == CYPFLASH_ST_READY)
-                {
-                    cypflashtest = 0;
-                }
-                else
-                {
-                    /* Flash busy already, wrong sequence */
-                }
+                cypflashcallstatus = CypFlash_Read(baseaddress, CYPFLASH_READ_BUFSIZE, &flash_buff[0]);
                 break;
             }
-        case 2: /* Write  */
+        case 2: /* Write 64 bytes from address */
             {
                 for (i=0; i<64; i++) flash_buff[i] = i;
-                ls_CypFlash_Status = CypFlash_Write(baseaddress, 64, &flash_buff[0]);
-                cypflashtest=0;
+                cypflashcallstatus = CypFlash_Write(baseaddress, 64, &flash_buff[0]);
                 break;
             }
-        case 3: /* Page write */
+        case 3: /* Page write with 0x55 */
             {
                 for (i=0; i<CYPFLASH_WRITE_BUFSIZE; i++) flash_buff[i] = 0x55;
-                ls_CypFlash_Status = CypFlash_WritePage(baseaddress, &flash_buff[0]);
-                cypflashtest=0;
+                cypflashcallstatus = CypFlash_WritePage(baseaddress, &flash_buff[0]);
                 break;
             }
-        case 4: /* Erase sector */
+        case 4: /* Erase 4KB sector */
             {
-                ls_CypFlash_Status = CypFlash_EraseSector(baseaddress);
-                cypflashtest=0;
+                cypflashcallstatus = CypFlash_EraseSector(baseaddress);
                 break;
             }
-        case 5: /* Erase block */
+        case 5: /* Erase 64 KB block */
             {
-                ls_CypFlash_Status = CypFlash_EraseBlock(baseaddress);
-                cypflashtest=0;
+                cypflashcallstatus = CypFlash_EraseBlock(baseaddress);
                 break;
             }
         case 6: /* Erase entire chip */
             {
-                ls_CypFlash_Status = CypFlash_EraseAll();
-                cypflashtest=0;
+                cypflashcallstatus = CypFlash_EraseAll();
                 break;
             }
         default: /* Wrong test code */
             {
-                cypflashtest=0;
-                break;
             }
+        }
+        cypflashtest=0;
+        
+        if (cypflashcallstatus != CYPFLASH_ST_READY)
+        {
+            /* Flash was busy at the time of the command */
+            baseaddress = CypFlash_GetStatus();
         }
     }
 }
