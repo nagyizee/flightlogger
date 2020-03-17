@@ -1,5 +1,5 @@
-#ifndef	_EXAMPLERTAPP_H
-#define _EXAMPLERTAPP_H
+#ifndef	_RTAPPDATA_H
+#define _RTAPPDATA_H
 /**
  *
  *
@@ -21,9 +21,7 @@
  *   		  	 	Functions
  *--------------------------------------------------*/
 
-/* Init the cpu core items (clocks and stuff) */
-void ExampleRtApp_Main(uint32 taskIdx);
-
+void RtAppData_Main(void);
 
 #endif
 

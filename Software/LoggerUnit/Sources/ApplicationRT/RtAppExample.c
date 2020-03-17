@@ -1,6 +1,6 @@
-#include "ExampleRtApp.h"
+#include "RtAppExample.h"
 
-#ifdef EXAMPLEAPPACTIVE
+#ifdef RTAPPEXAMPLEACTIVE
 
 #include "HALport.h"
 #include "Os.h"
@@ -44,7 +44,7 @@ static void local_spi_test(void);
 static void local_cypflashtest(void);
 static void local_fillbuffer(uint8 *buffer);
 
-void ExampleRtApp_Main(uint32 taskIdx)
+void RtAppExample_Main(uint32 taskIdx)
 {
     local_tasktiming_test(taskIdx);
     local_i2c_test();

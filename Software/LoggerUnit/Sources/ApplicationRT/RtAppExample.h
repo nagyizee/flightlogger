@@ -1,5 +1,5 @@
-#ifndef	_EXAMPLERTAPP_H
-#define _EXAMPLERTAPP_H
+#ifndef	_RTAPPEXAMPLE_H
+#define _RTAPPEXAMPLE_H
 /**
  *
  *
@@ -16,15 +16,15 @@
  * 		    		Defines
  *--------------------------------------------------*/
 
-#define EXAMPLEAPPACTIVE  /* Comment to deactivate application test routines */
+#define RTAPPEXAMPLEACTIVE  /* Comment to deactivate application test routines */
 
 /*--------------------------------------------------
  *   		  	 	Functions
  *--------------------------------------------------*/
 
-#ifdef EXAMPLEAPPACTIVE
+#ifdef RTAPPEXAMPLEACTIVE
 /* Init the cpu core items (clocks and stuff) */
-void ExampleRtApp_Main(uint32 taskIdx);
+void RtAppExample_Main(uint32 taskIdx);
 #endif
 
 #endif

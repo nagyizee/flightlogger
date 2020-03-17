@@ -64,10 +64,10 @@ void CypFlash_Init(void)
     /* initialize local variables */
     memset(&lCypFlash, 0, sizeof(tCypFlashStruct));
     /* Force device initialisation phase */
-    while(lCypFlash.Status<=CYPFLASH_ST_INITIALIZING) CypFlash_MainFunction();
+    while(lCypFlash.Status<=CYPFLASH_ST_INITIALIZING) CypFlash_Main();
 }
 
-void CypFlash_MainFunction(void)
+void CypFlash_Main(void)
 {
     switch (lCypFlash.Status)
     {

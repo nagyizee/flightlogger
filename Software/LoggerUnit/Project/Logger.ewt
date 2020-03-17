@@ -2372,10 +2372,16 @@
     <group>
         <name>AppRtGroup</name>
         <file>
-            <name>$PROJ_DIR$\..\Sources\ApplicationRT\ExampleRtApp\ExampleRtApp.c</name>
+            <name>$PROJ_DIR$\..\Sources\ApplicationRT\RtAppData.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Sources\ApplicationRT\ExampleRtApp\ExampleRtApp.h</name>
+            <name>$PROJ_DIR$\..\Sources\ApplicationRT\RtAppData.h</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\ApplicationRT\RtAppExample.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\ApplicationRT\RtAppExample.h</name>
         </file>
     </group>
     <group>

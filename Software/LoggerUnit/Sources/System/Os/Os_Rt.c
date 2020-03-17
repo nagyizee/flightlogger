@@ -14,7 +14,8 @@
 #include "NxpBaro.h"
 #include "CypFlash.h"
 /* AppRT */
-#include "ExampleRtApp.h"
+#include "RtAppExample.h"
+#include "RtAppData.h"
 /* AppBgnd */
 
 
@@ -57,49 +58,49 @@ void OsRt_Init(void)
 /* definition of timed Tasks - they are run in the low priority interrupt context */
 static void RTTask_1ms(void)
 {
-#ifdef EXAMPLEAPPACTIVE
-    ExampleRtApp_Main(0);
+#ifdef RTAPPEXAMPLEACTIVE
+    RtAppExample_Main(0);
 #endif
 }
 
 static void RTTask_5ms_1(void)
 {
-#ifdef EXAMPLEAPPACTIVE
-    ExampleRtApp_Main(1);
+#ifdef RTAPPEXAMPLEACTIVE
+    RtAppExample_Main(1);
 #endif
-    //AppSensor_MainFunction();
+    //RtAppSensor_MainFunction();
 }
 
 static void RTTask_5ms_2(void)
 {
-#ifdef EXAMPLEAPPACTIVE
-    ExampleRtApp_Main(2);
+#ifdef RTAPPEXAMPLEACTIVE
+    RtAppExample_Main(2);
 #endif
-    //AppComm_MainFunction();
+    //RtAppComm_MainFunction();
 }
 
 static void RTTask_5ms_3(void)
 {
-#ifdef EXAMPLEAPPACTIVE
-    ExampleRtApp_Main(3);
+#ifdef RTAPPEXAMPLEACTIVE
+    RtAppExample_Main(3);
 #endif
-    //AppPack_MainFunction();
+    //RtAppPack_MainFunction();
 }
 
 static void RTTask_5ms_4(void)
 {
-#ifdef EXAMPLEAPPACTIVE
-    ExampleRtApp_Main(4);
+#ifdef RTAPPEXAMPLEACTIVE
+    RtAppExample_Main(4);
 #endif
-    //AppData_MainFunction();
+    RtAppData_Main();
 }
 
 static void RTTask_5ms_5(void)
 {
-#ifdef EXAMPLEAPPACTIVE
-    ExampleRtApp_Main(5);
+#ifdef RTAPPEXAMPLEACTIVE
+    RtAppExample_Main(5);
 #endif
-    CypFlash_MainFunction();
+    CypFlash_Main();
 }
 
 /* definition of the constantly running background task - it is run in the application context */
