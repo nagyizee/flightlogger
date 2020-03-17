@@ -1,8 +1,9 @@
 #include "ExampleRtApp.h"
+
+#ifdef EXAMPLEAPPACTIVE
+
 #include "HALport.h"
 #include "Os.h"
-
-//TODO: remove the whole module from project scope after tests are done
 
 #include "HALI2c.h"
 #include "HALSpi.h"
@@ -32,12 +33,11 @@ static uint8  spitest_padding = 0x01;
 uint8 buff_1[LONGBUFF_SIZE];
 uint8 buff_2[LONGBUFF_SIZE];
 
-
 static uint32 cypflashtest = 0; 
-/* Possible values: 0 - inactive, 1 - read, 2 - write, 3 - page write, 4 - erase sector, 5 - erase block */
 uint8 flash_buff[CYPFLASH_READ_BUFSIZE];
 uint32 baseaddress = 0;
 
+static void local_tasktiming_test(uint32 taskIdx);
 static void local_i2c_test(void);
 static void local_spi_test(void);
 static void local_cypflashtest(void);
@@ -45,7 +45,14 @@ static void local_fillbuffer(uint8 *buffer);
 
 void ExampleRtApp_Main(uint32 taskIdx)
 {
+    local_tasktiming_test(taskIdx);
+    local_i2c_test();
+    local_spi_test();
+    local_cypflashtest();
+}
 
+static void local_tasktiming_test(uint32 taskIdx)
+{
     if (tasktimingtest)
     {
         volatile uint32 count;
@@ -83,13 +90,7 @@ void ExampleRtApp_Main(uint32 taskIdx)
 
         PORT_PIN_LED_ON_OFF();
     }
-
-    local_i2c_test();
-    local_spi_test();
-    local_cypflashtest();
 }
-
-
 
 static void local_i2c_test(void)
 {
@@ -289,3 +290,4 @@ static void local_cypflashtest(void)
         }
     }
 }
+#endif

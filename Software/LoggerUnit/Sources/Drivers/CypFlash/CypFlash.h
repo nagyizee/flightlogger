@@ -32,8 +32,8 @@ typedef enum
                                 Defines
  *--------------------------------------------------*/
 
-#define CYPFLASH_READ_BUFSIZE   256 /* Bytes */
-#define CYPFLASH_WRITE_BUFSIZE  256 /* MUST BE 256 Bytes !! */
+#define CYPFLASH_READ_BUFSIZE   256 /* Must be >= 256 Bytes */
+#define CYPFLASH_WRITE_BUFSIZE  256 /* MUST BE exactly 256 Bytes !! */
 
 /*--------------------------------------------------
  *                              Exported interfaces
@@ -52,6 +52,7 @@ void CypFlash_Wake(void);
 tCypFlashStatus CypFlash_Read(uint32 address, uint16 count, uint8* buffer);
 tCypFlashStatus CypFlash_Write(uint32 address, uint16 count, uint8* buffer);
 tCypFlashStatus CypFlash_WritePage(uint32 address, uint8* buffer);
+
 tCypFlashStatus CypFlash_EraseSector(uint32 address); /* 4K sector */
 tCypFlashStatus CypFlash_EraseBlock(uint32 address); /* 64K block */
 tCypFlashStatus CypFlash_EraseAll(void);

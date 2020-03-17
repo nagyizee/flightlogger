@@ -57,33 +57,49 @@ void OsRt_Init(void)
 /* definition of timed Tasks - they are run in the low priority interrupt context */
 static void RTTask_1ms(void)
 {
+#ifdef EXAMPLEAPPACTIVE
     ExampleRtApp_Main(0);
+#endif
 }
 
 static void RTTask_5ms_1(void)
 {
+#ifdef EXAMPLEAPPACTIVE
     ExampleRtApp_Main(1);
-    CypFlash_MainFunction();
+#endif
+    //AppSensor_MainFunction();
 }
 
 static void RTTask_5ms_2(void)
 {
+#ifdef EXAMPLEAPPACTIVE
     ExampleRtApp_Main(2);
+#endif
+    //AppComm_MainFunction();
 }
 
 static void RTTask_5ms_3(void)
 {
+#ifdef EXAMPLEAPPACTIVE
     ExampleRtApp_Main(3);
+#endif
+    //AppPack_MainFunction();
 }
 
 static void RTTask_5ms_4(void)
 {
+#ifdef EXAMPLEAPPACTIVE
     ExampleRtApp_Main(4);
+#endif
+    //AppData_MainFunction();
 }
 
 static void RTTask_5ms_5(void)
 {
+#ifdef EXAMPLEAPPACTIVE
     ExampleRtApp_Main(5);
+#endif
+    CypFlash_MainFunction();
 }
 
 /* definition of the constantly running background task - it is run in the application context */
@@ -91,4 +107,3 @@ static void RTTask_BackGnd(uint32 reason)
 {
 
 }
-
