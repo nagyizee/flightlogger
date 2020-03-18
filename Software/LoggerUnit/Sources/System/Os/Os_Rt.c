@@ -1,6 +1,7 @@
 /* Os related includes */
 #include "Os.h"
 #include "Os_Rt.h"
+#include "HALOsSys.h"
 #include "Os_Internals.h"
 
 /* project specific includes */
@@ -12,6 +13,7 @@
 /* System */
 /* Drivers */
 #include "NxpBaro.h"
+#include "NxpAccel.h"
 #include "CypFlash.h"
 /* AppRT */
 #include "RtAppExample.h"
@@ -51,13 +53,18 @@ tOsTaskBgndItem gOsRt_BgndTask = &RTTask_BackGnd;
 /* definition of the startup code */
 void OsRt_Init(void)
 {
+    /* init HAL modules */
     HALCore_Init();
     HALPort_Init();
     HALI2C_Init();
     HALSPI_Init();
-    
+    /* now it is safer to activate interrupts */
+    HALOsSys_EnableAllInterrupts();
+    /* init drivers and system modules */
     CypFlash_Init();
-    
+    NxpBaro_Init();
+    NxpAccel_Init();
+    /* init application modules */
     RtAppData_Init();
 }
 
