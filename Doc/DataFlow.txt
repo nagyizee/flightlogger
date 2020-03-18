@@ -37,7 +37,7 @@ data storage - page allocation:
         [pg.header][ds][ds][ds]....[crc16]
     
         [pg.header]:
-            - [00]        page written marker (if 0xaa or 0xff - page is free) - suggestion: only 0xFF free, 0xAA written, 0x00 invalidated
+            - [00]        page written marker - 0xFF free, 0xAA written, 0x00 invalidated
               [sinf]      session info
               [ss][ss]    16bit sequence counter (32k pages - with 64k value we can detect the start/end of sequence
 
@@ -69,7 +69,6 @@ S25FL 064 L AB NFA040
 - c.erase:                  55 .. 150 sec
 
 
-
 b0  -
 b1  -  swappable blocks NV functional data
 b2  -
@@ -77,23 +76,7 @@ b3  -  redundant mirror for b0/b1
 
 b4 .. bN  - data log area
 
-- memory array is deleted completely at 1st. start-up
+- memory array is deleted completely at start of day
 - memory is written 1 page at a time
-- if 2 pages till next undeleted block - delete it. (operation max. 600ms, page can hold 8 sec. recordings)
-- deleting will be done after writing the current page.
-
-- when block is deleted, the first byte is written 0xaa. This marks that delete operation was successfull.
-- if after start-up the block is checked at the last 2 pages from prew. block - it will mark that the new block
-  can be used. Otherwise a new delete operation is triggered.
-  
-  
-  
-
-
-
-
-
-
-
-
-
+- no erase operation during flight
+- invalidate will be done after writing the current NVM sector

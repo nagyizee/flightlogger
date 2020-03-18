@@ -18,8 +18,6 @@
  *                              Defines
  *--------------------------------------------------*/
 
-#define APPDATA_NVM_USE_RAM  /* Comment to use CypFlash insted of RAM emulated NVM */
-
 /*--------------------------------------------------
  *                              Exported interfaces
  *--------------------------------------------------*/
