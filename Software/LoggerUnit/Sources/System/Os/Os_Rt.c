@@ -1,7 +1,6 @@
 /* Os related includes */
 #include "Os.h"
 #include "Os_Rt.h"
-#include "HALOsSys.h"
 #include "Os_Internals.h"
 
 /* project specific includes */
@@ -59,13 +58,23 @@ void OsRt_Init(void)
     HALI2C_Init();
     HALSPI_Init();
     /* now it is safer to activate interrupts */
-    HALOsSys_EnableAllInterrupts();
+
+// problems at HALOsSys with HALOsSys_GetCurrentCounter
+//  - can not use  HALOsSys_EnableAllInterrupts();
+//TODO: solve the issue, and remove the mess below:
+    #include "nrf.h"
+    __enable_irq();
+
+
     /* init drivers and system modules */
     CypFlash_Init();
-    NxpBaro_Init();
-    NxpAccel_Init();
+    NXPBaro_Init();
+//placeholder for    NxpAccel_Init();
     /* init application modules */
-    RtAppData_Init();
+
+
+//it blocks inside - need investigation
+//    RtAppData_Init();
 }
 
 /* definition of timed Tasks - they are run in the low priority interrupt context */
@@ -74,6 +83,7 @@ static void RTTask_1ms(void)
 #ifdef RTAPPEXAMPLEACTIVE
     RtAppExample_Main(0);
 #endif
+    HALI2C_MainFunction();
 }
 
 static void RTTask_5ms_1(void)
@@ -90,6 +100,7 @@ static void RTTask_5ms_2(void)
     RtAppExample_Main(2);
 #endif
     RtAppComm_Main();
+    NXPBaro_MainFunction();
 }
 
 static void RTTask_5ms_3(void)
@@ -106,6 +117,7 @@ static void RTTask_5ms_4(void)
     RtAppExample_Main(4);
 #endif
     RtAppData_Main();
+    //place holder for NXPAccel_MainFunction();
 }
 
 static void RTTask_5ms_5(void)

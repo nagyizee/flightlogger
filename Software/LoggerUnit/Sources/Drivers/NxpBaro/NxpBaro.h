@@ -39,7 +39,7 @@ typedef enum
 {
     NXPBARO_MS_PRESSURE = 0u,
     NXPBARO_MS_ALTITUDE,
-    NXPBARO_MS_TEMP
+    NXPBARO_MS_TEMP,
 } tNxpBaroMeasurementSelector;
 
 /*--------------------------------------------------

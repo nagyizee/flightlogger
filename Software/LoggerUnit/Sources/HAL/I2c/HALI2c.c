@@ -56,7 +56,7 @@ void HALI2C_Init(void)
 
 void HALI2C_MainFunction(void)
 {
-    local_PolInternalStateMachine(true);
+    local_PollInternalStateMachine(true);
 }
 
 tI2CStatus HALI2C_GetStatus(tI2CChannelType ch)
