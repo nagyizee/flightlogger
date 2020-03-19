@@ -347,10 +347,10 @@
                     <state>$PROJ_DIR$\..\Sources\HAL\I2c\</state>
                     <state>$PROJ_DIR$\..\Sources\HAL\Spi\</state>
                     <state>$PROJ_DIR$\..\Sources\System\Os\</state>
+                    <state>$PROJ_DIR$\..\Sources\Drivers\NxpBaro\</state>
+                    <state>$PROJ_DIR$\..\Sources\Drivers\NxpAccel\</state>
                     <state>$PROJ_DIR$\..\Sources\Drivers\CypFlash\</state>
                     <state>$PROJ_DIR$\..\Sources\Drivers\Nvm\</state>
-                    <state>$PROJ_DIR$\..\Sources\Drivers\NxpAccel\</state>
-                    <state>$PROJ_DIR$\..\Sources\Drivers\NxpBaro\</state>
                     <state>$PROJ_DIR$\..\Sources\Drivers\PPMin\</state>
                     <state>$PROJ_DIR$\..\Sources\Lib\Crc\</state>
                     <state>$PROJ_DIR$\..\Sources\Lib\Filters\</state>
@@ -2090,16 +2090,16 @@
             <name>$PROJ_DIR$\..\Sources\Drivers\Nvm\Nvm.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Sources\Drivers\NVM\Nvm.h</name>
+            <name>$PROJ_DIR$\..\Sources\Drivers\Nvm\Nvm.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\Sources\Drivers\Nvm\Nvm_Cfg.c</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Sources\Drivers\NVM\Nvm_Cfg.h</name>
+            <name>$PROJ_DIR$\..\Sources\Drivers\Nvm\Nvm_Cfg.h</name>
         </file>
         <file>
-            <name>$PROJ_DIR$\..\Sources\Drivers\NVM\Nvm_Internals.h</name>
+            <name>$PROJ_DIR$\..\Sources\Drivers\Nvm\Nvm_Internals.h</name>
         </file>
         <file>
             <name>$PROJ_DIR$\..\Sources\Drivers\NxpAccel\NxpAccel.c</name>
