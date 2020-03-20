@@ -21,13 +21,15 @@
 
 typedef enum
 {
-    NVM_ST_INIT = 0,         /* Initialization */
-    NVM_ST_INITHEADER,       /* Initialization of NVM Header */
-    NVM_ST_INITDATA,         /* Initialization of NVM Data */
-    NVM_ST_IDLE,             /* Nothing to do */
-    NVM_ST_REPAIR,           /* Erase all sectors and rebuild nvm */
-    NVM_ST_REPAIR_CNT,       /*      Continue */
-    NVM_ST_ERROR             /* Flash memory unavailable */    
+    NVM_ST_INIT = 0,        /* Initialization */
+    NVM_ST_READHEADER,      /* Initialization of NVM Header */
+    NVM_ST_INITDATA,        /* Initialization of NVM Data */
+    NVM_ST_READDATA,        /* Read out block data associated with actual header */
+    NVM_ST_WAIT,            /* Wait for last command to be finished */
+    NVM_ST_IDLE,            /* Nothing to do */
+    NVM_ST_REPAIR,          /* Erase all sectors and rebuild nvm */
+    NVM_ST_REPAIR_CNT,      /*      Continue */
+    NVM_ST_ERROR            /* Flash memory unavailable */    
 } tNvmDataInternalStates;
 
 typedef struct
@@ -98,10 +100,10 @@ void Nvm_Main(void)
             /* Parse header areas - start with Sector 0 */
             /* Start to check actual sector */
             if (Nvm_ReadMemory(lNvm.CurrentHeadAddr, NVM_HEADER_SIZE, lNvm.Buffer) == RES_OK)
-                lNvm.InternalState = NVM_ST_INITHEADER;
+                lNvm.InternalState = NVM_ST_READHEADER;
             break;
         }
-    case NVM_ST_INITHEADER:
+    case NVM_ST_READHEADER:
         {
             if (Nvm_GetMemoryStatus() == RES_OK)
             {
@@ -116,9 +118,6 @@ void Nvm_Main(void)
                         if (((lNvm.CurrentHeader.BlockAbsAddress & NVM_SECTOR_MASK) == (lNvm.CurrentHeadAddr & NVM_SECTOR_MASK))
                             && (lNvm.CurrentHeader.BlockID < NVM_NUMBER_OF_BLOCKS))
                         {       /* read out data associated with actual header */
-                            Nvm_ReadMemory(lNvm.CurrentHeader.BlockAbsAddress, 
-                                             cNvmBlockConfig[lNvm.CurrentHeader.BlockID].BlockSize, 
-                                             lNvm.Buffer);
                             lNvm.InternalState = NVM_ST_INITDATA;
                         }
                         else
@@ -189,6 +188,14 @@ void Nvm_Main(void)
         }
     case NVM_ST_INITDATA:
         {
+            if (Nvm_ReadMemory( lNvm.CurrentHeader.BlockAbsAddress, 
+                                cNvmBlockConfig[lNvm.CurrentHeader.BlockID].BlockSize, 
+                                lNvm.Buffer) == RES_OK)
+                lNvm.InternalState = NVM_ST_READDATA;
+            break;
+        }
+    case NVM_ST_READDATA:
+        {
             if (Nvm_GetMemoryStatus() == RES_OK)
             {   /* Check header and block data consistency */
                 if (  (lNvm.Buffer[0]==cNvmBlockConfig[lNvm.CurrentHeader.BlockID].MagicWord)
@@ -251,9 +258,7 @@ void Nvm_Main(void)
         }
     case NVM_ST_ERROR:
         {   /* Error case - erase memory and rebuild data */
-            
-/* !!!!!!!!!!!!!!!!!!!!!!!!! to be removed after os interrupts will be fixed */
-            if(Nvm_GetMemoryStatus() == RES_OK) lNvm.InternalState = NVM_ST_INIT;
+            local_NvmStartRepairProcess();
             break;
         }
     default:
@@ -280,7 +285,7 @@ static void local_NvmHandleCorruptMemory(void)
     }
     else    /* Already in mirror flash space, start repair process */
     {
-        //local_NvmStartRepairProcess();
+        local_NvmStartRepairProcess();
     }
 }
 
