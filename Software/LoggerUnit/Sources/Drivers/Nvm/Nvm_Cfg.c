@@ -55,26 +55,7 @@ const uint8 cNvmDefaultData[NVM_TOTAL_SIZE_OF_BLOCKS] =
  *--------------------------------------------------*/
 
 #ifdef NVM_USE_CYPFLASH
-inline tResult i_NvmTranslateStatus(tCypFlashStatus status)
-{
-    tResult retval;
-    if (status == CYPFLASH_ST_READY)
-    {
-        retval = RES_OK;
-    }
-    elseif (status == CYPFLASH_ST_BUSY)
-    {
-        retval = RES_BUSY;
-    }
-    elseif (status < CYPFLASH_ST_READY)
-    {
-        retval = RES_INVALID;
-    }
-    else
-    retval = RES_ERROR;
-    
-    return retval;
-}
+static tResult i_NvmTranslateStatus(tCypFlashStatus status);
 #endif
 
 /*--------------------------------------------------
@@ -148,3 +129,26 @@ tResult Nvm_WriteMemory(uint32 address, uint16 count, uint8* buffer)
     return i_NvmTranslateStatus(fls_status);    
 #endif
 }
+
+#ifdef NVM_USE_CYPFLASH
+static tResult i_NvmTranslateStatus(tCypFlashStatus status)
+{
+    tResult retval;
+    if (status == CYPFLASH_ST_READY)
+    {
+        retval = RES_OK;
+    }
+    else if (status == CYPFLASH_ST_BUSY)
+    {
+        retval = RES_BUSY;
+    }
+    else if (status < CYPFLASH_ST_READY)
+    {
+        retval = RES_INVALID;
+    }
+    else
+    retval = RES_ERROR;
+    
+    return retval;
+}
+#endif

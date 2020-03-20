@@ -97,9 +97,8 @@ void Nvm_Main(void)
         {
             /* Parse header areas - start with Sector 0 */
             /* Start to check actual sector */
-            Nvm_ReadMemory(lNvm.CurrentHeadAddr, NVM_HEADER_SIZE, lNvm.Buffer);
-
-            lNvm.InternalState = NVM_ST_INITHEADER;
+            if (Nvm_ReadMemory(lNvm.CurrentHeadAddr, NVM_HEADER_SIZE, lNvm.Buffer) == RES_OK)
+                lNvm.InternalState = NVM_ST_INITHEADER;
             break;
         }
     case NVM_ST_INITHEADER:
@@ -281,7 +280,7 @@ static void local_NvmHandleCorruptMemory(void)
     }
     else    /* Already in mirror flash space, start repair process */
     {
-        local_NvmStartRepairProcess();
+        //local_NvmStartRepairProcess();
     }
 }
 

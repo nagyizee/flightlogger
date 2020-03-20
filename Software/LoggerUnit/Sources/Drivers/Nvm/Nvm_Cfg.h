@@ -28,8 +28,8 @@ typedef struct
  *--------------------------------------------------*/
 
 /* Underlying data storage method/device selection - only 1 should be active */
-#define NVM_USE_RAM         /* internal RAM emulated NVM - used for testing */
-//#define NVM_USE_CYPFLASH    /* Use Cypress S25FL064 external flash driver */
+//#define NVM_USE_RAM         /* internal RAM emulated NVM - used for testing */
+#define NVM_USE_CYPFLASH    /* Use Cypress S25FL064 external flash driver */
 
 /* Block size settings */
 #define NVM_NUMBER_OF_BLOCKS         3
