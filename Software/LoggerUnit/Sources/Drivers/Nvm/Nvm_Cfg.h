@@ -43,10 +43,12 @@ typedef struct
 
 /* Memory descriptors */
 #ifdef NVM_USE_RAM
-#define NVM_SECTOR_SIZE              0x200
+    #define NVM_SECTOR_SIZE              0x200
+    #define NVM_SECTOR_MASK             0xFE00
 #else
 #ifdef NVM_USE_CYPFLASH
-#define NVM_SECTOR_SIZE             0x1000
+    #define NVM_SECTOR_SIZE             0x1000
+    #define NVM_SECTOR_MASK             0xF000
 #endif
 #endif
 

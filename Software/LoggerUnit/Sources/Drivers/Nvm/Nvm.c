@@ -76,8 +76,7 @@ void Nvm_Init(void)
     /* initialize local variables */
     memset(&lNvm, 0, sizeof(tNvmDataStruct));
     /* Fill RAM mirror with default data */
-    memcpy(&lNvm.RamMirror, &cNvmDefaultData, sizeof(cNvmDefaultData));
-    lNvm.CurrentDataAddr = NVM_SECTOR_SIZE;
+    memcpy(&lNvm.RamMirror, &cNvmDefaultData, NVM_TOTAL_SIZE_OF_BLOCKS);
     
     if (Nvm_Init_Internal() == RES_OK)
     {
@@ -105,7 +104,7 @@ void Nvm_Main(void)
         }
     case NVM_ST_INITHEADER:
         {
-            if (Nvm_GetMemoryStatus() == CYPFLASH_ST_READY)
+            if (Nvm_GetMemoryStatus() == RES_OK)
             {
                 switch (lNvm.Buffer[0])
                 {
@@ -115,7 +114,7 @@ void Nvm_Main(void)
                         memcpy(&lNvm.CurrentHeader, lNvm.Buffer, NVM_HEADER_SIZE);
                         
                         /* Check plausibility of block ID and address  */
-                        if (((lNvm.CurrentHeader.BlockAbsAddress & 0xF000) == (lNvm.CurrentHeadAddr & 0xF000))
+                        if (((lNvm.CurrentHeader.BlockAbsAddress & NVM_SECTOR_MASK) == (lNvm.CurrentHeadAddr & NVM_SECTOR_MASK))
                             && (lNvm.CurrentHeader.BlockID < NVM_NUMBER_OF_BLOCKS))
                         {       /* read out data associated with actual header */
                             Nvm_ReadMemory(lNvm.CurrentHeader.BlockAbsAddress, 
@@ -141,8 +140,8 @@ void Nvm_Main(void)
                            )
                         {
                             lNvm.CurrentSector++;
-                            lNvm.CurrentHeadAddr = lNvm.CurrentSector*0x1000;
-                            lNvm.CurrentDataAddr = (lNvm.CurrentSector+1)*0x1000;
+                            lNvm.CurrentHeadAddr = lNvm.CurrentSector*NVM_SECTOR_SIZE;
+                            lNvm.CurrentDataAddr = (lNvm.CurrentSector+1)*NVM_SECTOR_SIZE;
                             lNvm.InternalState = NVM_ST_INIT;
                         }
                         else
@@ -166,10 +165,10 @@ void Nvm_Main(void)
                         }
                         else    /* Check other sectors if available */
                         {
-                            if (lNvm.CurrentSector<3) /* Total of 4 sectors available for NVM - 2 operational + 2 mirrorred */
+                            if (lNvm.CurrentSector<NVM_SECTOR_CNT*NVM_DATASET_CNT-1)
                             {
                                 lNvm.CurrentSector++;
-                                lNvm.CurrentHeadAddr = lNvm.CurrentSector*0x1000;
+                                lNvm.CurrentHeadAddr = lNvm.CurrentSector*NVM_SECTOR_SIZE;
                                 lNvm.InternalState = NVM_ST_INIT;
                             }
                             else
@@ -191,7 +190,7 @@ void Nvm_Main(void)
         }
     case NVM_ST_INITDATA:
         {
-            if (Nvm_GetMemoryStatus() == CYPFLASH_ST_READY)
+            if (Nvm_GetMemoryStatus() == RES_OK)
             {   /* Check header and block data consistency */
                 if (  (lNvm.Buffer[0]==cNvmBlockConfig[lNvm.CurrentHeader.BlockID].MagicWord)
                     &&(CalcCRC16(lNvm.CurrentHeader.InstanceNr+lNvm.CurrentHeader.BlockAbsAddress+lNvm.CurrentHeader.BlockID,
@@ -228,18 +227,18 @@ void Nvm_Main(void)
         }
     case NVM_ST_REPAIR:
         {
-            if (Nvm_StartEraseSector(lNvm.CurrentHeadAddr) == CYPFLASH_ST_READY)
+            if (Nvm_StartEraseSector(lNvm.CurrentHeadAddr) == RES_OK)
                 lNvm.InternalState = NVM_ST_REPAIR_CNT;
             break;
         }
     case NVM_ST_REPAIR_CNT:
         {
-            if (Nvm_GetMemoryStatus() == CYPFLASH_ST_READY)
+            if (Nvm_GetMemoryStatus() == RES_OK)
             {
-                if (lNvm.CurrentSector<3) /* Total of 4 sectors available for NVM - 2 operational + 2 mirrorred */
+                if (lNvm.CurrentSector<NVM_SECTOR_CNT*NVM_DATASET_CNT-1)
                 {
                     lNvm.CurrentSector++;
-                    lNvm.CurrentHeadAddr = lNvm.CurrentSector*0x1000;
+                    lNvm.CurrentHeadAddr = lNvm.CurrentSector*NVM_SECTOR_SIZE;
                     lNvm.InternalState = NVM_ST_REPAIR;
                 }
                 else
@@ -255,7 +254,7 @@ void Nvm_Main(void)
         {   /* Error case - erase memory and rebuild data */
             
 /* !!!!!!!!!!!!!!!!!!!!!!!!! to be removed after os interrupts will be fixed */
-            if(Nvm_GetMemoryStatus() == CYPFLASH_ST_READY) lNvm.InternalState = NVM_ST_INIT;
+            if(Nvm_GetMemoryStatus() == RES_OK) lNvm.InternalState = NVM_ST_INIT;
             break;
         }
     default:
@@ -274,10 +273,10 @@ static void local_NvmHandleCorruptMemory(void)
 {
     /* Invalid header data in the actual sector - header space corrupted, continue with mirror data */
     /* If current sector < 2, check the same mirror header area */
-    if (lNvm.CurrentSector<2)
+    if (lNvm.CurrentSector<NVM_DATASET_CNT)
     {
-            lNvm.CurrentSector+=2;
-            lNvm.CurrentHeadAddr += 0x2000;
+            lNvm.CurrentSector+=NVM_DATASET_CNT;
+            lNvm.CurrentHeadAddr += NVM_DATASET_CNT*NVM_SECTOR_SIZE;
             lNvm.InternalState = NVM_ST_INIT;
     }
     else    /* Already in mirror flash space, start repair process */
@@ -292,7 +291,7 @@ static void local_NvmStartRepairProcess(void)
     
     lNvm.CurrentSector = 0u;
     lNvm.CurrentHeadAddr = 0u;
-    lNvm.CurrentDataAddr = 0x1000;
+    lNvm.CurrentDataAddr = NVM_SECTOR_SIZE;
     
     /* Mark nvm based data as dirty */
     for (i=0; i<NVM_NUMBER_OF_BLOCKS; i++)

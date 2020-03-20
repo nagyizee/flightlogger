@@ -86,7 +86,7 @@ tResult Nvm_Init_Internal(void)
     tResult retval = RES_OK;
     /* Check memory source availability */
 #ifdef NVM_USE_RAM
-    memset(lNvmRamBuffer, 0xFF, 0x4000);
+    memset(&lNvmRamBuffer, NVM_ERASE_VAL, NVM_DATASET_CNT*NVM_SECTOR_CNT*NVM_SECTOR_SIZE );
 #endif
     
 #ifdef NVM_USE_CYPFLASH
