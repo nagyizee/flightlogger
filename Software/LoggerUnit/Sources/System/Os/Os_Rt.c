@@ -68,6 +68,7 @@ static void RTTask_1ms(void)
 {
 #ifdef RTAPPEXAMPLEACTIVE
     RtAppExample_Main(0);
+    CypFlash_Main();
 #endif
 }
 
@@ -85,7 +86,7 @@ static void RTTask_5ms_2(void)
     RtAppExample_Main(2);
 #endif
     RtAppComm_Main();
-    CypFlash_Main();
+    Nvm_Main();
 }
 
 static void RTTask_5ms_3(void)
@@ -102,7 +103,6 @@ static void RTTask_5ms_4(void)
     RtAppExample_Main(4);
 #endif
     RtAppData_Main();
-    Nvm_Main();
 }
 
 static void RTTask_5ms_5(void)
@@ -110,7 +110,7 @@ static void RTTask_5ms_5(void)
 #ifdef RTAPPEXAMPLEACTIVE
     RtAppExample_Main(5);
 #endif
-    CypFlash_Main();
+    Nvm_Main();
 }
 
 /* definition of the constantly running background task - it is run in the application context */
