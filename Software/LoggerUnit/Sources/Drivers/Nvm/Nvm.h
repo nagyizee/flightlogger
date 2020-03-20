@@ -1,5 +1,5 @@
-#ifndef	_RTAPPDATA_H
-#define _RTAPPDATA_H
+#ifndef	_NVM_H
+#define _NVM_H
 /**
  *
  *
@@ -22,8 +22,7 @@
  *                              Exported interfaces
  *--------------------------------------------------*/
 
-void RtAppData_Init(void);     
-void RtAppData_Main(void);
+void Nvm_Init(void);     
+void Nvm_Main(void);
 
 #endif
-

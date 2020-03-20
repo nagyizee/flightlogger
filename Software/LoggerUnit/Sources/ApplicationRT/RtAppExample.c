@@ -8,6 +8,9 @@
 #include "HALI2c.h"
 #include "HALSpi.h"
 #include "CypFlash.h"
+#include "Nvm.h"
+#include "Nvm_Cfg.h"
+#include "RtAppData.h"
 
 /* Test control and data variables */
 
@@ -40,12 +43,16 @@ static uint32 baseaddress = 0;
 static uint8 writecount = 64;
 static uint8 writedata = 0x55;
 
+static uint32 nvmtest = 0;
+static uint8 nvmtest_blockid;
+static uint8 nvmtest_data[NVM_MAX_BLOCK_SIZE];
 
 static void local_tasktiming_test(uint32 taskIdx);
 static void local_i2c_test(void);
 static void local_spi_test(void);
 static void local_cypflashtest(void);
 static void local_fillbuffer(uint8 *buffer);
+static void local_nvm_test();
 
 void RtAppExample_Main(uint32 taskIdx)
 {
@@ -53,6 +60,7 @@ void RtAppExample_Main(uint32 taskIdx)
     local_i2c_test();
     local_spi_test();
     local_cypflashtest();
+    local_nvm_test();
 }
 
 static void local_tasktiming_test(uint32 taskIdx)
@@ -283,5 +291,15 @@ static void local_cypflashtest(void)
             baseaddress = CypFlash_GetStatus();
         }
     }
+}
+
+static void local_nvm_test(void)
+{
+    switch(nvmtest)
+    {
+    case 1: /* Read block */
+        break;
+    }
+    nvmtest = 0;
 }
 #endif

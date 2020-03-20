@@ -13,6 +13,7 @@
 /* Drivers */
 #include "NxpBaro.h"
 #include "CypFlash.h"
+#include "Nvm.h"
 /* AppRT */
 #include "RtAppExample.h"
 #include "RtAppData.h"
@@ -57,6 +58,7 @@ void OsRt_Init(void)
     HALSPI_Init();
     
     CypFlash_Init();
+    Nvm_Init();
     
     RtAppData_Init();
 }
@@ -83,6 +85,7 @@ static void RTTask_5ms_2(void)
     RtAppExample_Main(2);
 #endif
     RtAppComm_Main();
+    CypFlash_Main();
 }
 
 static void RTTask_5ms_3(void)
@@ -99,6 +102,7 @@ static void RTTask_5ms_4(void)
     RtAppExample_Main(4);
 #endif
     RtAppData_Main();
+    Nvm_Main();
 }
 
 static void RTTask_5ms_5(void)
