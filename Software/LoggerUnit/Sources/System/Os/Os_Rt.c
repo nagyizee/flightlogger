@@ -14,7 +14,6 @@
 #include "NxpBaro.h"
 #include "NxpAccel.h"
 #include "CypFlash.h"
-#include "Nvm.h"
 /* AppRT */
 #include "RtAppExample.h"
 #include "RtAppData.h"
@@ -69,7 +68,6 @@ void OsRt_Init(void)
 
     /* init drivers and system modules */
     CypFlash_Init();
-<<<<<<< HEAD
     NXPBaro_Init();
 //placeholder for    NxpAccel_Init();
     /* init application modules */
@@ -77,11 +75,6 @@ void OsRt_Init(void)
 
 //it blocks inside - need investigation
 //    RtAppData_Init();
-=======
-    Nvm_Init();
-    
-    RtAppData_Init();
->>>>>>> NVM
 }
 
 /* definition of timed Tasks - they are run in the low priority interrupt context */
@@ -89,7 +82,6 @@ static void RTTask_1ms(void)
 {
 #ifdef RTAPPEXAMPLEACTIVE
     RtAppExample_Main(0);
-    CypFlash_Main();
 #endif
     HALI2C_MainFunction();
 }
@@ -108,11 +100,7 @@ static void RTTask_5ms_2(void)
     RtAppExample_Main(2);
 #endif
     RtAppComm_Main();
-<<<<<<< HEAD
     NXPBaro_MainFunction();
-=======
-    Nvm_Main();
->>>>>>> NVM
 }
 
 static void RTTask_5ms_3(void)
@@ -137,7 +125,7 @@ static void RTTask_5ms_5(void)
 #ifdef RTAPPEXAMPLEACTIVE
     RtAppExample_Main(5);
 #endif
-    Nvm_Main();
+    CypFlash_Main();
 }
 
 /* definition of the constantly running background task - it is run in the application context */

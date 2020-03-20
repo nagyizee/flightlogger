@@ -421,7 +421,7 @@ tCypFlashStatus CypFlash_EraseSector(uint32 address) /* 4K sector */
     if (l_return_status == CYPFLASH_ST_READY)
     {
         /* Check input parameters */
-        if (address==(address&0x00FFF000)) /* Check address alignment to Sector start*/
+        if (address==(address&0x00FFF000)) /* Check address alignment to sector start*/
         {
             lCypFlash.ActualCommand = FLS_CMD_ERASESECTOR;
             lCypFlash.ActualCount = 4;
@@ -444,7 +444,7 @@ tCypFlashStatus CypFlash_EraseBlock(uint32 address) /* 64K block */
     if (l_return_status == CYPFLASH_ST_READY)
     {
         /* Check input parameters */
-        if (address==(address&0x00FF0000)) /* Check address alignment to Block start*/
+        if (address==(address&0x00FF0000)) /* Check address alignment to sector start*/
         {
             lCypFlash.ActualCommand = FLS_CMD_ERASEBLOCK;
             lCypFlash.ActualCount = 4;
