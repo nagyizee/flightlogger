@@ -7,17 +7,13 @@
 #include <string.h>
 #include "base.h"
 #include "HALPort.h"
+#include "LibCrc.h"
 #include "Nvm.h"
 #include "Nvm_Cfg.h"
 
 /*--------------------------------------------------
  *                  Defines and type definitions
  *--------------------------------------------------*/
-
-#define NVM_BLOCKSTATE_DEFAULT      0
-#define NVM_BLOCKSTATE_NVM          1
-#define NVM_BLOCKSTATE_DIRTY        2
-#define NVM_BLOCKSTATE_WR_MAIN      3   /* Written to the main sector, writing to mirror still ongoing */
 
 typedef enum
 {
@@ -32,28 +28,41 @@ typedef enum
     NVM_ST_ERROR            /* Flash memory unavailable */    
 } tNvmDataInternalStates;
 
+#ifdef UC_LITTLE_ENDIAN
 typedef struct
 {
-    uint8   MagicWord;          /* 0xFF - unused, 0xAA - current, 0x0A - history, 0x00 - invalid */
-    uint8   BlockID;            /* Index of the block */
-    uint16  InstanceNr;         /* Reset only with NVM sectors erase */
-    uint16  BlockAbsAddress;    /* Absolute address of the block within current sector */
-    uint16  CRC16;              /* CRC of the data area, also with elements from header:
-                                 * (BlockID, InstaceNr, BlockAbsAddress) */
+    uint32  MagicWord    :  8;  /* 0xFF - unused, 0xAA - current, 0x0A - history, 0x00 - invalid */
+    uint32  BlockID      :  3;  /* Max 8 different blocks can be handled */
+    uint32  InstanceNr   :  3;  /* instance of the block in memory history, rollover when overflowing, starting with 1 */
+    uint32  BlockSegAddr : 10;  /* Real address = Segment Address * NVM_MIN_BLOCK_SIZE */
+    uint32  CRC8 :          8;           /* CRC of the data area, also with elements from header:
+                                 * (BlockID, InstaceNr, BlockSegAddr) */
 } tNvmBlockHeaderStruct;
+#else
+typedef struct
+{
+    uint32  CRC8         :  8;  /* CRC of the data area, also with elements from header:
+                                 * (BlockID, InstaceNr, BlockSegAddr) */
+    uint32  BlockSegAddr : 10;  /* Real address = Segment Address * NVM_MIN_BLOCK_SIZE */
+    uint32  InstanceNr   :  3;  /* instance of the block in memory history, rollover when overflowing, starting with 1 */
+    uint32  BlockID      :  3;  /* Max 8 different blocks can be handled */
+    uint32  MagicWord    :  8;  /* 0xFF - unused, 0xAA - current, 0x0A - history, 0x00 - invalid */
+} tNvmBlockHeaderStruct;
+#endif
 
 typedef struct
 {
+    tNvmDataInternalStates  InternalState;
+    tNvmBlockHeaderStruct   CurrentHeader;
     uint8                   RamMirror[NVM_TOTAL_SIZE_OF_BLOCKS];
     uint8                   Buffer[NVM_MAX_BLOCK_SIZE];
-    uint8                   CurrentBlockInstance[NVM_NUMBER_OF_BLOCKS];
-    tNvmBlockHeaderStruct   CurrentHeader;
+    tNvmBlockState          BlockState[NVM_NUMBER_OF_BLOCKS];
+    uint16                  CurrentBlockAddr[NVM_NUMBER_OF_BLOCKS];
     uint16                  CurrentHeadAddr;
     uint16                  CurrentDataAddr;
+    uint8                   CurrentBlockInstance[NVM_NUMBER_OF_BLOCKS];
     uint8                   CurrentSector;
-    tNvmDataInternalStates  InternalState;
     uint8                   BlockFound;
-    uint8                   BlockState[NVM_NUMBER_OF_BLOCKS]; /* 0 - default, 1 - nv data, 2 - dirty */
 } tNvmDataStruct;
 
 /*--------------------------------------------------
@@ -109,14 +118,15 @@ void Nvm_Main(void)
             {
                 switch (lNvm.Buffer[0])
                 {
-                case 0x0A:  /* History data considered valid until newer data will be found */
-                case 0xAA:  /* Valid header, save and process header information */
+                case NVM_HEADER_HISTORY:  /* History data considered valid until newer data will be found */
+                case NVM_HEADER_VALID:  /* Valid header, save and process header information */
                     {                        
                         memcpy(&lNvm.CurrentHeader, lNvm.Buffer, NVM_HEADER_SIZE);
                         
                         /* Check plausibility of block ID and address  */
-                        if (((lNvm.CurrentHeader.BlockAbsAddress & NVM_SECTOR_MASK) == (lNvm.CurrentHeadAddr & NVM_SECTOR_MASK))
-                            && (lNvm.CurrentHeader.BlockID < NVM_NUMBER_OF_BLOCKS))
+                        if ((((lNvm.CurrentHeader.BlockSegAddr*NVM_MIN_BLOCK_SIZE) & NVM_SECTOR_MASK) == (lNvm.CurrentHeadAddr & NVM_SECTOR_MASK))
+                            && (lNvm.CurrentHeader.BlockID < NVM_NUMBER_OF_BLOCKS)
+                            && ((lNvm.CurrentHeader.BlockSegAddr*NVM_MIN_BLOCK_SIZE)>lNvm.CurrentHeadAddr+NVM_HEADER_SIZE))
                         {       /* read out data associated with actual header */
                             lNvm.InternalState = NVM_ST_INITDATA;
                         }
@@ -126,15 +136,15 @@ void Nvm_Main(void)
                         }
                         break;
                     }
-                case 0x55:  /* NVM continues in next sector */
+                case NVM_HEADER_NEXTSECTOR:  /* NVM continues in next sector */
                     {
                         memcpy(&lNvm.CurrentHeader, lNvm.Buffer, NVM_HEADER_SIZE);
                         
                         if ( ((lNvm.CurrentSector==0)||(lNvm.CurrentSector==2))
-                            &&(lNvm.CurrentHeader.BlockID == 0xA5)
-                            &&(lNvm.CurrentHeader.InstanceNr == 0xCAFE)
-                            &&(lNvm.CurrentHeader.BlockAbsAddress == 0xDADA)
-                            &&(lNvm.CurrentHeader.CRC16 == 0x0CBC)
+                            &&(lNvm.CurrentHeader.BlockID == NVM_NEXTSECT_BLOCKID)
+                            &&(lNvm.CurrentHeader.InstanceNr == NVM_NEXTSECT_INSTANCE)
+                            &&(lNvm.CurrentHeader.BlockSegAddr == NVM_NEXTSECT_BLOCKSEG)
+                            &&(lNvm.CurrentHeader.CRC8 == NVM_NEXTSECT_CRC8)
                            )
                         {
                             lNvm.CurrentSector++;
@@ -148,7 +158,7 @@ void Nvm_Main(void)
                         }
                         break;
                     }
-                case 0x00:  /* Invalidated header ignored, go to next header */
+                case NVM_HEADER_INVALID:  /* Invalidated header ignored, go to next header */
                     {
                         lNvm.CurrentHeadAddr += NVM_HEADER_SIZE;
                         lNvm.InternalState = NVM_ST_INIT;
@@ -188,7 +198,7 @@ void Nvm_Main(void)
         }
     case NVM_ST_INITDATA:
         {
-            if (Nvm_ReadMemory( lNvm.CurrentHeader.BlockAbsAddress, 
+            if (Nvm_ReadMemory( (lNvm.CurrentHeader.BlockSegAddr*NVM_MIN_BLOCK_SIZE), 
                                 cNvmBlockConfig[lNvm.CurrentHeader.BlockID].BlockSize, 
                                 lNvm.Buffer) == RES_OK)
                 lNvm.InternalState = NVM_ST_READDATA;
@@ -199,10 +209,10 @@ void Nvm_Main(void)
             if (Nvm_GetMemoryStatus() == RES_OK)
             {   /* Check header and block data consistency */
                 if (  (lNvm.Buffer[0]==cNvmBlockConfig[lNvm.CurrentHeader.BlockID].MagicWord)
-                    &&(CalcCRC16(lNvm.CurrentHeader.InstanceNr+lNvm.CurrentHeader.BlockAbsAddress+lNvm.CurrentHeader.BlockID,
+                    &&(CalcCRC8(lNvm.CurrentHeader.InstanceNr+(lNvm.CurrentHeader.BlockSegAddr)+lNvm.CurrentHeader.BlockID,
                                  lNvm.Buffer, 
                                  cNvmBlockConfig[lNvm.CurrentHeader.BlockID].BlockSize) 
-                       == lNvm.CurrentHeader.CRC16)
+                       == lNvm.CurrentHeader.CRC8)
                     )
                 {
                     /* Data valid, store in RAM Mirror */
@@ -218,7 +228,8 @@ void Nvm_Main(void)
                     lNvm.CurrentBlockInstance[lNvm.CurrentHeader.BlockID] = lNvm.CurrentHeader.InstanceNr;
                     
                     /* Update global BlockAddress */
-                    lNvm.CurrentDataAddr = lNvm.CurrentHeader.BlockAbsAddress;
+                    lNvm.CurrentDataAddr = (lNvm.CurrentHeader.BlockSegAddr*NVM_MIN_BLOCK_SIZE);
+                    lNvm.CurrentBlockAddr[lNvm.CurrentHeader.BlockID] = lNvm.CurrentDataAddr;
                     
                     /* Parse next header */
                     lNvm.CurrentHeadAddr += NVM_HEADER_SIZE;
@@ -308,10 +319,3 @@ static void local_NvmStartRepairProcess(void)
     lNvm.InternalState = NVM_ST_REPAIR;
 }
 
-uint16 CalcCRC16(uint16 startval, uint8* buffer, uint16 counter)
-{
-    uint16 acc = startval, i;
-    for (i=0; i<counter; i++) acc += (buffer[i]+i)*buffer[i];
-    //return acc;
-    return 0xFFFF;
-}

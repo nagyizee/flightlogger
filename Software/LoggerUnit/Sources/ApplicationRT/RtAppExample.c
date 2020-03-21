@@ -40,8 +40,8 @@ static uint32 cypflashtest = 0;
 static tCypFlashStatus cypflashcallstatus;
 static uint8 flash_buff[CYPFLASH_READ_BUFSIZE];
 static uint32 baseaddress = 0;
-static uint8 writecount = 64;
-static uint8 writedata = 0x55;
+static uint8 writecount = 1;
+static uint8 writedata = 0xaa;
 
 static uint32 nvmtest = 0;
 static uint8 nvmtest_blockid;
