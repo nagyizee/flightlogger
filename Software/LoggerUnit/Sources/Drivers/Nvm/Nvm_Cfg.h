@@ -1,9 +1,7 @@
 #ifndef	_NVMCFG_H
 #define _NVMCFG_H
 /**
- *
- *
- *
+ *      NVM Driver configuration header file
  */
 
 /*--------------------------------------------------
@@ -15,7 +13,6 @@
 /*--------------------------------------------------
                                 Type definitions
  *--------------------------------------------------*/
-
 typedef struct
 {
     uint16      BlockAddress;   /* Start address of the block in the NVM array */
@@ -26,7 +23,6 @@ typedef struct
 /*--------------------------------------------------
  *                              Defines
  *--------------------------------------------------*/
-
 /* Underlying data storage method/device selection - only 1 should be active */
 //#define NVM_USE_RAM         /* internal RAM emulated NVM - used for testing */
 #define NVM_USE_CYPFLASH    /* Use Cypress S25FL064 external flash driver */
@@ -36,7 +32,7 @@ typedef struct
 /* Block size settings */
 #define NVM_NUMBER_OF_BLOCKS         3  /* Max 8 different blocks are allowed */
 #define NVM_HEADER_SIZE              4  /* Bytes */
-#define NVM_MIN_BLOCK_SIZE           8  /* Bytes */
+#define NVM_MIN_BLOCK_SIZE           8  /* Bytes - Used also for segment size */
 /* !!! All block sizes have to be multiples of the min block size !!! */
 #define NVM_MAX_BLOCK_SIZE          16  /* Bytes */
 #define NVM_TOTAL_SIZE_OF_BLOCKS    32  /* Only data blocks, without header info! */
@@ -58,18 +54,20 @@ typedef struct
 
 /* Memory descriptors */
 #ifdef NVM_USE_RAM
-    #define NVM_SECTOR_SIZE              0x200
-    #define NVM_SECTOR_MASK             0xFE00
+    #define NVM_SECTOR_SIZE              0x100
+    #define NVM_SECTOR_MASK             0xFF00
+    #define NVM_INNER_MASK              0x00FF
 #else
 #ifdef NVM_USE_CYPFLASH
     #define NVM_SECTOR_SIZE             0x1000
     #define NVM_SECTOR_MASK             0xF000
+    #define NVM_INNER_MASK              0x0FFF
 #endif
 #endif
 
 /* Verify if segment size in header address fits to sector size + min block size */     
 #if NVM_SECTOR_SIZE/(NVM_HEADER_SIZE+NVM_MIN_BLOCK_SIZE)>1023
-#error     
+#error  /* Has to fit in 10 bits of data to keep header size low */
 #endif
      
 /*--------------------------------------------------
@@ -86,6 +84,7 @@ tResult Nvm_Init_Internal(void);
 
 tResult Nvm_GetMemoryStatus(void);
 tResult Nvm_StartEraseSector(uint32 address);
+
 tResult Nvm_ReadMemory(uint32 address, uint16 count, uint8* buffer);
 tResult Nvm_WriteMemory(uint32 address, uint16 count, uint8* buffer);
 

@@ -5,7 +5,6 @@
  *--------------------------------------------------*/
 
 #include <string.h>
-#include "base.h"
 #include "CypFlash.h"
 #include "HALSpi.h"
 

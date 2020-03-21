@@ -44,8 +44,10 @@ static uint8 writecount = 1;
 static uint8 writedata = 0xaa;
 
 static uint32 nvmtest = 0;
-static uint8 nvmtest_blockid;
-static uint8 nvmtest_data[NVM_MAX_BLOCK_SIZE];
+static uint8 nvmtest_blockid = 0;
+static uint16 nvmtest_blocksize = 8;
+static tNvmBlockState nvmtest_retval;
+static uint8 nvmtest_buff[NVM_MAX_BLOCK_SIZE];
 
 static void local_tasktiming_test(uint32 taskIdx);
 static void local_i2c_test(void);
@@ -297,8 +299,19 @@ static void local_nvm_test(void)
 {
     switch(nvmtest)
     {
-    case 1: /* Read block */
-        break;
+    case 1:     /* Read block */
+        {
+            nvmtest_retval = Nvm_ReadBlock(nvmtest_blockid, nvmtest_buff, nvmtest_blocksize);
+            break;
+        }
+    case 2:     /* Write block */
+        {
+            nvmtest_retval = Nvm_WriteBlock(nvmtest_blockid, nvmtest_buff, nvmtest_blocksize);
+            break;
+        }
+    default: /* Wrong test code */
+        {
+        }
     }
     nvmtest = 0;
 }
