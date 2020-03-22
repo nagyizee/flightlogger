@@ -24,8 +24,8 @@ typedef struct
  *                              Defines
  *--------------------------------------------------*/
 /* Underlying data storage method/device selection - only 1 should be active */
-//#define NVM_USE_RAM         /* internal RAM emulated NVM - used for testing */
-#define NVM_USE_CYPFLASH    /* Use Cypress S25FL064 external flash driver */
+#define NVM_USE_RAM         /* internal RAM emulated NVM - used for testing */
+//#define NVM_USE_CYPFLASH    /* Use Cypress S25FL064 external flash driver */
 
 #define UC_LITTLE_ENDIAN    /* Comment out if moved to big endian microcontroller */
      
@@ -38,7 +38,7 @@ typedef struct
 #define NVM_TOTAL_SIZE_OF_BLOCKS    32  /* Only data blocks, without header info! */
 
 #define NVM_DATASET_CNT              2  /* 1 - no mirror / 2 - use mirror */
-#define NVM_SECTOR_CNT               2  /* Number of sectors used for NVM */
+#define NVM_SECTOR_CNT               3  /* Number of sectors used for NVM */
 
 /* Magic numbers */
 #define NVM_ERASE_VAL             0xFF  /* Default data after memory erased */

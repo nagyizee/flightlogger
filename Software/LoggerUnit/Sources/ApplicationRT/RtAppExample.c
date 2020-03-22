@@ -46,7 +46,7 @@ static uint8 writedata = 0xaa;
 static uint32 nvmtest = 0;
 static uint8 nvmtest_blockid = 0;
 static uint16 nvmtest_blocksize = 8;
-static tNvmBlockState nvmtest_retval;
+static tNvmBlockStatus nvmtest_retval;
 static uint8 nvmtest_buff[NVM_MAX_BLOCK_SIZE];
 
 static void local_tasktiming_test(uint32 taskIdx);
