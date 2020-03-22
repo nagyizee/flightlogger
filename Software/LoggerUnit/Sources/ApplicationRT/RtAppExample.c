@@ -302,17 +302,34 @@ static void local_nvm_test(void)
     case 1:     /* Read block */
         {
             nvmtest_retval = Nvm_ReadBlock(nvmtest_blockid, nvmtest_buff, nvmtest_blocksize);
+            nvmtest = 0;
             break;
         }
     case 2:     /* Write block */
         {
             nvmtest_retval = Nvm_WriteBlock(nvmtest_blockid, nvmtest_buff, nvmtest_blocksize);
+            nvmtest = 0;
             break;
+        }
+    case 3:     /* Continuous write */
+        {
+            nvmtest_retval = Nvm_WriteBlock(nvmtest_blockid, nvmtest_buff, nvmtest_blocksize);
+            if (nvmtest_retval != NVM_MEMORY_FULL)
+                nvmtest_buff[1]++;
+            else
+                nvmtest = 0;
+                
+            break;
+        }
+    case 4:
+        {
+            Nvm_PurgeHistory();
         }
     default: /* Wrong test code */
         {
+            nvmtest = 0;
         }
     }
-    nvmtest = 0;
+    
 }
 #endif
