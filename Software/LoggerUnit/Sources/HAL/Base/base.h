@@ -22,6 +22,7 @@
 #define RES_BUSY        (1)
 #define RES_INVALID     (2)
 #define RES_ERROR       (3)
+#define RES_TIMEOUT     (4)
 
 #ifndef ON_QT_PLATFORM
 
