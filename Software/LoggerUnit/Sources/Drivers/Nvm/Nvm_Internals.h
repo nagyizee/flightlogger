@@ -65,8 +65,10 @@ typedef struct
 #endif
     tNvmBlockHeaderStruct   CurrentHeader;
     uint8                   RamMirror[NVM_TOTAL_SIZE_OF_BLOCKS];
+    uint8                   WriteMirror[NVM_MAX_BLOCK_SIZE];
     uint8                   Buffer[NVM_MAX_BLOCK_SIZE];
     tNvmBlockStatus         BlockStatus[NVM_NUMBER_OF_BLOCKS];
+    tNvmBlockStatus         WriteStatus[NVM_NUMBER_OF_BLOCKS];
     uint16                  LastHeadAddr[NVM_NUMBER_OF_BLOCKS];
     uint16                  CalcDataAddr;
     uint16                  CurrentHeadAddr;

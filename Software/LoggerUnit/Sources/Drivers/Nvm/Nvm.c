@@ -70,6 +70,10 @@ void Nvm_Main(void)
                     lNvm.CurrentHeader.InstanceNr = (lNvm.CurrentBlockInstance[i] + 1) & 0x7; /* 3 bits available, overflow to 0 */
                     lNvm.CurrentHeader.BlockSegAddr = (lNvm.CurrentDataAddr & NVM_INNER_MASK) / NVM_MIN_BLOCK_SIZE;
                     lNvm.CurrentHeader.CRC8 = local_calc_CRC8(&lNvm.RamMirror[cNvmBlockConfig[i].BlockAddress]);
+                        /* Safeguard data to write buffer to keep consistency with header CRC */
+                    memcpy(lNvm.WriteMirror, lNvm.RamMirror+cNvmBlockConfig[i].BlockAddress, cNvmBlockConfig[i].BlockSize);
+                    lNvm.WriteStatus[i] = lNvm.BlockStatus[i];
+                    lNvm.BlockStatus[i] = NVM_BLOCKSTATE_NVM;
                     
 #ifdef NVM_READ_BEFORE_WRITE
                     lNvm.InternalState = NVM_ST_CHECKERASED;
@@ -174,8 +178,24 @@ void Nvm_Main(void)
                     {
                         if ((lNvm.MemoryStatus & NVM_MEM_ST_BLOCKFOUND) != 0) /* We already found data, finish */
                         {
-                            PORT_PIN_LED_ON_OFF();
-                            lNvm.InternalState = NVM_ST_IDLE;
+                                PORT_PIN_LED_ON_OFF();  /* LED switches off */
+                                    /* Check if memory full */
+                            if ((lNvm.CurrentDataAddr - lNvm.CurrentHeadAddr) < NVM_MAX_BLOCK_SIZE+2*NVM_HEADER_SIZE)
+                            {
+                                if (lNvm.CurrentSector == NVM_SECTOR_CNT-1)
+                                {       /* Memory full */
+                                    lNvm.MemoryStatus |= NVM_MEM_ST_STORAGE_FULL;
+                                    lNvm.InternalState = NVM_ST_ERROR;
+                                }
+                                else
+                                {       /* Missing Next sector header, abort Init */
+                                    local_NvmHandleInitCorruptMemory();
+                                }
+                            }
+                            else
+                            {
+                                lNvm.InternalState = NVM_ST_IDLE;
+                            }
                         }
                         else    /* Check other sectors if available */
                         {
@@ -232,6 +252,7 @@ void Nvm_Main(void)
                     /* Mark block state */
                     lNvm.MemoryStatus |= NVM_MEM_ST_BLOCKFOUND;
                     lNvm.BlockStatus[lNvm.CurrentHeader.BlockID] = NVM_BLOCKSTATE_NVM;
+                    lNvm.WriteStatus[lNvm.CurrentHeader.BlockID] = NVM_BLOCKSTATE_NVM;
                     
                     /* Update Instance number */
                     lNvm.CurrentBlockInstance[lNvm.CurrentHeader.BlockID] = lNvm.CurrentHeader.InstanceNr;
@@ -273,7 +294,7 @@ void Nvm_Main(void)
                         {       /* Start data write process */
                             Nvm_WriteMemory(lNvm.CurrentDataAddr, 
                                     cNvmBlockConfig[lNvm.CurrentHeader.BlockID].BlockSize, 
-                                    &lNvm.RamMirror[cNvmBlockConfig[lNvm.CurrentHeader.BlockID].BlockAddress]);
+                                    lNvm.WriteMirror);
 
                                 /* Prepare the history mark data to be written in the generic buffer for the old header of the same block */
                             lNvm.Buffer[0] = NVM_HEADER_HISTORY;
@@ -306,7 +327,7 @@ void Nvm_Main(void)
 
                 Nvm_WriteMemory(lNvm.CurrentDataAddr, 
                         cNvmBlockConfig[lNvm.CurrentHeader.BlockID].BlockSize, 
-                        &lNvm.RamMirror[cNvmBlockConfig[lNvm.CurrentHeader.BlockID].BlockAddress]);
+                        lNvm.WriteMirror);
 
                     /* Prepare the history mark data to be written in the generic buffer for the old header of the same block */
                 lNvm.Buffer[0] = NVM_HEADER_HISTORY;
@@ -338,7 +359,7 @@ void Nvm_Main(void)
 #if NVM_DATASET_CNT == 2    /* Mirror data exist, write second dataset */
                 if (lNvm.CurrentSector < NVM_SECTOR_CNT)
                 {       /* Start write in mirror sector also */
-                    lNvm.BlockStatus[lNvm.CurrentHeader.BlockID] = NVM_BLOCKSTATE_WR_MAIN;
+                    lNvm.WriteStatus[lNvm.CurrentHeader.BlockID] = NVM_BLOCKSTATE_WR_MAIN;
 
                     lNvm.CurrentSector   += NVM_SECTOR_CNT;
                     lNvm.CurrentHeadAddr += NVM_SECTOR_CNT*NVM_SECTOR_SIZE;
@@ -365,14 +386,14 @@ void Nvm_Main(void)
  
                     lNvm.LastHeadAddr[lNvm.CurrentHeader.BlockID] = lNvm.CurrentHeadAddr;
                     lNvm.CurrentBlockInstance[lNvm.CurrentHeader.BlockID] = lNvm.CurrentHeader.InstanceNr;
-                    lNvm.BlockStatus[lNvm.CurrentHeader.BlockID] = NVM_BLOCKSTATE_NVM;
+                    lNvm.WriteStatus[lNvm.CurrentHeader.BlockID] = NVM_BLOCKSTATE_NVM;
 
                     lNvm.InternalState = NVM_ST_CHECKSECTORFULL;
                 }
 #else                   /* No mirror space, skip to sector full check */
                 lNvm.LastHeadAddr[lNvm.CurrentHeader.BlockID] = lNvm.CurrentHeadAddr;
                 lNvm.CurrentBlockInstance[lNvm.CurrentHeader.BlockID] = lNvm.CurrentHeader.InstanceNr;
-                lNvm.BlockStatus[lNvm.CurrentHeader.BlockID] = NVM_BLOCKSTATE_NVM;
+                lNvm.WriteStatus[lNvm.CurrentHeader.BlockID] = NVM_BLOCKSTATE_NVM;
                 
                 lNvm.InternalState = NVM_ST_CHECKSECTORFULL;
 #endif
@@ -487,6 +508,8 @@ void Nvm_Main(void)
         }
     case NVM_ST_ERROR:
         {   /* Error case - block driver until reset and reinitialization or purge history command */
+                /* Keep LED static ON */
+            PORT_PIN_LED_ON_ON();
             break;
         }
     default:
@@ -516,7 +539,7 @@ tNvmBlockStatus Nvm_ReadBlock(uint8 blockID, uint8* buffer, uint16 count)
         &&(count == cNvmBlockConfig[blockID].BlockSize))
     {
         memcpy(buffer, &lNvm.RamMirror[cNvmBlockConfig[blockID].BlockAddress], count);
-        retval = lNvm.BlockStatus[blockID];
+        retval = lNvm.WriteStatus[blockID];
     }
     return retval;
 }
@@ -598,7 +621,9 @@ static void local_NvmStartRepairProcess(void)
     /* Mark nvm based data as dirty */
     for (i=0; i<NVM_NUMBER_OF_BLOCKS; i++)
     {
-        lNvm.CurrentBlockInstance[i] = 1u;
+        lNvm.CurrentBlockInstance[i] = 0u;
+        
+        lNvm.LastHeadAddr[i]= 0xFFFF;
         
         if (  (lNvm.BlockStatus[i]==NVM_BLOCKSTATE_NVM)
             ||(lNvm.BlockStatus[i]==NVM_BLOCKSTATE_WR_MAIN) )
