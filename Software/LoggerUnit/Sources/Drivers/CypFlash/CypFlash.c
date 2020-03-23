@@ -161,7 +161,7 @@ void CypFlash_Main(void)
                                 if (lres == RES_OK)
                                 {
                                     HALSPI_StartTransfer(FLASH_SPI_ID); 
-                                    lCypFlash.RecoverCounter = RECOVER_WAIT_CYCLES - 1; /* 5ms timeout */
+                                    lCypFlash.RecoverCounter = 0; /* 5ms timeout */
                                 }
                                 else
                                 {
@@ -202,7 +202,7 @@ void CypFlash_Main(void)
                                 if (lres == RES_OK)
                                 {
                                     HALSPI_StartTransfer(FLASH_SPI_ID); 
-                                    lCypFlash.RecoverCounter = RECOVER_WAIT_CYCLES - 1; /* 5ms timeout */
+                                    lCypFlash.RecoverCounter = 0; /* 5ms timeout */
                                 }
                                 else
                                 {
@@ -329,7 +329,7 @@ tCypFlashStatus CypFlash_Read(uint32 address, uint16 count, uint8* buffer)
             if (lres == RES_OK)
             {
                 HALSPI_StartTransfer(FLASH_SPI_ID); 
-                lCypFlash.RecoverCounter = RECOVER_WAIT_CYCLES - 1; /* 5ms timeout */
+                lCypFlash.RecoverCounter = 0; /* 5ms timeout */
                 lCypFlash.Status = CYPFLASH_ST_BUSY;
                 /* Return the previous READY state as everything going OK */
             }
@@ -375,7 +375,7 @@ tCypFlashStatus CypFlash_Write(uint32 address, uint16 count, uint8* buffer)
             if (lres == RES_OK)
             {
                 HALSPI_StartTransfer(FLASH_SPI_ID); 
-                lCypFlash.RecoverCounter = RECOVER_WAIT_CYCLES - 1; /* 5ms timeout */
+                lCypFlash.RecoverCounter = 0; /* 5ms timeout */
                 lCypFlash.Status = CYPFLASH_ST_BUSY;
                 /* Return the previous READY state as everything going OK */
             }
@@ -500,7 +500,7 @@ static tCypFlashStatus local_CypFlash_StartErase(uint32 address)
     if (lres == RES_OK)
     {
         HALSPI_StartTransfer(FLASH_SPI_ID); 
-        lCypFlash.RecoverCounter = RECOVER_WAIT_CYCLES - 1; /* 5ms timeout */
+        lCypFlash.RecoverCounter = 0; /* 5ms timeout */
         lCypFlash.Status = CYPFLASH_ST_BUSY;
         /* Return the previous READY state as everything going OK */
     }
