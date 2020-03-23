@@ -21,7 +21,8 @@
 typedef enum
 {
     I2C_IDLE  = 0u,     /* I2C channel is idle and ready to be used */
-    I2C_BUSY,           /* I2C channel is busy sending or receiving data */
+    I2C_BUSY_CH,        /* I2C channel is busy sending or receiving data */
+    I2C_BUSY_OTHER,     /* I2C device is busy but current channel terminated the operation (data is sent or read result is in, but can not give new command) */
     I2C_ERR_NAK,        /* I2C channel received unexpected NAK from the addressed slave, or the slave device is refusing receiving more data */
     I2C_ERR_ARB,        /* I2C arbitration error on the bus used by the channel */
     I2C_ERR_TIMEOUT,    /* I2C channel in blocked state (long clock stretch from the addressed slave) - reinit is needed */

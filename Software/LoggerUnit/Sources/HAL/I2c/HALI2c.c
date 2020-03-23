@@ -64,7 +64,14 @@ tI2CStatus HALI2C_GetStatus(tI2CChannelType ch)
     local_PollInternalStateMachine(false);
     if (lI2c.busy)
     {
-        return I2C_BUSY;
+        if (lI2c.op_ch == ch)
+        {
+            return I2C_BUSY_CH;
+        }
+        else
+        {
+            return I2C_BUSY_OTHER;
+        }
     }
     else
     {
