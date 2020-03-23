@@ -62,7 +62,7 @@ static tResult i_NvmTranslateStatus(tCypFlashStatus status);
  *                  Interface Functions
  *--------------------------------------------------*/
 
-tResult Nvm_Init_Internal(void)
+tResult Nvm_InitInternal(void)
 {
     tResult retval = RES_OK;
     /* Check memory source availability */
@@ -77,6 +77,13 @@ tResult Nvm_Init_Internal(void)
     }
 #endif
     return retval;
+}
+
+void Nvm_MemoryMain(void)
+{
+#ifdef NVM_USE_CYPFLASH
+    CypFlash_Main();
+#endif
 }
 
 tResult Nvm_GetMemoryStatus(void)

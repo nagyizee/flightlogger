@@ -39,9 +39,13 @@ void Nvm_Init(void)
     /* Fill LastHeadaddr[] with 0xFF */
     memset(&lNvm.LastHeadAddr[0], 0xFF, sizeof(lNvm.LastHeadAddr));
     
-    if (Nvm_Init_Internal() == RES_OK)
+    if (Nvm_InitInternal() == RES_OK)
     {
-        while(lNvm.InternalState < NVM_ST_IDLE) Nvm_Main();
+        while(lNvm.InternalState < NVM_ST_IDLE) 
+        {
+            Nvm_Main();
+            Nvm_MemoryMain();
+        }
     }
     /* else Initialization has to be delayed after OS starts */
 }
@@ -205,7 +209,7 @@ void Nvm_Main(void)
         }
     case NVM_ST_INITDATA:
         {
-            if (Nvm_ReadMemory( (lNvm.CurrentSector*NVM_DATASET_CNT*NVM_SECTOR_SIZE)
+            if (Nvm_ReadMemory( (lNvm.CurrentSector*NVM_SECTOR_SIZE)
                                +(lNvm.CurrentHeader.BlockSegAddr*NVM_MIN_BLOCK_SIZE), 
                                 cNvmBlockConfig[lNvm.CurrentHeader.BlockID].BlockSize, 
                                 lNvm.Buffer) == RES_OK)
