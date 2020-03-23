@@ -10,6 +10,7 @@
 #include "CypFlash.h"
 #include "Nvm.h"
 #include "Nvm_Cfg.h"
+#include "NxpBaro.h"
 
 /* Test control and data variables */
 
@@ -48,11 +49,15 @@ static uint16 nvmtest_blocksize = 8;
 static tNvmBlockStatus nvmtest_retval;
 static uint8 nvmtest_buff[NVM_MAX_BLOCK_SIZE];
 
+static uint32 nxpbarotest = 0;
+static uint32 nxpbarotest_mask = NXPBARO_ACQMASK_PRESSURE;
+
 static void local_tasktiming_test(uint32 taskIdx);
 static void local_i2c_test(void);
 static void local_spi_test(void);
 static void local_cypflashtest(void);
 static void local_fillbuffer(uint8 *buffer);
+static void local_nxp_baro_test(void);
 
 void RtAppExample_Main(uint32 taskIdx)
 {
@@ -60,6 +65,7 @@ void RtAppExample_Main(uint32 taskIdx)
     local_i2c_test();
     local_spi_test();
     local_cypflashtest();
+    local_nxp_baro_test();
 }
 
 static void local_tasktiming_test(uint32 taskIdx)
@@ -125,7 +131,7 @@ static void local_i2c_test(void)
             break;
       }
 
-    while (HALI2C_GetStatus(HALI2C_CHANNEL_BAROMETER) == I2C_BUSY)
+    while (HALI2C_GetStatus(HALI2C_CHANNEL_BAROMETER) != I2C_IDLE)
     {
         ctr++;
     }
@@ -329,4 +335,78 @@ static void local_nvm_test(void)
     }
     
 }
+
+static void local_nxp_baro_test(void)
+{
+    volatile tNxpBaroStatus bstatus;
+    volatile tResult res;
+    uint32 retval;
+
+    if (nxpbarotest == 0)
+    {
+        return;
+    }
+
+    switch(nxpbarotest)
+    {
+        case 1:
+            bstatus = NXPBaro_GetStatus(&nxpbarotest_mask);
+            nxpbarotest = 0;
+            break;
+        case 2:
+            res = NXPBaro_Acquire(nxpbarotest_mask);
+            nxpbarotest = 0;
+            break;
+        case 3:
+            retval = NXPBaro_GetResult((tNxpBaroMeasurementSelector)nxpbarotest_mask);
+            nxpbarotest = 0;
+            break;
+        case 4:
+            NXPBaro_Acquire(nxpbarotest_mask);
+            nxpbarotest = 5;
+            break;
+        case 5:
+            bstatus = NXPBaro_GetStatus(&nxpbarotest_mask);
+            if (bstatus == NXPBARO_ST_READY)
+            {
+                volatile float value;
+
+                /* result ready */
+                if (nxpbarotest_mask & NXPBARO_MS_ALTITUDE)
+                {
+                    retval = NXPBaro_GetResult(NXPBARO_MS_ALTITUDE);
+                    /* conver to meters in float */
+                    value = ((float)retval / (float)(1 << 16)) - NXPBARO_ALT_OFFSET;
+                    nxpbarotest_mask &= ~NXPBARO_MS_ALTITUDE;
+                }
+                if (nxpbarotest_mask & NXPBARO_MS_PRESSURE)
+                {
+                    retval = NXPBaro_GetResult(NXPBARO_MS_PRESSURE);
+                    /* conver to hPa in float */
+                    value = (float)retval / ((float)(1 << 8) * 1000.0);
+                    nxpbarotest_mask &= ~NXPBARO_MS_PRESSURE;
+                }
+                if (nxpbarotest_mask & NXPBARO_MS_TEMP)
+                {
+                    retval = NXPBaro_GetResult(NXPBARO_MS_TEMP);
+                    /* conver to temperature in float */
+                    value = ((float)retval / (float)(1 << 16)) - NXPBARO_TEMP_OFFSET;
+                    nxpbarotest_mask &= ~NXPBARO_MS_TEMP;
+                }
+
+                if (nxpbarotest_mask == 0)
+                {
+                    nxpbarotest = 0;
+                }
+            }
+            else if (bstatus != NXPBARO_ST_BUSY)
+            {
+                /* error or other stuff */
+                nxpbarotest = 0;
+            }
+            break;
+    }
+
+}
+
 #endif
