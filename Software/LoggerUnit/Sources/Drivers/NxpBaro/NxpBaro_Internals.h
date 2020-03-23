@@ -27,6 +27,8 @@
 #define REGPRESS_CTRL4          (0x29)            // 1byte control register 4 - interrupt enable register
 #define REGPRESS_CTRL5          (0x2A)            // 1byte control register 5 - interrupt cfg. register
 
+#define PREG_ID_VALUE           (0xC4)            // device ID
+
 #define PREG_CTRL1_ALT          (0x80)            // SET: altimeter mode, RESET: barometer mode
 #define PREG_CTRL1_RAW          (0x40)            // SET: raw data output mode - data directly from sensor - The FIFO must be disabled and all other functionality: Alarms, Deltas, and other interrupts are disabled
 #define PREG_CTRL1_OSMASK       (0x38)            // 3bit oversample ratio - it is 2^x,  0 - means 1 sample, 7 means 128 sample, see enum EPressOversampleRatio
@@ -55,7 +57,7 @@
 #define PREG_STATUS_PDR         (0x04)            // set when pressure data is updated in OUTP, cleared when REGPRESS_OUTP is read
 #define PREG_STATUS_TDR         (0x02)            // set when temperature data is updated in OUTT, cleared when REGPRESS_OUTT is read
 
-#define PREG_DATACFG_DREM       (0x04)            // data reay event mode
+#define PREG_DATACFG_DREM       (0x04)            // data ready event mode
 #define PREG_DATACFG_PDEFE      (0x02)            // event detection for new pressure data
 #define PREG_DATACFG_TDEFE      (0x01)            // event detection for new temperature data
 
@@ -70,8 +72,8 @@
 #define RHREG_USER_CHIPHEATER   (0x04)            // on chip heater on
 #define RHREG_USER_NO_OTP_REL   (0x02)            // disable OTP reload
 
-#define SENSOR_PWR_PAYLOAD_LEN          (10)
-#define SENSOR_PITOT_SAMPLEBUFF_LEN     (10)      // 10 samples - 10ms reserv
+
+#define BARODRV_INISTATE_CHECKDEVICE    (0xFFFFFFFFu)
 
 typedef enum
 {                           /* minimum times between data samples: */
@@ -90,8 +92,7 @@ typedef enum
     drvst_initializing = 0,     /* driver is initializing the sensor. This is a multistep operation, takes a while, see substates */
     drvst_idle,                 /* driver is in idle state - sensor initialized, waiting for Acquire command */
     drvst_sensor_read,          /* reading from sensor, multistep state - see substates */
-    drvst_goto_low_power,       /* setting the sensor to low power mode */
-    drvst_low_power,
+    drvst_error,                /* persistent error state - full system reset and hw. check is required */
 } tBaroDrvState;
 
 typedef enum
@@ -99,17 +100,26 @@ typedef enum
     drvsst_read_oneshot = 0,
     drvsst_read_waitevent,
     drvsst_read_waitresult,
-} tBaroDrvSubState;
+} tBaroDrvSubStateWorking;
+
 
 
 typedef struct
 {
     tBaroDrvState       state;
-    uint32              substate;       /* it can have a sequence number for init, low power, or a substate value from tBaroDrvSubState */
-    uint32              error_code;
+    uint32              substate;       /* it can have a sequence number for init, low power, or a substate value from tBaroDrvSubStateWorking */
+    tResult             error_code;
 
-    uint16              check_ctr;      /* time counter for polling period */
-    uint16              fail_ctr;       /* failure retrial counter */
+    uint8               fail_ctr;       /* failure retrial counter */
+    uint8               timeout_ctr;    /* timeout to failure */
+
+    uint8               meas_req_mask;      /* measurement request mask */
+    uint8               meas_compl_mask;    /* measurement completion mask */
+
+    uint32              mval_alti;          /* altitude in meters in FPu16.16 with predefined offset */
+    uint32              mval_baro;          /* pressure in Pa in FPu24.8 */
+    uint32              mval_temp;          /* temperature in 8C in FPu16.16 with predefined offset */
+
     uint8               hw_read_val[8]; /* read value from the sensor in i2c */
 
 } tBaroDrvInternals;

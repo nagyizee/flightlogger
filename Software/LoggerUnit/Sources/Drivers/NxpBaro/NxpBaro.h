@@ -20,7 +20,13 @@
 #define NXPBARO_ACQMASK_ALTITUDE     (0x02u)
 #define NXPBARO_ACQMASK_TEMP         (0x04u)
 
+#define NXPBARO_TEMP_OFFSET          (100u)                 /* integer offset for temperature ( value 0 means -100*C) */
+#define NXPBARO_ALT_OFFSET           (1000u)                /* integer offset for altitude    ( value 0 means -1000m) */
 #define NXPBARO_ERROR_CODE           (0xFFFFFFFFu)
+
+/* operating configuration parameters */
+#define NXPBARO_CFG_ERROR_RETRY             (3)             /* 3 retrials in case of comm. error */
+#define NXPBARO_CFG_TIMEROUT_CTR           (100)            /* in cyclic call ticks - maximum timeout for waiting the sensor interrupt */
 
 /* driver states */
 typedef enum
@@ -68,12 +74,19 @@ tNxpBaroStatus NXPBaro_GetStatus(uint32 *acq_mask);
 void NXPBaro_Sleep(void);
 
 /* Acquire request for one or more measurement parameters.
- * If device was in low power mode then it will be woken up */
+ * If device was in low power mode then it will be woken up
+ * For device wakeup only - call the function with no maks - this will not trigger measurement,
+ * only the device wakeup. */
 tResult NXPBaro_Acquire(uint32 mask);
 
-/* Return the selected measurement result. Format TBD
+/* Return the selected measurement result.
  * In case of failure or if result is not ready - NXPBARO_ERROR_CODE is returned
- * When a measurement result is read, it's acquire mask flag is cleared */
+ * When a measurement result is read, it's acquire mask flag is cleared
+ * Format of returned data:
+ * - altitude:    FPu16.16 in meters with offset (defined above)
+ * - pressure:    FPu24.8  in Pa
+ * - temperature: FPu16.16 in *C with offset (defined above)
+ **/
 uint32 NXPBaro_GetResult(tNxpBaroMeasurementSelector select);
 
 #endif
