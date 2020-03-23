@@ -86,7 +86,7 @@ static void RTTask_1ms(void)
     HALI2C_MainFunction();
 
     Nvm_Main();
-    CypFlash_Main();
+    CypFlash_Main(100); /* 2ms SPI timeout */
 }
 
 static void RTTask_5ms_1(void)

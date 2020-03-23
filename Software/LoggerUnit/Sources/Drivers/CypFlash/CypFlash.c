@@ -18,7 +18,7 @@
 #define FLASH_MAX_ADDRESS   16*1024*1024+1 /* 16 MB flash size */
 #define FLASH_SPI_ID        0
 #define RECOVER_RETRY_COUNT 5
-#define RECOVER_WAIT_CYCLES 200 /* 1 second based on 5ms task cycle time */
+#define RECOVER_WAIT_CYCLES 200 /* Function call parameter value * iterations */
 
 #define FLS_CMD_GET_ID          0x9F
 #define FLS_CMD_READ            0x03
@@ -53,6 +53,7 @@ static tCypFlashStatus local_CypFlash_StartErase(uint32 address);
 static void local_CypFlash_GetDeviceStatus(void);
 static void local_CypFlash_CheckDeviceStatus(volatile uint8 status);
 
+static void local_CypFlash_SPITimeout(uint8 tick);
 /*--------------------------------------------------
  *             Interface Functions
  *--------------------------------------------------*/
@@ -63,10 +64,10 @@ void CypFlash_Init(void)
     /* initialize local variables */
     memset(&lCypFlash, 0, sizeof(tCypFlashStruct));
     /* Force device initialisation phase */
-    while(lCypFlash.Status<=CYPFLASH_ST_INITIALIZING) CypFlash_Main();
+    while(lCypFlash.Status<=CYPFLASH_ST_INITIALIZING) CypFlash_Main(1); /* 200 calls timeout*/
 }
 
-void CypFlash_Main(void)
+void CypFlash_Main(uint8 tick)
 {
     switch (lCypFlash.Status)
     {
@@ -118,17 +119,7 @@ void CypFlash_Main(void)
             }
             else /* SPI still busy */
             {
-                /* SPI deadlock timeout handling */
-                if (lCypFlash.RecoverCounter >= RECOVER_WAIT_CYCLES)
-                {
-                    HALSPI_ReleaseCS(FLASH_SPI_ID);
-                    lCypFlash.Status = CYPFLASH_ST_COMM_ERROR;
-/* !! Don't reset lCypFlash.RecoverCounter only in this case to avoid extra wait time */
-                }
-                else
-                {
-                    lCypFlash.RecoverCounter++;
-                }
+                local_CypFlash_SPITimeout(tick);
             }
         break;
         }
@@ -237,17 +228,7 @@ void CypFlash_Main(void)
             }
             else /* SPI still busy */
             {
-                /* SPI deadlock timeout handling */
-                if (lCypFlash.RecoverCounter >= RECOVER_WAIT_CYCLES)
-                {
-                    HALSPI_ReleaseCS(FLASH_SPI_ID);
-                    lCypFlash.Status = CYPFLASH_ST_COMM_ERROR;
-/* !! Don't reset lCypFlash.RecoverCounter only in this case to avoid extra wait time */
-                }
-                else
-                {
-                    lCypFlash.RecoverCounter++;
-                }
+                local_CypFlash_SPITimeout(tick);
             }
             break;
         }
@@ -264,7 +245,7 @@ void CypFlash_Main(void)
                 }
                 else
                 {
-                    lCypFlash.RecoverCounter++;
+                    lCypFlash.RecoverCounter += tick;
                 }
             }
             else
@@ -545,5 +526,20 @@ static void local_CypFlash_CheckDeviceStatus(volatile uint8 status)
     else
     {
         local_CypFlash_GetDeviceStatus();
+    }
+}
+
+static void local_CypFlash_SPITimeout(uint8 tick)
+{
+        /* SPI deadlock timeout handling */
+    if (lCypFlash.RecoverCounter >= RECOVER_WAIT_CYCLES)
+    {
+        HALSPI_ReleaseCS(FLASH_SPI_ID);
+        lCypFlash.Status = CYPFLASH_ST_COMM_ERROR;
+/* !! Don't reset lCypFlash.RecoverCounter only in this case to avoid extra wait time */
+    }
+    else
+    {
+        lCypFlash.RecoverCounter += tick;
     }
 }

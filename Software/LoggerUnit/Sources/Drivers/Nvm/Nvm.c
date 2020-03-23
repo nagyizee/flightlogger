@@ -44,7 +44,7 @@ void Nvm_Init(void)
         while(lNvm.InternalState < NVM_ST_IDLE) 
         {
             Nvm_Main();
-            Nvm_MemoryMain();
+            Nvm_MemoryMain(2); /* 100 calls timeout */
         }
     }
     /* else Initialization has to be delayed after OS starts */

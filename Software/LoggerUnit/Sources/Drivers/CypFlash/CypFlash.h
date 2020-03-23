@@ -41,7 +41,7 @@ typedef enum
 
 /* Generic driver interfaces */
 void CypFlash_Init(void);
-void CypFlash_Main(void);
+void CypFlash_Main(uint8 tick);
 tCypFlashStatus CypFlash_GetStatus(void);
 
 /* Device handling functions */

@@ -82,7 +82,7 @@ extern const uint8 cNvmDefaultData[NVM_TOTAL_SIZE_OF_BLOCKS];
  *                              Exported interfaces
  *--------------------------------------------------*/
 tResult Nvm_InitInternal(void);
-void Nvm_MemoryMain(void);
+void Nvm_MemoryMain(uint8 tick);
 
 
 tResult Nvm_GetMemoryStatus(void);

@@ -79,10 +79,10 @@ tResult Nvm_InitInternal(void)
     return retval;
 }
 
-void Nvm_MemoryMain(void)
+void Nvm_MemoryMain(uint8 tick)
 {
 #ifdef NVM_USE_CYPFLASH
-    CypFlash_Main();
+    CypFlash_Main(tick);
 #endif
 }
 
