@@ -80,7 +80,7 @@
 #define     PORT_PIN_FLS_CS_OFF()           do { GPIO_FLS_CS->OUTCLR  = (1U << PIN_FLS_CS); } while(0)
 
 /* Generic Input pin operations */
-
+#define     PORT_GETPIN_PRESS_INT()         (GPIO_PRESS_INT->IN & (1U << PIN_PRESS_INT))
 
 /*--------------------------------------------------
  *   		  	 	Functions
