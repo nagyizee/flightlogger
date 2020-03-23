@@ -57,6 +57,7 @@ static void local_i2c_test(void);
 static void local_spi_test(void);
 static void local_cypflashtest(void);
 static void local_fillbuffer(uint8 *buffer);
+static void local_nvm_test(void);
 static void local_nxp_baro_test(void);
 
 void RtAppExample_Main(uint32 taskIdx)
@@ -65,6 +66,7 @@ void RtAppExample_Main(uint32 taskIdx)
     local_i2c_test();
     local_spi_test();
     local_cypflashtest();
+    local_nvm_test();
     local_nxp_baro_test();
 }
 
