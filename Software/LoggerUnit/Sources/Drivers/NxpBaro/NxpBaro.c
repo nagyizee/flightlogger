@@ -222,7 +222,7 @@ static void local_StateRead(void)
             break;
         case drvsst_read_oneshot:
             /* launch one shot read command */
-            op_mask = ((uint32)lBaro.meas_compl_mask ^ (uint32)lBaro.meas_req_mask) & ~((uint32)lBaro.meas_req_mask);
+            op_mask = ((uint32)lBaro.meas_compl_mask ^ (uint32)lBaro.meas_req_mask) & ((uint32)lBaro.meas_req_mask);
             if (op_mask & NXPBARO_ACQMASK_PRESSURE)  /* pressure has priority over altitude */
             {
                 /* read barometric pressure */
@@ -238,7 +238,7 @@ static void local_StateRead(void)
             break;
         case drvsst_read_waitresult:
             local_ReadProcessResult();
-            op_mask = ((uint32)lBaro.meas_compl_mask ^ (uint32)lBaro.meas_req_mask) & ~((uint32)lBaro.meas_req_mask);
+            op_mask = ((uint32)lBaro.meas_compl_mask ^ (uint32)lBaro.meas_req_mask) & ((uint32)lBaro.meas_req_mask);
             if (op_mask)
             {
                 /* if we have an alitmerty measurement - do it as a new oneshot */
@@ -329,7 +329,7 @@ static void local_ReadSetupReadOp(void)
     /* all I2C operations are quaranteed to be successfull by the caller - no error check is required */
     uint32  op_mask;
 
-    op_mask = ((uint32)lBaro.meas_compl_mask ^ (uint32)lBaro.meas_req_mask) & ~((uint32)lBaro.meas_req_mask);
+    op_mask = ((uint32)lBaro.meas_compl_mask ^ (uint32)lBaro.meas_req_mask) & ((uint32)lBaro.meas_req_mask);
 
     if (op_mask == NXPBARO_ACQMASK_TEMP)
     {
@@ -354,7 +354,7 @@ static void local_ReadProcessResult(void)
     /* result is received in the lBaro.hw_read_val buffer */
     uint32  op_mask;
     int32   tempreg;
-    op_mask = ((uint32)lBaro.meas_compl_mask ^ (uint32)lBaro.meas_req_mask) & ~((uint32)lBaro.meas_req_mask);
+    op_mask = ((uint32)lBaro.meas_compl_mask ^ (uint32)lBaro.meas_req_mask) & ((uint32)lBaro.meas_req_mask);
 
     if (op_mask == NXPBARO_ACQMASK_TEMP)
     {
