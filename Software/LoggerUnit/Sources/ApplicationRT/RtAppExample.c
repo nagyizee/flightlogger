@@ -37,9 +37,17 @@ static uint32 cypflashtest = 0;
 static tCypFlashStatus cypflashcallstatus;
 static uint8 flash_buff[CYPFLASH_READ_BUFSIZE];
 static uint32 baseaddress = 0;
-static uint8 writecount = 64;
-static uint8 writedata = 0x55;
+static uint8 writecount = 1;
+static uint8 writedata = 0xaa;
 
+<<<<<<< HEAD
+=======
+static uint32 nvmtest = 0;
+static uint8 nvmtest_blockid = 0;
+static uint16 nvmtest_blocksize = 8;
+static tNvmBlockStatus nvmtest_retval;
+static uint8 nvmtest_buff[NVM_MAX_BLOCK_SIZE];
+>>>>>>> NVM
 
 static void local_tasktiming_test(uint32 taskIdx);
 static void local_i2c_test(void);
@@ -284,4 +292,45 @@ static void local_cypflashtest(void)
         }
     }
 }
+<<<<<<< HEAD
+=======
+
+static void local_nvm_test(void)
+{
+    switch(nvmtest)
+    {
+    case 1:     /* Read block */
+        {
+            nvmtest_retval = Nvm_ReadBlock(nvmtest_blockid, nvmtest_buff, nvmtest_blocksize);
+            nvmtest = 0;
+            break;
+        }
+    case 2:     /* Write block */
+        {
+            nvmtest_retval = Nvm_WriteBlock(nvmtest_blockid, nvmtest_buff, nvmtest_blocksize);
+            nvmtest = 0;
+            break;
+        }
+    case 3:     /* Continuous write */
+        {
+            nvmtest_retval = Nvm_WriteBlock(nvmtest_blockid, nvmtest_buff, nvmtest_blocksize);
+            if (nvmtest_retval != NVM_MEMORY_FULL)
+                nvmtest_buff[1]++;
+            else
+                nvmtest = 0;
+                
+            break;
+        }
+    case 4:
+        {
+            Nvm_PurgeHistory();
+        }
+    default: /* Wrong test code */
+        {
+            nvmtest = 0;
+        }
+    }
+    
+}
+>>>>>>> NVM
 #endif
