@@ -8,6 +8,8 @@
 #include "HALI2c.h"
 #include "HALSpi.h"
 #include "CypFlash.h"
+#include "Nvm.h"
+#include "Nvm_Cfg.h"
 
 /* Test control and data variables */
 

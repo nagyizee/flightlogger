@@ -73,7 +73,7 @@ void OsRt_Init(void)
 //placeholder for    NxpAccel_Init();
 
     /* init application modules */
-
+    RtAppData_Init();
 
 }
 
@@ -82,10 +82,11 @@ static void RTTask_1ms(void)
 {
 #ifdef RTAPPEXAMPLEACTIVE
 //    RtAppExample_Main(0);
-    Nvm_Main();
-    CypFlash_Main();
 #endif
     HALI2C_MainFunction();
+
+    Nvm_Main();
+    CypFlash_Main();
 }
 
 static void RTTask_5ms_1(void)
