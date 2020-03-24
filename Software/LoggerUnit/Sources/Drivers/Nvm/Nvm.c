@@ -559,16 +559,18 @@ tNvmBlockStatus Nvm_WriteBlock(uint8 blockID, uint8* buffer, uint16 count)
         if (i<count)
         {       /* Change in block data compared to existing values */
             memcpy(&lNvm.RamMirror[cNvmBlockConfig[blockID].BlockAddress], buffer, count);
-            lNvm.BlockStatus[blockID] = NVM_BLOCKSTATE_DIRTY;
             
             if ((lNvm.MemoryStatus & NVM_MEM_ST_STORAGE_FULL) == 0)
             {
+                    /* Keep previous state in return value to signal udating of non-written yet data */
                 retval = lNvm.BlockStatus[blockID];
             }
             else
             {
                 retval = NVM_MEMORY_FULL;
             }
+                /* Update status after setting the return value */
+            lNvm.BlockStatus[blockID] = NVM_BLOCKSTATE_DIRTY;
         }
         else
         {
