@@ -38,7 +38,7 @@ typedef struct
 #define NVM_TOTAL_SIZE_OF_BLOCKS    32  /* Only data blocks, without header info! */
 
 #define NVM_DATASET_CNT              2  /* 1 - no mirror / 2 - use mirror */
-#define NVM_SECTOR_CNT               3  /* Number of sectors used for NVM */
+#define NVM_SECTOR_CNT               2  /* Number of sectors used for NVM */
 #define NVM_READ_BEFORE_WRITE           /* Activate reading before any write operation */
      
 /* Magic numbers */

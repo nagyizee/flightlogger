@@ -133,17 +133,17 @@ void Nvm_Main(void)
                                 }
                                 else
                                 {   /* Inconsistent header and block memory space */
-                                    local_NvmHandleInitCorruptMemory();
+                                    local_NvmHandleInitCorruptMemory(NVM_MEM_ST_HEADER_ERROR);
                                 }
                             }
                             else
                             {       /* Invalid address within header */
-                               local_NvmHandleInitCorruptMemory();
+                               local_NvmHandleInitCorruptMemory(NVM_MEM_ST_HEADER_ERROR);
                             }
                         }
                         else
                         {   /* Invalid block ID within header */
-                            local_NvmHandleInitCorruptMemory();
+                            local_NvmHandleInitCorruptMemory(NVM_MEM_ST_HEADER_ERROR);
                         }
                         break;
                     }
@@ -170,7 +170,7 @@ void Nvm_Main(void)
                         }
                         else
                         {   /* Invalid header data in the actual sector - header space corrupted, continue with mirror data */
-                            local_NvmHandleInitCorruptMemory();
+                            local_NvmHandleInitCorruptMemory(NVM_MEM_ST_HEADER_ERROR);
                         }
                         break;
                     }
@@ -189,7 +189,7 @@ void Nvm_Main(void)
                                 }
                                 else
                                 {       /* Missing Next sector header, abort Init */
-                                    local_NvmHandleInitCorruptMemory();
+                                    local_NvmHandleInitCorruptMemory(NVM_MEM_ST_HEADER_ERROR);
                                 }
                             }
                             else
@@ -220,7 +220,7 @@ void Nvm_Main(void)
                     }
                 default:    /* Invalid header data in the actual sector - header space corrupted, continue with mirror data */
                     {
-                        local_NvmHandleInitCorruptMemory();
+                        local_NvmHandleInitCorruptMemory(NVM_MEM_ST_HEADER_ERROR);
                     }
                 }
             }
@@ -240,7 +240,7 @@ void Nvm_Main(void)
         {
             if (Nvm_GetMemoryStatus() == RES_OK)
             {   /* Check header and block data consistency */
-                if (  (lNvm.Buffer[0]==cNvmBlockConfig[lNvm.CurrentHeader.BlockID].MagicWord)
+                if (  (lNvm.Buffer[0] == cNvmBlockConfig[lNvm.CurrentHeader.BlockID].MagicWord)
                     &&(local_calc_CRC8(lNvm.Buffer) == lNvm.CurrentHeader.CRC8)
                    )
                 {
@@ -269,7 +269,7 @@ void Nvm_Main(void)
                 }
                 else        /* Data corrupted, go to mirror area */
                 {
-                    local_NvmHandleInitCorruptMemory();
+                    local_NvmHandleInitCorruptMemory(NVM_MEM_ST_DATA_ERROR);
                 }
             }
             break;
@@ -585,9 +585,10 @@ tNvmBlockStatus Nvm_WriteBlock(uint8 blockID, uint8* buffer, uint16 count)
  *             Local functions
  *--------------------------------------------------*/
 
-static void local_NvmHandleInitCorruptMemory(void)
+static void local_NvmHandleInitCorruptMemory(uint8 errsource)
 {
-    /* Invalid header data in the actual sector - header space corrupted, continue with mirror data */
+    /* Invalid header or block data in the actual sector - continue with mirror data */
+    lNvm.MemoryStatus |= errsource;
     /* If current sector < 2, check the same mirror header area */
 #if NVM_DATASET_CNT == 2
     if (lNvm.CurrentSector<NVM_SECTOR_CNT)

@@ -90,7 +90,7 @@ typedef struct
  *--------------------------------------------------*/
 
 /* NVM internal functions */
-static void local_NvmHandleInitCorruptMemory(void);
+static void local_NvmHandleInitCorruptMemory(uint8 errsource);
 static void local_NvmHandleWriteCorruptMemory(void);
 
 static void local_NvmStartRepairProcess(void);

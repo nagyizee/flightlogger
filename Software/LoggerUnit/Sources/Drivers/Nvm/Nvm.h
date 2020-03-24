@@ -32,8 +32,10 @@ typedef uint8 tNvmStatus;
  *                              Defines
  *--------------------------------------------------*/
 /* tNvmStatus bit mapping definitions */
-#define NVM_MEM_ST_BLOCKFOUND   0x01
-#define NVM_MEM_ST_STORAGE_FULL 0x80
+#define NVM_MEM_ST_BLOCKFOUND       0x01    /* Correct block exists in NVM memory */
+#define NVM_MEM_ST_HEADER_ERROR     0x02    /* Error found during Init in header data */
+#define NVM_MEM_ST_DATA_ERROR       0x04    /* Error found during Init in block data */
+#define NVM_MEM_ST_STORAGE_FULL     0x80
 
 /*--------------------------------------------------
  *                              Exported interfaces
