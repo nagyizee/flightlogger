@@ -1,5 +1,5 @@
-#ifndef	_RTAPPPACK_H
-#define _RTAPPPACK_H
+#ifndef	_RTAPPMEAS_H
+#define _RTAPPMEAS_H
 /**
  *
  *
@@ -17,24 +17,21 @@
  *--------------------------------------------------*/
 typedef enum
 {
-    RTAPPPACK_ST_INIT = 0,        /* Initialization */
-    RTAPPPACK_ST_IDLE,
-    RTAPPPACK_ST_WRITEPAGE,
-    RTAPPPACK_ST_WRITENVM,
-    RTAPPPACK_ST_ERROR
-} tRtAppPackInternalStates;
+    RTAPPMEAS_ST_INIT = 0,        /* Initialization */
+    RTAPPMEAS_ST_IDLE,
+    RTAPPMEAS_ST_ERROR
+} tRtAppMeasInternalStates;
 
 /*--------------------------------------------------
  *                              Defines
  *--------------------------------------------------*/
-#define RTAPPPACK_PAGESIZE      256         /* Flash Page size 256 bytes */
      
 /*--------------------------------------------------
  *                              Exported interfaces
  *--------------------------------------------------*/
 
-void RtAppPack_Init(void);
-void RtAppPack_Main(uint8 timebase);
+void RtAppMeas_Init(void);
+void RtAppMeas_Main(void);
 
 #endif
 

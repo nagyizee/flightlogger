@@ -1,4 +1,4 @@
-/* Logging data packer module */
+/* Measurement module */
 
 /*--------------------------------------------------
  *                  Includes
@@ -6,9 +6,8 @@
 
 #include <string.h>
 #include "base.h"
-#include "RtAppPack.h"
 #include "RtAppMeasurement.h"
-#include "RtAppData.h"
+#include "RtAppSensor.h"
 
 /*--------------------------------------------------
  *                  Defines and type definitions
@@ -16,53 +15,44 @@
 
 typedef struct
 {
-    uint8                       Buffer[RTAPPPACK_PAGESIZE];
-    tRtAppPackInternalStates    InternalState;
-}tRtAppPackStruct;
+    tRtAppMeasInternalStates    InternalState;
+}tRtAppMeasStruct;
 
 /*--------------------------------------------------
  *                  Local Variables and prototypes
  *--------------------------------------------------*/
 
-static tRtAppPackStruct  lRtAppPack;
+static tRtAppMeasStruct  lRtAppMeas;
 
 /*--------------------------------------------------
  *                  Interface Functions
  *--------------------------------------------------*/
 
-void RtAppPack_Init(void)
+void RtAppMeas_Init(void)
 {
     /* initialize local variables */
-    memset(&lRtAppPack, 0, sizeof(tRtAppPackStruct));
+    memset(&lRtAppMeas, 0, sizeof(tRtAppMeasStruct));
 }
 
-void RtAppPack_Main(uint8 timebase)
+void RtAppMeas_Main(void)
 {
-    switch(lRtAppPack.InternalState)
+    switch(lRtAppMeas.InternalState)
     {   
-    case RTAPPPACK_ST_IDLE:
+    case RTAPPMEAS_ST_IDLE:
         {
             break;
         }
-    case RTAPPPACK_ST_INIT:
+    case RTAPPMEAS_ST_INIT:
         {
             break;
         }
-    case RTAPPPACK_ST_WRITEPAGE:
-        {
-            break;
-        }
-    case RTAPPPACK_ST_WRITENVM:
-        {
-            break;
-        }
-    case RTAPPPACK_ST_ERROR:
+    case RTAPPMEAS_ST_ERROR:
         {
             break;
         }
     default:
         {
-            lRtAppPack.InternalState = RTAPPPACK_ST_ERROR;
+            lRtAppMeas.InternalState = RTAPPMEAS_ST_ERROR;
         }
     }
 }

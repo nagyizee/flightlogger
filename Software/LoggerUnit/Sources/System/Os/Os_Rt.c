@@ -73,6 +73,7 @@ void OsRt_Init(void)
 //placeholder for    NxpAccel_Init();
 
     /* init application modules */
+    RtAppPack_Init();
     RtAppData_Init();
 
 }
@@ -111,7 +112,7 @@ static void RTTask_5ms_3(void)
 #ifdef RTAPPEXAMPLEACTIVE
 //    RtAppExample_Main(3);
 #endif
-    RtAppPack_Main();
+    RtAppPack_Main(5);
 }
 
 static void RTTask_5ms_4(void)

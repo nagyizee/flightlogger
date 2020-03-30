@@ -2390,6 +2390,12 @@
             <name>$PROJ_DIR$\..\Sources\ApplicationRT\RtAppExample.h</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\Sources\ApplicationRT\RtAppMeasurement.c</name>
+        </file>
+        <file>
+            <name>$PROJ_DIR$\..\Sources\ApplicationRT\RtAppMeasurement.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Sources\ApplicationRT\RtAppPack.c</name>
         </file>
         <file>

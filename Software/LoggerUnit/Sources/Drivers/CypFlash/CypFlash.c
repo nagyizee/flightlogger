@@ -15,7 +15,7 @@
 #define FLS_UNRESET()       do {PORT_PIN_FLS_RESET_ON();} while(0)     /* Signal 1 on RESET unresets the flash chip */
 #define FLS_RESET()         do {PORT_PIN_FLS_RESET_OFF();} while(0)    /* Signal 0 on RESET resets the flash chip */
 
-#define FLASH_MAX_ADDRESS   16*1024*1024+1 /* 16 MB flash size */
+#define FLASH_MAX_ADDRESS   16*1024*1024 /* 16 MB flash size */
 #define FLASH_SPI_ID        0
 #define RECOVER_RETRY_COUNT 5
 #define RECOVER_WAIT_CYCLES 200 /* Function call parameter value * iterations */
@@ -292,7 +292,7 @@ tCypFlashStatus CypFlash_Read(uint32 address, uint16 count, uint8* buffer)
     if (l_return_status == CYPFLASH_ST_READY)
     {
         /* Check input parameters - read 0 bytes not allowed, useless */
-        if (((address&0x00FFFFFF)+count < FLASH_MAX_ADDRESS)
+        if (((address&0x00FFFFFF)+count <= FLASH_MAX_ADDRESS)
             &&(count>0)
             &&(count<=CYPFLASH_READ_BUFSIZE)
             &&(buffer!=NULL))
@@ -337,7 +337,7 @@ tCypFlashStatus CypFlash_Write(uint32 address, uint16 count, uint8* buffer)
     if (l_return_status == CYPFLASH_ST_READY)
     {
         /* Check input parameters */
-        if (((address&0x00FFFFFF)+count < FLASH_MAX_ADDRESS)
+        if (((address&0x00FFFFFF)+count <= FLASH_MAX_ADDRESS)
             &&(count>0)
             &&(count<=CYPFLASH_WRITE_BUFSIZE)
             &&(buffer!=NULL))
