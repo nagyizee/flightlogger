@@ -51,6 +51,7 @@ void RtAppData_Main(void)
         }
     case RTAPPDATA_ST_INIT:
         {
+            lRtAppData.InternalState = RTAPPDATA_ST_IDLE;
             break;
         }
     case RTAPPDATA_ST_WRITEPAGE:
