@@ -226,13 +226,18 @@ static void local_StateRead(void)
             if (op_mask & NXPBARO_ACQMASK_PRESSURE)  /* pressure has priority over altitude */
             {
                 /* read barometric pressure */
-                HALI2C_Write(HALI2C_CHANNEL_BAROMETER, &psens_cmd_sshot_baro[0], 2);
+                /* NOTE - Nordic can not transfer DMA from Flash - so no const can be used */
+                lBaro.hw_buff[0] = psens_cmd_sshot_baro[0];
+                lBaro.hw_buff[1] = psens_cmd_sshot_baro[1];
             }
             else
             {
                 /* read altitude */
-                HALI2C_Write(HALI2C_CHANNEL_BAROMETER, &psens_cmd_sshot_alti[0], 2);
+                lBaro.hw_buff[0] = psens_cmd_sshot_alti[0];
+                lBaro.hw_buff[1] = psens_cmd_sshot_alti[1];
             }
+            HALI2C_Write(HALI2C_CHANNEL_BAROMETER, lBaro.hw_buff, 2);
+
             lBaro.timeout_ctr = NXPBARO_CFG_TIMEROUT_CTR;
             lBaro.substate = drvsst_read_waitevent;
             break;
@@ -271,18 +276,21 @@ static void local_StateInit(void)
             if (lBaro.substate == BARODRV_INISTATE_CHECKDEVICE)
             {
                 /* trigger the device ID readback for first */
-                HALI2C_ReadRegister(HALI2C_CHANNEL_BAROMETER, REGPRESS_ID, &lBaro.hw_read_val[0], 1);
+                HALI2C_ReadRegister(HALI2C_CHANNEL_BAROMETER, REGPRESS_ID, lBaro.hw_buff, 1);
                 lBaro.substate = 0;     /* begin the instruction list */
             }
             else if (lBaro.substate < LENGTH_INI_SEQ)
             {
                 /* before the first init. instruction - check the prew. read device ID */
-                if ((lBaro.substate == 0) && (lBaro.hw_read_val[0] != PREG_ID_VALUE))
+                if ((lBaro.substate == 0) && (lBaro.hw_buff[0] != PREG_ID_VALUE))
                 {
                     failure = RES_INVALID;
                     break;
                 }
-                HALI2C_Write(HALI2C_CHANNEL_BAROMETER, &lIniSeq[lBaro.substate].reg[0], 2);
+                /* NOTE - Nordic can not transfer DMA from Flash - so no const can be used */
+                lBaro.hw_buff[0] = lIniSeq[lBaro.substate].reg[0];
+                lBaro.hw_buff[1] = lIniSeq[lBaro.substate].reg[1];
+                HALI2C_Write(HALI2C_CHANNEL_BAROMETER, lBaro.hw_buff, 2);
                 lBaro.substate++;
             }
             else
@@ -334,17 +342,17 @@ static void local_ReadSetupReadOp(void)
     if (op_mask == NXPBARO_ACQMASK_TEMP)
     {
         /* read temperature only */
-        HALI2C_ReadRegister(HALI2C_CHANNEL_BAROMETER, REGPRESS_OUTT, &lBaro.hw_read_val[0], 2);
+        HALI2C_ReadRegister(HALI2C_CHANNEL_BAROMETER, REGPRESS_OUTT, lBaro.hw_buff, 2);
     }
     else if ((op_mask & NXPBARO_ACQMASK_TEMP) == 0)
     {
         /* read pressure/altitude only */
-        HALI2C_ReadRegister(HALI2C_CHANNEL_BAROMETER, REGPRESS_OUTP, &lBaro.hw_read_val[0], 3);  /* read temperature also */
+        HALI2C_ReadRegister(HALI2C_CHANNEL_BAROMETER, REGPRESS_OUTP, lBaro.hw_buff, 3);  /* read temperature also */
     }
     else
     {
         /* read both */
-        HALI2C_ReadRegister(HALI2C_CHANNEL_BAROMETER, REGPRESS_OUTP, &lBaro.hw_read_val[0], 5);  /* read temperature also */
+        HALI2C_ReadRegister(HALI2C_CHANNEL_BAROMETER, REGPRESS_OUTP, lBaro.hw_buff, 5);  /* read temperature also */
     }
 }
 
@@ -359,7 +367,7 @@ static void local_ReadProcessResult(void)
     if (op_mask == NXPBARO_ACQMASK_TEMP)
     {
         /* read temperature only */
-        lBaro.mval_temp = local_ConvertTempFromRaw(&lBaro.hw_read_val[0]);
+        lBaro.mval_temp = local_ConvertTempFromRaw(&lBaro.hw_buff[0]);
         lBaro.meas_compl_mask |= NXPBARO_ACQMASK_TEMP;
     }
     else
@@ -367,23 +375,23 @@ static void local_ReadProcessResult(void)
         if (op_mask & NXPBARO_ACQMASK_TEMP)
         {
             /* read both */
-            lBaro.mval_temp = local_ConvertTempFromRaw(&lBaro.hw_read_val[3]);
+            lBaro.mval_temp = local_ConvertTempFromRaw(&lBaro.hw_buff[3]);
             lBaro.meas_compl_mask |= NXPBARO_ACQMASK_TEMP;
         }
 
         if (lBaro.meas_req_mask & NXPBARO_ACQMASK_PRESSURE)         /* pressure has priority over altitude */
         {
-            lBaro.mval_baro = ((((uint32)lBaro.hw_read_val[0] << 24) |
-                                ((uint32)lBaro.hw_read_val[1] << 16) |
-                                ((uint32)lBaro.hw_read_val[2] << 8)) >> 6);
+            lBaro.mval_baro = ((((uint32)lBaro.hw_buff[0] << 24) |
+                                ((uint32)lBaro.hw_buff[1] << 16) |
+                                ((uint32)lBaro.hw_buff[2] << 8)) >> 6);
             lBaro.meas_compl_mask |= NXPBARO_ACQMASK_PRESSURE;
         }
         else
         {
-            tempreg = (int32)((int16)(((uint16)lBaro.hw_read_val[0] << 8) | (uint16)lBaro.hw_read_val[1]));
+            tempreg = (int32)((int16)(((uint16)lBaro.hw_buff[0] << 8) | (uint16)lBaro.hw_buff[1]));
             tempreg *= (1 << 16);
             tempreg += (NXPBARO_ALT_OFFSET << 16);
-            lBaro.mval_alti = (uint32)tempreg + ((uint32)lBaro.hw_read_val[2] << 8);
+            lBaro.mval_alti = (uint32)tempreg + ((uint32)lBaro.hw_buff[2] << 8);
             lBaro.meas_compl_mask |= NXPBARO_ACQMASK_ALTITUDE;
         }
     }

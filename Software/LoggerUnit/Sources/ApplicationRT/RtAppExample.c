@@ -51,6 +51,23 @@ static uint8 nvmtest_buff[NVM_MAX_BLOCK_SIZE];
 
 static uint32 nxpbarotest = 0;
 static uint32 nxpbarotest_mask = NXPBARO_ACQMASK_PRESSURE;
+static int32 nxpbarotest_res_int;
+static uint32 nxpbarotest_res_fract;
+
+
+static uint32 i2c_sensorcheck = 0;
+enum EPressOversampleRatio
+{                           // minimum times between data samples:
+    pos_none = 0x00,        // 6ms
+    pos_2 = 0x08,           // 10ms
+    pos_4 = 0x10,           // 18ms
+    pos_8 = 0x18,           // 34ms
+    pos_16 = 0x20,          // 66ms
+    pos_32 = 0x28,          // 130ms
+    pos_64 = 0x30,          // 258ms
+    pos_128 = 0x38          // 512ms
+};
+
 
 static void local_tasktiming_test(uint32 taskIdx);
 static void local_i2c_test(void);
@@ -59,6 +76,8 @@ static void local_cypflashtest(void);
 static void local_fillbuffer(uint8 *buffer);
 static void local_nvm_test(void);
 static void local_nxp_baro_test(void);
+static void local_i2c_sensor_check(void);
+
 
 void RtAppExample_Main(uint32 taskIdx)
 {
@@ -68,6 +87,7 @@ void RtAppExample_Main(uint32 taskIdx)
     local_cypflashtest();
     local_nvm_test();
     local_nxp_baro_test();
+    local_i2c_sensor_check();
 }
 
 static void local_tasktiming_test(uint32 taskIdx)
@@ -371,28 +391,32 @@ static void local_nxp_baro_test(void)
             bstatus = NXPBaro_GetStatus(&nxpbarotest_mask);
             if (bstatus == NXPBARO_ST_READY)
             {
-                volatile float value;
-
                 /* result ready */
                 if (nxpbarotest_mask & NXPBARO_MS_ALTITUDE)
                 {
                     retval = NXPBaro_GetResult(NXPBARO_MS_ALTITUDE);
                     /* conver to meters in float */
-                    value = ((float)retval / (float)(1 << 16)) - NXPBARO_ALT_OFFSET;
+                    nxpbarotest_res_int = (int32)(retval >> 16) - NXPBARO_ALT_OFFSET;
+                    nxpbarotest_res_fract = (retval & 0xFFFF) * 1000 / 0xFFFF;
+
                     nxpbarotest_mask &= ~NXPBARO_MS_ALTITUDE;
                 }
                 if (nxpbarotest_mask & NXPBARO_MS_PRESSURE)
                 {
                     retval = NXPBaro_GetResult(NXPBARO_MS_PRESSURE);
                     /* conver to hPa in float */
-                    value = (float)retval / ((float)(1 << 8) * 1000.0);
+                    nxpbarotest_res_int = (retval >> 8);
+                    nxpbarotest_res_fract = (retval & 0xFF) * 1000 / 0xFF;
+
                     nxpbarotest_mask &= ~NXPBARO_MS_PRESSURE;
                 }
                 if (nxpbarotest_mask & NXPBARO_MS_TEMP)
                 {
                     retval = NXPBaro_GetResult(NXPBARO_MS_TEMP);
                     /* conver to temperature in float */
-                    value = ((float)retval / (float)(1 << 16)) - NXPBARO_TEMP_OFFSET;
+                    nxpbarotest_res_int = (int32)(retval >> 16) - NXPBARO_TEMP_OFFSET;
+                    nxpbarotest_res_fract = (retval & 0xFFFF) * 1000 / 0xFFFF;
+
                     nxpbarotest_mask &= ~NXPBARO_MS_TEMP;
                 }
 
@@ -409,6 +433,79 @@ static void local_nxp_baro_test(void)
             break;
     }
 
+}
+
+static void local_i2c_sensor_check(void)
+{
+
+#define REGPRESS_DATACFG        0x13            // 1byte Pressure data, Temperature data and event flag generator
+#define REGPRESS_OUTP           0x01            // 3byte barometric data + 2byte thermometric data - pressure data is in Pascales - 20bit: 18.2 from MSB.
+#define PREG_DATACFG_DREM       0x04            // data reay event mode
+#define PREG_DATACFG_PDEFE      0x02            // event detection for new pressure data
+#define PREG_DATACFG_TDEFE      0x01            // event detection for new temperature data
+#define REGPRESS_CTRL1          0x26            // 1byte control register 1
+#define REGPRESS_CTRL3          0x28            // 1byte control register 3 - interrupt pin config
+#define REGPRESS_CTRL4          0x29            // 1byte control register 4 - interrupt enable register
+#define REGPRESS_CTRL5          0x2A            // 1byte control register 5 - interrupt cfg. register
+#define PREG_CTRL3_IPOL1        0x20            // SET: INT1 pin active high
+#define PREG_CTRL3_PPOD1        0x10            // SET: open drain output
+#define PREG_CTRL3_IPOL2        0x02            // SET: INT2 pin active high
+#define PREG_CTRL3_PPOD2        0x01            // SET: open drain output
+
+#define PREG_CTRL4_DRDY         0x80            // SET: enable data ready interrupt
+
+#define PREG_CTRL5_DRDY         0x80            // SET: data ready interrupt routed to INT1, RESET: routed to INT2 pin
+
+#define PREG_CTRL1_ALT          0x80            // SET: altimeter mode, RESET: barometer mode
+#define PREG_CTRL1_RAW          0x40            // SET: raw data output mode - data directly from sensor - The FIFO must be disabled and all other functionality: Alarms, Deltas, and other interrupts are disabled
+#define PREG_CTRL1_OSMASK       0x38            // 3bit oversample ratio - it is 2^x,  0 - means 1 sample, 7 means 128 sample, see enum EPressOversampleRatio
+#define PREG_CTRL1_RST          0x04            // SET: software reset
+#define PREG_CTRL1_OST          0x02            // SET: initiate a measurement immediately. If the SBYB bit is set to active, setting the OST bit will initiate an immediate measurement, the part will then return to acquiring data as per the setting of the ST bits in CTRL_REG2. In this mode, the OST bit does not clear itself and must be cleared and set again to initiate another immediate measurement. One Shot: When SBYB is 0, the OST bit is an auto-clear bit. When OST is set, the device initiates a measurement by going into active mode. Once a Pressure/Altitude and Temperature measurement is completed, it clears the OST bit and comes back to STANDBY mode. User shall read the value of the OST bit before writing to this bit again
+#define PREG_CTRL1_SBYB         0x01            // SET: sets the active mode. system makes periodic measurements set by ST in CTRL2 register.
+
+#define REGPRESS_ID             (0x0C)            // 1byte pressure sensor chip ID
+
+
+    const uint8     psens_set_01_data_event[] = { REGPRESS_DATACFG, (PREG_DATACFG_TDEFE | PREG_DATACFG_PDEFE | PREG_DATACFG_DREM) };     // set up data event signalling for pressure update
+    const uint8     psens_set_02_interrupt_src[]  = { REGPRESS_CTRL3, PREG_CTRL3_IPOL1 };       // pushpull active high on INT1
+    const uint8     psens_set_03_interrupt_en[]  = { REGPRESS_CTRL4, PREG_CTRL4_DRDY };         // enable data ready interrupt
+    const uint8     psens_set_04_interrupt_out[]  = { REGPRESS_CTRL5, PREG_CTRL5_DRDY };        // route data ready interrupt to INT1
+
+    const uint8     psens_cmd_sshot_baro[] = { REGPRESS_CTRL1, ( pos_4 | PREG_CTRL1_OST) };     // start one shot data aq. with 4 sample oversampling (~18ms wait time)
+
+    if (i2c_sensorcheck == 0)
+    {
+        return;
+    }
+
+    switch (i2c_sensorcheck)
+    {
+        case 1:             /* init pressure sensor */
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_BAROMETER) != I2C_IDLE) {}
+            HALI2C_Write(HALI2C_CHANNEL_BAROMETER, psens_set_01_data_event, sizeof(psens_set_01_data_event));
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_BAROMETER) != I2C_IDLE) {}
+            HALI2C_Write(HALI2C_CHANNEL_BAROMETER, psens_set_02_interrupt_src, sizeof(psens_set_02_interrupt_src));
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_BAROMETER) != I2C_IDLE) {}
+            HALI2C_Write(HALI2C_CHANNEL_BAROMETER, psens_set_03_interrupt_en, sizeof(psens_set_03_interrupt_en));
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_BAROMETER) != I2C_IDLE) {}
+            HALI2C_Write(HALI2C_CHANNEL_BAROMETER, psens_set_04_interrupt_out, sizeof(psens_set_04_interrupt_out));
+            break;
+        case 2:             /* read ID */
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_BAROMETER) != I2C_IDLE) {}
+            HALI2C_ReadRegister(HALI2C_CHANNEL_BAROMETER, REGPRESS_ID,  buff_1, 1);
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_BAROMETER) != I2C_IDLE) {}
+            break;
+        case 3:             /* read pressure */
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_BAROMETER) != I2C_IDLE) {}
+            HALI2C_Write(HALI2C_CHANNEL_BAROMETER, psens_cmd_sshot_baro, sizeof(psens_cmd_sshot_baro));
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_BAROMETER) != I2C_IDLE) {}
+            /* wait here with debugger - int. pin should be asserted by the sensor */
+            HALI2C_ReadRegister(HALI2C_CHANNEL_BAROMETER, REGPRESS_OUTP,  buff_1, 5);
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_BAROMETER) != I2C_IDLE) {}
+            break;
+    }
+
+    i2c_sensorcheck = 0;
 }
 
 #endif

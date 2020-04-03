@@ -43,9 +43,9 @@ typedef enum
 /* measurement selector */
 typedef enum
 {
-    NXPBARO_MS_PRESSURE = 0u,
-    NXPBARO_MS_ALTITUDE,
-    NXPBARO_MS_TEMP,
+    NXPBARO_MS_PRESSURE = NXPBARO_ACQMASK_PRESSURE,
+    NXPBARO_MS_ALTITUDE = NXPBARO_ACQMASK_ALTITUDE,
+    NXPBARO_MS_TEMP = NXPBARO_ACQMASK_TEMP,
 } tNxpBaroMeasurementSelector;
 
 /*--------------------------------------------------

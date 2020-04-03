@@ -120,7 +120,7 @@ typedef struct
     uint32              mval_baro;          /* pressure in Pa in FPu24.8 */
     uint32              mval_temp;          /* temperature in 8C in FPu16.16 with predefined offset */
 
-    uint8               hw_read_val[8]; /* read value from the sensor in i2c */
+    uint8               hw_buff[8];         /* read value from the sensor in i2c */
 
 } tBaroDrvInternals;
 
