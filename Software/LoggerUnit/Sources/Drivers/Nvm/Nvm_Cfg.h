@@ -30,12 +30,12 @@ typedef struct
 #define UC_LITTLE_ENDIAN    /* Comment out if moved to big endian microcontroller */
      
 /* Block size settings */
-#define NVM_NUMBER_OF_BLOCKS         3  /* Max 8 different blocks are allowed */
+#define NVM_NUMBER_OF_BLOCKS         4  /* Max 8 different blocks are allowed */
 #define NVM_HEADER_SIZE              4  /* Bytes */
 #define NVM_MIN_BLOCK_SIZE           8  /* Bytes - Used also for segment size */
 /* !!! All block sizes have to be multiples of the min block size !!! */
 #define NVM_MAX_BLOCK_SIZE          16  /* Bytes */
-#define NVM_TOTAL_SIZE_OF_BLOCKS    32  /* Only data blocks, without header info! */
+#define NVM_TOTAL_SIZE_OF_BLOCKS    40  /* Only data blocks, without header info! */
 
 #define NVM_DATASET_CNT              2  /* 1 - no mirror / 2 - use mirror */
 #define NVM_SECTOR_CNT               2  /* Number of sectors used for NVM */
