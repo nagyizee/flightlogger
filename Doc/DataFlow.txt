@@ -7,6 +7,8 @@ components:
     ext.mem.                    S25FL064LABNFA040       USON8   (4x4mm)     2.7 - 3.6V     13
     
                                 
+====================================================								
+DATA STORAGE FOR NORMAL OPERATION								
 ----------------------------------------------------
 sampling:
 
@@ -34,7 +36,7 @@ sampling:
 data storage - page allocation:
     
     256byte pages:
-        [pg.header][ds][ds][ds]....[crc16]
+        [pg.header][ds][ds][ds]....[footer][crc16]
     
         [pg.header]:
             - [00]        page written marker - 0xFF free, 0xAA written, 0x00 invalidated
@@ -49,14 +51,63 @@ data storage - page allocation:
               
         [ds] x 8    31x8 bytes of payload     (8 seconds)
               
-        [rtc][rtc]  RTC Time info of first sample in dataset, RTC sync in RtAppComm Activation/ free running SW RTC calc in the OS during power cycle / reset to 0/0/0 after power up, 
+        [rtc][rtc]  (footer) RTC Time info of first sample in dataset, RTC sync in RtAppComm Activation/ free running SW RTC calc in the OS during power cycle / reset to 0/0/0 after power up, 
 			start to be validated in the same power cycle with the flight
 		    RTC Date and RtAppComm Activation Time stored in NVM
 
         [crc][crc]  16 bit page CRC - over data range [0]..[253]
         
         
-            
+====================================================								
+DATA STORAGE Dump sampling - discrete RAW G sensor data:
+----------------------------------------------------
+sampling:
+
+    sample element types:                                           sampled at
+		- (A) altitude (0.05m)      16bit    range: 0 .. 3000.00        10Hz     - 0.05m resolution uint16
+		- (G) accelero (raw x/y/z)	12bit    range: -2047 .. 2048       200Hz	 - 1/256g resolution
+        - (C) ctrl_sig. (1%)        8bit    range: -120 .. 120          10Hz     - 1% resolution with 120 offset uint8		- just to fill up wasted align.space
+        - (T) temperature (0.5*C)   8bit    range: -40 .. 85            10Hz     - 0.5*C with 40*C offset uint8				- just to fill up wasted align.space
+
+		(A) organized in 2 bytes: [A][A]										 - denoted in data seq. as [A][A]
+		(G) organized in 		  [Gx][Gx][Gy][Gy][Gz][Gz]					     - denoted in data seq. as [G][G][G][G][G][G]
+
+		there are 20 G samples per 1 Alt. sample
+		
+    data sequence (ds):
+	    [A][A][T][C]
+		[G][G][G][G][G][G] [G][G][G][G][G][G] [G][G][G][G][G][G] [G][G][G][G][G][G] [G][G][G][G][G][G] [G][G][G][G][G][G] [G][G][G][G][G][G] [G][G][G][G][G][G] [G][G][G][G][G][G] [G][G][G][G][G][G] 
+	    [G][G][G][G][G][G] [G][G][G][G][G][G] [G][G][G][G][G][G] [G][G][G][G][G][G] [G][G][G][G][G][G] [G][G][G][G][G][G] [G][G][G][G][G][G] [G][G][G][G][G][G] [G][G][G][G][G][G] [G][G][G][G][G][G] 
+		
+	    124 bytes / 10Hz period
+		
+----------------------------------------------------
+data storage - page allocation:
+    
+    256byte pages:
+        [pg.header][ds][ds][footer][crc16]
+    
+        [pg.header]:
+            - [00]        page written marker - 0xFF free, 0xAA written, 0x00 invalidated
+              [sinf]      session info
+              [ss][ss]    16bit sequence counter (32k pages - with 64k value we can detect the start/end of sequence
+
+            session info:
+                1bit      1st. page recorded from power on
+                1bit      1st. page recorded for a new session
+                1bit      last page recorded before power off
+                4bits     number of samples recorded                
+              
+        [ds] x 2    124x2 bytes of payload     (0.2 seconds)
+              
+        [rtc][rtc] (footer) RTC Time info of first sample in dataset, RTC sync in RtAppComm Activation/ free running SW RTC calc in the OS during power cycle / reset to 0/0/0 after power up, 
+			start to be validated in the same power cycle with the flight
+		    RTC Date and RtAppComm Activation Time stored in NVM
+
+        [crc][crc]  16 bit page CRC - over data range [0]..[253]
+
+
+		
 ----------------------------------------------------
 memory blocks:
 
