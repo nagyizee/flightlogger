@@ -53,8 +53,8 @@ tCypFlashStatus CypFlash_Read(uint32 address, uint16 count, uint8* buffer);
 tCypFlashStatus CypFlash_Write(uint32 address, uint16 count, uint8* buffer);
 tCypFlashStatus CypFlash_WritePage(uint32 address, uint8* buffer);
 
-tCypFlashStatus CypFlash_EraseSector(uint32 address); /* 4K sector */
-tCypFlashStatus CypFlash_EraseBlock(uint32 address); /* 64K block */
+tCypFlashStatus CypFlash_EraseSector(uint32 address);   /* 4K sector */
+tCypFlashStatus CypFlash_EraseBlock(uint32 address);    /* 64K block */
 tCypFlashStatus CypFlash_EraseAll(void);
 
 #endif

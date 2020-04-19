@@ -29,30 +29,32 @@
 
 const tNvmBlockStruct cNvmBlockConfig[NVM_NUMBER_OF_BLOCKS] = 
 {   /*  BlockAddress    BlockSize   MagicWord*/
-    {   {0x0000},       { 8},       {0x1D}},       /* Block 0 - Device identification */
+    {   {0x0000},       { 8},       {0x1D}},       /* Block 0 - Device identification  */
     {   {0x0008},       { 8},       {0xEE}},       /* Block 1 - Device Health status */
-    {   {0x0010},       {16},       {0xCE}},       /* Block 2 - Comm/Flight Event */
-    {   {0x0020},       { 8},       {0xDA}}        /* Block 3 - Data Address + CRC32 */
+    {   {0x0010},       {16},       {0xCE}},       /* Block 2 - Comm/Flight/Boot Event */
+    {   {0x0020},       { 8},       {0xCA}}        /* Block 3 - Chunk Address + CRC32 */
 };
 
 const uint8 cNvmDefaultData[NVM_TOTAL_SIZE_OF_BLOCKS] =
 {   /* Block 0 - Device identification - size 8 bytes */
-    /* Magic    HW Ver  SW Ver   Cat    Unique ID   UID Inverted */
+    /* Magic    HW Ver  SW Ver  DataT   Unique ID   UID Inverted */
         0x1D,   0x01,   0x01,   0x00,   0x55,0x55,   0xAA,0xAA, 
 
     /* Block 1 - Device Health status - size 8 bytes */
     /* Magic        DateTimestamp     Error code + data    */
         0xEE,   0xFF,0xFF,0xFF,0xFF,    0xFF,   0xFF,0xFF,
         
-    /* Block 2 Comm + Flight Event - size 16 bytes */
-    /* Magic    Date        Time        JudgeID     EventCode    */
-        0xCE,   0xFF,0xFF,  0xFF,0xFF,  0xFF,0xFF,    0xFF,
-            /*  USERid      AirplaneID  CategoryID      reserved */
-                0xFF,0xFF,  0xFF,0xFF,  0xFF,       0xFF,0xFF,0xFF,
+    /* Block 2 Comm/Flight/Boot Event - size 16 bytes */
+    /* Magic    Date        Time         JudgeID    EventCode    */
+        0xCE,   0x00,0x00,  0x00,0x00,  0xFF,0xFF,    0xFF,
+            /*  USERid      AirplaneID  CategoryID  Reserved */
+                0xFF,0xFF,  0xFF,0xFF,     0xFF,      0xFF,
+            /* StartAddress of first Chunk Page from Log */
+                0x00,0x40,
 
-    /* Block 3 - Data address and CRC info - size 8 bytes */
-    /* Magic        LastAddress        CRC32 of stream    */
-        0xDA,      0x00,0x40,0x00,   0xFF,0xFF,0xFF,0xFF    
+    /* Block 3 - Chunk address and CRC info - size 8 bytes */
+    /* Magic    ChunkPageAddress DataT   CRC32 of Chunk    */
+        0xCA,   0x00,0x50,       0x00, 0xFF,0xFF,0xFF,0xFF    
 };
 
 /*--------------------------------------------------

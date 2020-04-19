@@ -648,13 +648,12 @@ static void local_NvmReadBeforeWrite(uint16 address, uint16 count)
 static tResult local_NvmCheckErased(void)
 {
     tResult retval = RES_OK;
-#ifdef NVM_READ_BEFORE_WRITE
     uint16 i;
     
     for (i=0; i<lNvm.CheckCount; i++)
         if (lNvm.Buffer[i] != NVM_ERASE_VAL)
             retval = RES_INVALID;
-#endif
+
     return retval;
 }
 #endif

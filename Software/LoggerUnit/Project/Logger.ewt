@@ -2525,6 +2525,9 @@
             <name>$PROJ_DIR$\..\Sources\Lib\Crc\LibCrc.h</name>
         </file>
         <file>
+            <name>$PROJ_DIR$\..\Sources\Lib\Crc\LibCrc_Cfg.h</name>
+        </file>
+        <file>
             <name>$PROJ_DIR$\..\Sources\Lib\Filters\LibFilters.c</name>
         </file>
         <file>
