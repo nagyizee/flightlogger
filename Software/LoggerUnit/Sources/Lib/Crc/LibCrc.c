@@ -47,16 +47,19 @@ uint8 CalcCRC8(uint8 startval, uint8* buffer, uint16 length)
         crc ^= buffer[i];
         for (bit = 8; bit>0; --bit)
         {
-            if (crc & 0x80) 
+            if (crc & 0x80)
+            {
                 crc = (crc << 1) ^ CRC8_POLYNOMIAL;
+            }
             else
+            {
                 crc = crc << 1;
+            }
         }
     }
 #endif    
     return crc;
 }
-
 
 /*--------------------------------------------------
  *             Local functions
@@ -78,15 +81,20 @@ static void init_crc8_tab( void )
 
 		for (j=8; j>0; --j) 
         {
-
-			if ( (crc ^ c) & 0x80 ) crc = ( crc << 1 ) ^ CRC8_POLYNOMIAL;
-			else                    crc =   crc << 1;
+			if ( (crc ^ c) & 0x80 ) 
+            {
+                crc = ( crc << 1 ) ^ CRC8_POLYNOMIAL;
+            }
+			else 
+            {
+                crc =   crc << 1;
+            }
 
 			c = c << 1;
 		}
 		crc_tab8[i] = crc;
 	}
-
+        /* Table generation finished */
 	crc_tab8_init = 1;
 }
 
