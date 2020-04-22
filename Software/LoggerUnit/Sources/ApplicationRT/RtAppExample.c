@@ -11,6 +11,7 @@
 #include "Nvm.h"
 #include "Nvm_Cfg.h"
 #include "NxpBaro.h"
+#include "NxpAccel.h"
 
 /* Test control and data variables */
 
@@ -55,7 +56,8 @@ static int32 nxpbarotest_res_int;
 static uint32 nxpbarotest_res_fract;
 
 
-static uint32 i2c_sensorcheck = 0;
+static uint32 i2c_barosensorcheck = 0;
+static volatile uint32 i2c_accelsensorcheck = 0;
 enum EPressOversampleRatio
 {                           // minimum times between data samples:
     pos_none = 0x00,        // 6ms
@@ -76,7 +78,8 @@ static void local_cypflashtest(void);
 static void local_fillbuffer(uint8 *buffer);
 static void local_nvm_test(void);
 static void local_nxp_baro_test(void);
-static void local_i2c_sensor_check(void);
+static void local_i2c_baro_sensor_check(void);
+static void local_i2c_accel_sensor_check(void);
 
 
 void RtAppExample_Main(uint32 taskIdx)
@@ -87,7 +90,8 @@ void RtAppExample_Main(uint32 taskIdx)
     local_cypflashtest();
     local_nvm_test();
     local_nxp_baro_test();
-    local_i2c_sensor_check();
+    local_i2c_baro_sensor_check();
+    local_i2c_accel_sensor_check();
 }
 
 static void local_tasktiming_test(uint32 taskIdx)
@@ -435,7 +439,7 @@ static void local_nxp_baro_test(void)
 
 }
 
-static void local_i2c_sensor_check(void)
+static void local_i2c_baro_sensor_check(void)
 {
 
 #define REGPRESS_DATACFG        0x13            // 1byte Pressure data, Temperature data and event flag generator
@@ -473,12 +477,12 @@ static void local_i2c_sensor_check(void)
 
     const uint8     psens_cmd_sshot_baro[] = { REGPRESS_CTRL1, ( pos_4 | PREG_CTRL1_OST) };     // start one shot data aq. with 4 sample oversampling (~18ms wait time)
 
-    if (i2c_sensorcheck == 0)
+    if (i2c_barosensorcheck == 0)
     {
         return;
     }
 
-    switch (i2c_sensorcheck)
+    switch (i2c_barosensorcheck)
     {
         case 1:             /* init pressure sensor */
             while (HALI2C_GetStatus(HALI2C_CHANNEL_BAROMETER) != I2C_IDLE) {}
@@ -505,7 +509,131 @@ static void local_i2c_sensor_check(void)
             break;
     }
 
-    i2c_sensorcheck = 0;
+    i2c_barosensorcheck = 0;
 }
+
+
+
+static void local_i2c_accel_sensor_check(void)
+{
+    /*
+     *  FS[1:0]=10 -> 8g range, resolution 1/256 G     12bit resolution
+     */
+    #define REG1_CFG_VAL         ((2 << 3))     // Data rate 200Hz
+
+    if (i2c_accelsensorcheck == 0)
+    {
+        return;
+    }
+
+    switch (i2c_accelsensorcheck)
+    {
+        case 1:             /* check / init */
+
+            /* sensor check */
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_ACCELERO) != I2C_IDLE) {}
+            HALI2C_ReadRegister(HALI2C_CHANNEL_ACCELERO, 0x0D, buff_1, 1);      // 0x2A - WHOAMI
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_ACCELERO) != I2C_IDLE) {}
+            if (buff_1[0] == 0x2A)
+            {
+                asm("nop");     // result is good
+            }
+            /* initialization */
+            buff_1[0] = 0x0E;       // XYZ_DATA_CFG register
+            buff_1[1] = 0x02;       // set 8 G range
+            HALI2C_Write(HALI2C_CHANNEL_ACCELERO, buff_1, 2);
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_ACCELERO) != I2C_IDLE) {}
+
+            buff_1[0] = 0x2A;       // CTRL_REG1
+            buff_1[1] = REG1_CFG_VAL;
+            HALI2C_Write(HALI2C_CHANNEL_ACCELERO, buff_1, 2);
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_ACCELERO) != I2C_IDLE) {}
+
+            //CTRL_REG2 - remains 0x00
+
+            buff_1[0] = 0x2C;       // CTRL_REG3
+            buff_1[1] = 0x02;       // - interrupt polarity: high,  - use push-pull
+            HALI2C_Write(HALI2C_CHANNEL_ACCELERO, buff_1, 2);
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_ACCELERO) != I2C_IDLE) {}
+
+            buff_1[0] = 0x2D;       // CTRL_REG4
+            buff_1[1] = 0x01;       // data ready int. enabled
+            HALI2C_Write(HALI2C_CHANNEL_ACCELERO, buff_1, 2);
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_ACCELERO) != I2C_IDLE) {}
+
+            buff_1[0] = 0x2E;       // CTRL_REG5
+            buff_1[1] = 0x01;       // data ready int. on pin INT1
+            HALI2C_Write(HALI2C_CHANNEL_ACCELERO, buff_1, 2);
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_ACCELERO) != I2C_IDLE) {}
+
+            break;
+        case 2:
+            /* initialization - bulk */
+            buff_1[0] = 0x0E;       // XYZ_DATA_CFG register
+            buff_1[1] = 0x02;       // set 8 G range
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_ACCELERO) != I2C_IDLE) {}
+            HALI2C_Write(HALI2C_CHANNEL_ACCELERO, buff_1, 2);
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_ACCELERO) != I2C_IDLE) {}
+
+            buff_1[0] = 0x2A;       // CTRL_REG1
+            buff_1[1] = REG1_CFG_VAL;
+            buff_1[2] = 0x00;
+            buff_1[3] = 0x02;       // - interrupt polarity: high,  - use push-pull
+            buff_1[4] = 0x01;       // data ready int. enabled
+            buff_1[5] = 0x01;       // data ready int. on pin INT1
+            HALI2C_Write(HALI2C_CHANNEL_ACCELERO, buff_1, 6);
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_ACCELERO) != I2C_IDLE) {}
+            break;
+        case 3:             /* read data set */
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_ACCELERO) != I2C_IDLE) {}
+            HALI2C_ReadRegister(HALI2C_CHANNEL_ACCELERO, 0x01, buff_1, 6);      // 0x2A - WHOAMI
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_ACCELERO) != I2C_IDLE) {}
+            break;
+
+        case 4:             /* cyclic read */
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_ACCELERO) != I2C_IDLE) {}
+            while (i2c_accelsensorcheck)
+            {
+                if (PORT_GENPIN_ACC_INT())
+                {
+                    HALI2C_ReadRegister(HALI2C_CHANNEL_ACCELERO, 0x01, buff_1, 6);      // 0x2A - WHOAMI
+                    while (HALI2C_GetStatus(HALI2C_CHANNEL_ACCELERO) != I2C_IDLE) {}
+                }
+            }
+
+            break;
+
+        case 5:             /* set active mode */
+            buff_1[0] = 0x2A;       // CTRL_REG1
+            buff_1[1] = REG1_CFG_VAL | 0x01;
+            HALI2C_Write(HALI2C_CHANNEL_ACCELERO, buff_1, 2);
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_ACCELERO) != I2C_IDLE) {}
+            break;
+        case 6:             /* set stdby mode */
+            buff_1[0] = 0x2A;       // CTRL_REG1
+            buff_1[1] = REG1_CFG_VAL | 0x00;
+            HALI2C_Write(HALI2C_CHANNEL_ACCELERO, buff_1, 2);
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_ACCELERO) != I2C_IDLE) {}
+            break;
+        case 7:             /* set selftest */
+            buff_1[0] = 0x2B;       // CTRL_REG1
+            buff_1[1] = 0x80;
+            HALI2C_Write(HALI2C_CHANNEL_ACCELERO, buff_1, 2);
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_ACCELERO) != I2C_IDLE) {}
+            break;
+        case 8:             /* clear selftest */
+            buff_1[0] = 0x2B;       // CTRL_REG1
+            buff_1[1] = 0x00;
+            HALI2C_Write(HALI2C_CHANNEL_ACCELERO, buff_1, 2);
+            while (HALI2C_GetStatus(HALI2C_CHANNEL_ACCELERO) != I2C_IDLE) {}
+            break;
+    }
+
+    i2c_accelsensorcheck = 0;
+}
+
+
+
+
 
 #endif

@@ -23,6 +23,7 @@
 #define RES_INVALID     (2)
 #define RES_ERROR       (3)
 #define RES_TIMEOUT     (4)
+#define RES_FAILED      (5)
 
 #ifndef ON_QT_PLATFORM
 
