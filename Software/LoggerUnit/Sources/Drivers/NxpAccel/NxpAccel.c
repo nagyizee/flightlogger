@@ -217,7 +217,7 @@ static void local_StateInit(void)
                 /* read the result of the selftest */
                 if (PORT_GENPIN_ACC_INT())
                 {
-                    HALI2C_ReadRegister(HALI2C_CHANNEL_ACCELERO, REGACC_ID, lAcc.hw_buff, 6);
+                    HALI2C_ReadRegister(HALI2C_CHANNEL_ACCELERO, REGACC_OUTX, lAcc.hw_buff, 6);
                     lAcc.substate = SUBST_INI_SELFTEST_RESULT;
                 }
             }
@@ -227,15 +227,15 @@ static void local_StateInit(void)
                 local_ProcessRawResults(lAcc.hw_buff, &lAcc.selftst_data);
                 /* disable selftest and leave it running with normal mode */
                 lAcc.hw_buff[0] = REGACC_CTRL2;
-                lAcc.hw_buff[2] = AREG_CFG2_MOD_NORMAL;                          // CTRL_REG2: selftest deactivated, use normal power scheme
-                HALI2C_Write(HALI2C_CHANNEL_ACCELERO, lAcc.hw_buff, 3);
+                lAcc.hw_buff[1] = AREG_CFG2_MOD_NORMAL;                          // CTRL_REG2: selftest deactivated, use normal power scheme
+                HALI2C_Write(HALI2C_CHANNEL_ACCELERO, lAcc.hw_buff, 2);
                 lAcc.substate = SUBST_INI_FINALIZE;
             }
             else
             {
                 /* end of initialization - go in the read mode to read the non-offsetted result for selftest */
                 lAcc.state = accdrvst_sensor_read;
-                lAcc.substate = SUBST_READ_WAITRESULT;
+                lAcc.substate = SUBST_READ_WAITEVENT;
                 lAcc.timeout_ctr = NXPBARO_CFG_TIMEROUT_CTR;
                 /* reset fail counter for the selftest (only if first start-up) */
                 if (lAcc.selftest == 0)
@@ -396,7 +396,7 @@ static void local_StateReadProcessSelftest(void)
     else
     {
         /* one more read */
-        lAcc.substate = SUBST_READ_WAITRESULT;
+        lAcc.substate = SUBST_READ_WAITEVENT;
         lAcc.timeout_ctr = NXPBARO_CFG_TIMEROUT_CTR;
     }
 }

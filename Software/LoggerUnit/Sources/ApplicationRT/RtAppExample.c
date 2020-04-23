@@ -55,6 +55,7 @@ static uint32 nxpbarotest_mask = NXPBARO_ACQMASK_PRESSURE;
 static int32 nxpbarotest_res_int;
 static uint32 nxpbarotest_res_fract;
 
+static uint32 nxpacctest = 0;
 
 static uint32 i2c_barosensorcheck = 0;
 static volatile uint32 i2c_accelsensorcheck = 0;
@@ -78,6 +79,7 @@ static void local_cypflashtest(void);
 static void local_fillbuffer(uint8 *buffer);
 static void local_nvm_test(void);
 static void local_nxp_baro_test(void);
+static void local_nxp_acc_test(void);
 static void local_i2c_baro_sensor_check(void);
 static void local_i2c_accel_sensor_check(void);
 
@@ -90,6 +92,7 @@ void RtAppExample_Main(uint32 taskIdx)
     local_cypflashtest();
     local_nvm_test();
     local_nxp_baro_test();
+    local_nxp_acc_test();
     local_i2c_baro_sensor_check();
     local_i2c_accel_sensor_check();
 }
@@ -437,6 +440,55 @@ static void local_nxp_baro_test(void)
             break;
     }
 
+}
+
+static void local_nxp_acc_test(void)
+{
+    volatile tNxpAccelStatus astatus;
+    static tNxpAccelResult acc_res;
+    tResult res;
+
+    if (nxpacctest == 0)
+    {
+        return;
+    }
+
+    switch(nxpacctest)
+    {
+        case 1:
+            astatus = NXPAccel_GetStatus();
+            nxpacctest = 0;
+            break;
+        case 2:
+            res = NXPAccel_Acquire(NXPACCEL_ACQ_SINGLE);
+            nxpacctest = 0;
+            break;
+        case 3:
+            res = NXPAccel_Acquire(NXPACCEL_ACQ_CONTINUOUS);
+            nxpacctest = 0;
+            break;
+        case 4:
+            NXPAccel_Sleep();
+            nxpacctest = 0;
+            break;
+        case 5:
+            res = NXPAccel_GetResult(&acc_res);
+            nxpacctest = 0;
+            break;
+        case 6:
+            do
+            {
+                res = NXPAccel_GetResult(&acc_res);
+            } while(res == RES_OK);
+            nxpacctest = 0;
+            break;
+        case 7:
+            while (NXPAccel_GetStatus() == NXPACCEL_ST_READY)
+            {
+                res = NXPAccel_GetResult(&acc_res);
+            }
+            break;
+    }
 }
 
 static void local_i2c_baro_sensor_check(void)

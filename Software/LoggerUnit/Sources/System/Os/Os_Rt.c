@@ -70,7 +70,7 @@ void OsRt_Init(void)
     CypFlash_Init();
     Nvm_Init();
     NXPBaro_Init();
-//placeholder for    NxpAccel_Init();
+    NXPAccel_Init();
 
     /* init application modules */
     RtAppPack_Init();
@@ -88,6 +88,8 @@ static void RTTask_1ms(void)
 
     Nvm_Main();
     CypFlash_Main(100); /* 2ms SPI timeout */
+
+    NXPAccel_MainFunction();
 }
 
 static void RTTask_5ms_1(void)
