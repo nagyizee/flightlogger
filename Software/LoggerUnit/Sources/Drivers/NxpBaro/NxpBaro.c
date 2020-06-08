@@ -247,7 +247,7 @@ static void local_StateRead(void)
             if (op_mask)
             {
                 /* if we have an alitmerty measurement - do it as a new oneshot */
-                lBaro.meas_compl_mask = (uint8)op_mask;
+                lBaro.meas_req_mask = (uint8)op_mask;
                 lBaro.substate = drvsst_read_oneshot;
             }
             else
@@ -381,9 +381,9 @@ static void local_ReadProcessResult(void)
 
         if (lBaro.meas_req_mask & NXPBARO_ACQMASK_PRESSURE)         /* pressure has priority over altitude */
         {
-            lBaro.mval_baro = ((((uint32)lBaro.hw_buff[0] << 24) |
-                                ((uint32)lBaro.hw_buff[1] << 16) |
-                                ((uint32)lBaro.hw_buff[2] << 8)) >> 6);
+            lBaro.mval_baro = ((uint32)lBaro.hw_buff[2] << 2)  |
+                              ((uint32)lBaro.hw_buff[1] << 10) |
+                              ((uint32)lBaro.hw_buff[0] << 18);
             lBaro.meas_compl_mask |= NXPBARO_ACQMASK_PRESSURE;
         }
         else
@@ -421,7 +421,7 @@ static uint32 local_ConvertTempFromRaw(uint8 *rawbuff)
 {
     uint32 retval;
 
-    retval = (uint32)(((int32)((int8)rawbuff[0]) * (1 << 16)) + (NXPBARO_TEMP_OFFSET * ( 1 << 8)));
+    retval = (uint32)(((int32)((int8)rawbuff[0]) * (1 << 16)) + (NXPBARO_TEMP_OFFSET * ( 1 << 16)));
     retval += ((uint32)rawbuff[1] << 8);
 
     return retval;
